@@ -1,0 +1,101 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Contains types specific to the Kraken servers.
+ *
+ * @namespace Kraken
+ */
+
+/**
+ * API key from Kraken used for authenticated connections.
+ *
+ * @typedef {string} Kraken~Key
+ */
+
+/**
+ * API secret from Kraken used for authenticated connections.
+ *
+ * @typedef {string} Kraken~Secret
+ */
+
+/**
+ * Verification tier from Kraken used for determining rate limits.
+ *
+ * @typedef {number} Kraken~Tier
+ */
+
+/**
+ * Server-side API version.
+ *
+ * @typedef {number} Kraken~Version
+ */
+
+/**
+ * Set of server-side API methods available to all users.
+ *
+ * @typedef {Set} Kraken~PublicMethods
+ */
+
+/**
+ * Set of server-side API methods available exclusively to authenticated users.
+ *
+ * @typedef {Set} Kraken~PrivateMethods
+ */
+
+/**
+ * Type of method being called on Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ *
+ * @typedef {string} Kraken~Method
+ */
+
+/**
+ * Method-specific options for calls to Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ *
+ * @typedef {string} Kraken~Options
+ */
+
+/**
+ * Unique ever-increasing integer used by Kraken servers to determine request validity. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info. As recommended by Kraken, nonce is the current time in microseconds.
+ *
+ * @typedef {number} Kraken~Nonce
+ */
+
+/**
+ * Hostname for the Kraken API endpoint. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ *
+ * @typedef {string} Kraken~Hostname
+ */
+
+/**
+ * Path to the Kraken API endpoint for a given method. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ *
+ * @typedef {string} Kraken~Path
+ */
+
+/**
+ * HTTPS request headers for calls to Kraken servers.
+ *
+ * @typedef  {Object}              Kraken~HTTPSRequestHeaders
+ * @property {Kraken~Key}          API-Key  - Kraken API key.
+ * @property {API~Calls~Signature} API-Sign - Cryptographic signature using API secret and other call parameters.
+ */
+
+/**
+ * HTTPS request options for calls to Kraken servers.
+ *
+ * @typedef  {Object}          Kraken~HTTPSRequestOptions
+ * @property {Kraken~Hostname} hostname - Kraken hostname.
+ * @property {Kraken~Path}     path     - Kraken method path.
+ * @property {string}          method   - 'POST' HTTPS request specification. NOTE: This is NOT the same as the {@link Kraken~Method} for the request.
+ * @property {Kraken~HTTPSRequestHeaders} headers - Kraken HTTPS request headers.
+ */
+
+/**
+ * HTTPS request POST data for calls to Kraken servers. Generated using 'qs' module.
+ *
+ * @typedef {string} Kraken~HTTPSRequestPOSTData
+ */

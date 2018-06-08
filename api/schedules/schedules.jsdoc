@@ -1,0 +1,24 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Types and methods specific to scheduling persistent {@link API~Caller} operations.
+ *
+ * @namespace API~Schedules
+ * @property  {module:API/Schedules/loadSchedule} loadSchedule - Loads settings and loaded call function and returns stateful scheduler function.
+ */
+
+/**
+ * Unique incrementing ID used for canceling scheduled calls.
+ *
+ * @typedef {number} API~Schedules~ID
+ */
+
+/**
+ * Maps {@link API~Schedules~ID} to request parameters. Requests are processed in insertion order and repeated until all requests are dequeued.
+ *
+ * @typedef {Map} API~Schedules~Requests
+ */

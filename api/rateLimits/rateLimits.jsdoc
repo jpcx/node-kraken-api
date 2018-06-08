@@ -1,0 +1,12 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Types and methods specific to limiting call frequency according to the rate limit specifications listed in the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit}
+ *
+ * @namespace API~RateLimits
+ * @property  {module:API/RateLimits/limiter} limiter - Prepares rate-limiting promises according to the {@link Kraken~Tier}, {@link Kraken~Method}, and {@link Settings~RateLimiter}.
+ */

@@ -1,0 +1,34 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Types and methods specific to making direct API calls to Kraken.
+ *
+ * @namespace API~Calls
+ * @property  {module:API/Calls/loadCall}       LoadCall - Loads a stateful call function given the execution settings.
+ * @property  {module:API/Calls/genRequestData} GenRequestData - Generates request data for a given request.
+ * @property  {module:API/Calls/signRequest}    SignRequest    - Applies a cryptographic signature to a given request.
+ */
+
+/**
+ * Timeout (in ms) for terminating HTTPS connections.
+ *
+ * @typedef {number} API~Calls~Timeout
+ */
+
+/**
+ * Request data prepared for use with the 'https' module.
+ *
+ * @typedef  {Object} API~Calls~RequestData
+ * @property {Kraken~HTTPSRequestOptions}  options - Options for HTTPS request to Kraken servers.
+ * @property {Kraken~HTTPSRequestPOSTData} post    - POST data for HTTPS request to Kraken servers.
+ */
+
+/**
+ * Cryptographic signature of a given call according to the specifications listed in the [Kraken API Docs]{@link https://www.kraken.com/help/api#general-usage}.
+ *
+ * @typedef  {Object} API~Calls~Signature
+ */

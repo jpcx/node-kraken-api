@@ -1,0 +1,28 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Contains methods and types for the client-side API.
+ *
+ * @namespace API
+ */
+
+/**
+ * Function which handles errors and data.
+ *
+ * @typedef  {Function} API~Callback
+ * @callback
+ * @param    {Error}    err  - Request errors.
+ * @param    {Object}   data - Response data.
+ */
+
+/**
+ * Provides functions which can be used to interact with the API.
+ *
+ * @typedef  {Object}                 API~Functions
+ * @property {API~Calls~Call}         call       - Call a single method.
+ * @property {API~Schedules~Schedule} schedule   - Add or delete a continuous call schedule operation.
+ */
