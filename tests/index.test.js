@@ -81,23 +81,23 @@ test('Observes rate limits', async () => {
 })
 
 test(
-  'Makes authenticated calls (if credentials are provided in ./config.js)',
+  'Makes authenticated calls (if credentials are provided in ./auth.json)',
   async () => {
     jest.setTimeout(60000)
     let userSettings
     try {
-      userSettings = require('../config.js')
+      userSettings = require('../auth.json')
     } catch (e) {
       console.log('No user settings configuration provided.')
     }
     if (
       userSettings !== undefined &&
-    userSettings.hasOwnProperty('key') &&
-    userSettings.hasOwnProperty('secret') &&
-    userSettings.hasOwnProperty('tier') &&
-    userSettings.key !== '' &&
-    userSettings.secret !== '' &&
-    userSettings.tier !== 0
+      userSettings.hasOwnProperty('key') &&
+      userSettings.hasOwnProperty('secret') &&
+      userSettings.hasOwnProperty('tier') &&
+      userSettings.key !== '' &&
+      userSettings.secret !== '' &&
+      userSettings.tier !== 0
     ) {
       const api = kraken(userSettings)
       try {
