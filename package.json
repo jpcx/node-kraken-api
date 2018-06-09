@@ -1,16 +1,16 @@
 {
   "name": "node-kraken-api",
   "version": "0.1.0",
-  "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes dates. Allows for persistent call scheduling.",
+  "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Allows for persistent call scheduling.",
   "engines": {
     "node": ">=8.7.0"
   },
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose",
+    "test": "jest",
     "prepare": "npm run-script build && npm test",
     "build": "sh scripts/build.sh",
-    "build-jsdoc": "jsdoc . -c .jsdoc.conf.json -d docs/jsdoc --readme README.md"
+    "build-jsdoc": "jsdoc . -c .jsdoc.conf.json --readme README.md -d docs/jsdoc"
   },
   "keywords": [
     "kraken",
@@ -28,6 +28,13 @@
     "email": "jpcxme@gmail.com"
   },
   "license": "MIT",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "deep-props.extract": "^0.1.4",
+    "deep-props.set": "^0.1.2",
+    "qs": "^6.5.2",
+    "ranged-date": "^1.1.3"
+  },
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-plugin-jsdoc": "^3.5.0",
@@ -37,17 +44,5 @@
     "standard": "^11.0.1",
     "turndown": "^4.0.2",
     "turndown-plugin-gfm": "^1.0.1"
-  },
-  "dependencies": {
-    "crypto": "^1.0.1",
-    "deep-props.extract": "^0.1.4",
-    "deep-props.set": "^0.1.2",
-    "qs": "^6.5.2",
-    "ranged-date": "^1.1.3"
-  },
-  "standard": {
-    "ignore": [
-      "tests/**/*.test.js"
-    ]
   }
 }
