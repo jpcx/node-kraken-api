@@ -162,7 +162,7 @@ const localPathToURL = (path, mappings) => Object.values(
 )
 
 /**
- * Adds horizontal line before Home link footer.
+ * Adds horizontal line before Home link footer, creates table of contents.
  *
  * @private
  * @param   {string} string   - Search string.
@@ -170,10 +170,62 @@ const localPathToURL = (path, mappings) => Object.values(
  * @param   {Object} mappings - Map of local HTML locations to desired MD file names, locations, remote URLs, and version numbers.
  * @returns {string} Formatted string.
  */
-const formatHomeFooter = (string, path, mappings) => string.replace(
-  /^\[Home\]\(index\.html\)\n-*\n[\s\S]*/gm,
-  `<hr>\n\n## [Home](${localPathToURL(path, mappings)}/README.md)\n`
-)
+const formatHomeFooter = (string, path, mappings) => {
+  const contents = Object.values(mappings).reduce((obj, v) => {
+    let name
+    let parents
+    if (v.path.match(/modules/g) !== null) {
+      name = v.file.replace(/^(.+?)\.md$/gm, '$1')
+      parents = v.path.split(/\//g).reduce((data, v) => {
+        if (!data.start && v === 'modules') data.start = true
+        else if (data.start) data.parents.push(v)
+        return data
+      }, { start: false, parents: [] }).parents
+    } else if (v.path.match(/namespaces/g) !== null) {
+      name = v.file.replace(/^(.+?)\.md$/gm, '$1')
+      parents = v.path.split(/\//g).reduce((data, v) => {
+        if (!data.start && v === 'namespaces') data.start = true
+        else if (data.start) data.parents.push(v)
+        return data
+      }, { start: false, parents: [] }).parents
+    }
+    const placement = parents.reduce((ref, v) => {
+      if (!ref.hasOwnProperty(v)) {
+        ref[v] = {}
+        return ref[v]
+      } else {
+        return ref[v].children
+      }
+    }, obj)
+    placement[name] = {
+      url: v.repo + '/blob/' + v.tag + '/' + v.path + '/' + v.file,
+      children: {}
+    }
+    return obj
+  }, {})
+  let md = ''
+  /**
+   * Recursively generates markdown table of contents from contents object.
+   *
+   * @private
+   * @param {Object} ref   - Object to analyze.
+   * @param {number} depth - Current depth.
+   */
+  const recurse = (ref, depth) => {
+    Object.entries(ref).forEach(entry => {
+      md += '  ' + Array(depth + 1).join('  ')
+      md += '+ ' + '[' + entry[0] + '](' + entry[1].url + ')\n'
+      if (Object.keys(entry[1].children).length > 0) {
+        recurse(entry[1].children, depth + 1)
+      }
+    })
+  }
+  recurse(contents, 0)
+  return string.replace(
+    /^\[Home\]\(index\.html\)\n-*\n[\s\S]*/gm,
+    `<hr>\n\n## [Home](${localPathToURL(path, mappings)}/README.md)\n${md}`
+  )
+}
 
 /**
  * Replaces source code urls with links to GitHub code locations and replaces #line links to GitHub-flavored #L links.

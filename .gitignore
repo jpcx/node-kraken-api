@@ -68,3 +68,6 @@ out
 
 # VSCode configuration
 .vscode
+
+# Cache folder for program Runtime
+cache

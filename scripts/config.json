@@ -4,7 +4,7 @@
   "packages": {
     "node-kraken-api": {
       "repo": "https://github.com/jpcx/node-kraken-api",
-      "tag": "0.1.0",
+      "tag": "develop",
       "node": "8.7.0",
       "jsdoc": [
         {
@@ -160,7 +160,7 @@
           }
         }
       ],
-      "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes dates. Allows for persistent call scheduling.",
+      "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Allows for persistent call scheduling.",
       "keywords": [
         "kraken",
         "api",

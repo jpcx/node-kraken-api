@@ -31,7 +31,7 @@
  *
  * @typedef  {Object}  Settings~Parse
  * @property {boolean} numbers - Parses string numbers via unary plus.
- * @property {boolean} dates   - Converts date strings, seconds, and microseconds to milliseconds using the deep-props module.
+ * @property {boolean} dates   - Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module.
  */
 
 /**
