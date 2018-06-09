@@ -12,7 +12,7 @@ Types and methods specific to making direct API calls to Kraken.
 
 Source:
 
-*   [api/calls/calls.jsdoc](api_calls_calls.jsdoc.html), [line 7](api_calls_calls.jsdoc.html#line7)
+*   [node-kraken-api/api/calls/calls.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc#L7)
 
 ### Methods
 
@@ -98,7 +98,7 @@ Request data prepared for use with the 'https' module.
 
 Source:
 
-*   [api/calls/calls.jsdoc](api_calls_calls.jsdoc.html), [line 22](api_calls_calls.jsdoc.html#line22)
+*   [node-kraken-api/api/calls/calls.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc), [line 22](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc#L22)
 
 <a name="~Signature"></a>
 #### Signature
@@ -111,7 +111,7 @@ Cryptographic signature of a given call according to the specifications listed i
 
 Source:
 
-*   [api/calls/calls.jsdoc](api_calls_calls.jsdoc.html), [line 30](api_calls_calls.jsdoc.html#line30)
+*   [node-kraken-api/api/calls/calls.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc), [line 30](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc#L30)
 
 <a name="~Timeout"></a>
 #### Timeout
@@ -124,7 +124,7 @@ Timeout (in ms) for terminating HTTPS connections.
 
 Source:
 
-*   [api/calls/calls.jsdoc](api_calls_calls.jsdoc.html), [line 16](api_calls_calls.jsdoc.html#line16)
+*   [node-kraken-api/api/calls/calls.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc), [line 16](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc#L16)
 
 <hr>
 

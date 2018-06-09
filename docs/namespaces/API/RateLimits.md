@@ -10,7 +10,7 @@ Types and methods specific to limiting call frequency according to the rate limi
 
 Source:
 
-*   [api/rateLimits/rateLimits.jsdoc](api_rateLimits_rateLimits.jsdoc.html), [line 7](api_rateLimits_rateLimits.jsdoc.html#line7)
+*   [node-kraken-api/api/rateLimits/rateLimits.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/rateLimits.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/rateLimits.jsdoc#L7)
 
 <hr>
 

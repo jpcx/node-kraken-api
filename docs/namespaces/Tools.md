@@ -14,7 +14,7 @@ Contains methods and types for various client-side tools.
 
 Source:
 
-*   [tools/tools.jsdoc](tools_tools.jsdoc.html), [line 7](tools_tools.jsdoc.html#line7)
+*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L7)
 
 ### Methods
 

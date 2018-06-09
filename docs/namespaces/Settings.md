@@ -10,7 +10,7 @@ Contains types specific to execution settings.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 7](settings_settings.jsdoc.html#line7)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L7)
 
 ### Type Definitions
 
@@ -39,7 +39,7 @@ Contains execution settings configuration for API operations.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 14](settings_settings.jsdoc.html#line14)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L14)
 
 <a name="~GetCounterIntvl"></a>
 #### GetCounterIntvl(tier) → \{Kraken~CounterInterval}
@@ -54,7 +54,7 @@ Determines counter countdown interval given a tier.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 45](settings_settings.jsdoc.html#line45)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 45](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L45)
 
 ##### Returns:
 
@@ -77,7 +77,7 @@ Determines counter limit given a tier.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 37](settings_settings.jsdoc.html#line37)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 37](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L37)
 
 ##### Returns:
 
@@ -100,7 +100,7 @@ Determines amount to increment counter depending on the method.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 53](settings_settings.jsdoc.html#line53)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 53](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L53)
 
 ##### Returns:
 
@@ -123,7 +123,7 @@ Determines whether or not a method should be limited to 1 hz.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 61](settings_settings.jsdoc.html#line61)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 61](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L61)
 
 ##### Returns:
 
@@ -151,7 +151,7 @@ Configures response parsing.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 29](settings_settings.jsdoc.html#line29)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 29](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L29)
 
 <a name="~RateLimiter"></a>
 #### RateLimiter
@@ -175,7 +175,7 @@ Limits call frequency.
 
 Source:
 
-*   [settings/settings.jsdoc](settings_settings.jsdoc.html), [line 69](settings_settings.jsdoc.html#line69)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 69](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L69)
 
 <hr>
 

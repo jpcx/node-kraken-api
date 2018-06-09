@@ -228,14 +228,14 @@ const formatHomeFooter = (string, path, mappings) => {
 }
 
 /**
- * Replaces source code urls with links to GitHub code locations and replaces #line links to GitHub-flavored #L links.
+ * Replaces source code urls with links to GitHub code locations and replaces #line links to GitHub-flavored #L links. Works with .js and .jsdoc extensions.
  *
  * @private
  * @param   {string} string - Search string.
  * @returns {string} Formatted string.
  */
 const formatSourceCodeURLs = string => string.split(
-  /([\w\d]*\.js\.html#line)/g
+  /([\w\d]*\.js(?:doc)?\.html#line)/g
 ).reduce(
   (formatted, block, i) => {
     if (i === 0) {
@@ -251,8 +251,8 @@ const formatSourceCodeURLs = string => string.split(
           /line/g,
           'L'
         ).replace(
-          /\.js\.html/g,
-          '.js'
+          /\.js(doc)?\.html/g,
+          '.js$1'
         )
       )
     } else {
@@ -261,7 +261,7 @@ const formatSourceCodeURLs = string => string.split(
   },
   ''
 ).split(
-  /([\w\d]*\.js\.html)/g
+  /([\w\d]*\.js(?:doc)?\.html)/g
 ).reduce(
   (formatted, block, i) => {
     if (i === 0) {
@@ -274,8 +274,8 @@ const formatSourceCodeURLs = string => string.split(
           /_/g,
           '/'
         ).replace(
-          /\.js\.html/g,
-          '.js'
+          /\.js(doc)?\.html/g,
+          '.js$1'
         )
       )
     } else {
@@ -317,7 +317,7 @@ const replaceModuleLinks = (string, mappings) => Object.entries(
 )
 
 /**
- * Replaces relative source code links with remote links.
+ * Replaces relative source code links with remote links. Works with .js and .jsdoc extensions.
  *
  * @private
  * @param {string} string   - Search string.
@@ -325,7 +325,7 @@ const replaceModuleLinks = (string, mappings) => Object.entries(
  * @returns {string} Formatted string.
  */
 const replaceSourceCodeLinks = (string, mappings) => string.split(
-  /(\]\([/\w\d\-._~:?#[\]@!$&'()*\\+,;=`]*.js[#L\d]*\))/g
+  /(\]\([/\w\d\-._~:?#[\]@!$&'()*\\+,;=`]*.js(?:doc)?[#L\d]*\))/g
 ).reduce(
   (newString, chunk, i) => {
     if (i === 0) {
@@ -367,7 +367,7 @@ const replaceSourceCodeLinks = (string, mappings) => string.split(
   },
   ''
 ).split(
-  /(\[[/\w\d\-._~:?#[\]@!$&'()*\\+,;=`]*.js[#L\d]*\]\()/g
+  /(\[[/\w\d\-._~:?#[\]@!$&'()*\\+,;=`]*.js(?:doc)?[#L\d]*\]\()/g
 ).reduce(
   (newString, chunk, i) => {
     if (i === 0) {

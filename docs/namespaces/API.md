@@ -4,7 +4,7 @@ Contains methods and types for the client-side API.
 
 Source:
 
-*   [api/api.jsdoc](api_api.jsdoc.html), [line 7](api_api.jsdoc.html#line7)
+*   [node-kraken-api/api/api.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc#L7)
 
 ### Namespaces
 
@@ -30,7 +30,7 @@ Function which handles errors and data.
 
 Source:
 
-*   [api/api.jsdoc](api_api.jsdoc.html), [line 13](api_api.jsdoc.html#line13)
+*   [node-kraken-api/api/api.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc), [line 13](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc#L13)
 
 <a name="~Functions"></a>
 #### Functions
@@ -50,7 +50,7 @@ Provides functions which can be used to interact with the API.
 
 Source:
 
-*   [api/api.jsdoc](api_api.jsdoc.html), [line 22](api_api.jsdoc.html#line22)
+*   [node-kraken-api/api/api.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc), [line 22](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc#L22)
 
 <hr>
 

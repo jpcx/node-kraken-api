@@ -10,7 +10,7 @@ Types and methods specific to scheduling persistent API~Caller operations.
 
 Source:
 
-*   [api/schedules/schedules.jsdoc](api_schedules_schedules.jsdoc.html), [line 7](api_schedules_schedules.jsdoc.html#line7)
+*   [node-kraken-api/api/schedules/schedules.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/schedules.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/schedules.jsdoc#L7)
 
 ### Methods
 
@@ -121,7 +121,7 @@ Unique incrementing ID used for canceling scheduled calls.
 
 Source:
 
-*   [api/schedules/schedules.jsdoc](api_schedules_schedules.jsdoc.html), [line 14](api_schedules_schedules.jsdoc.html#line14)
+*   [node-kraken-api/api/schedules/schedules.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/schedules.jsdoc), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/schedules.jsdoc#L14)
 
 <a name="~Info"></a>
 #### Info
@@ -156,7 +156,7 @@ Maps [API\~Schedules~ID](https://github.com/jpcx/node-kraken-api/blob/develop/do
 
 Source:
 
-*   [api/schedules/schedules.jsdoc](api_schedules_schedules.jsdoc.html), [line 20](api_schedules_schedules.jsdoc.html#line20)
+*   [node-kraken-api/api/schedules/schedules.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/schedules.jsdoc), [line 20](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/schedules.jsdoc#L20)
 
 <a name="~Schedule"></a>
 #### Schedule
