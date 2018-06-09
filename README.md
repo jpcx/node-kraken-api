@@ -155,9 +155,9 @@ setTimeout(() => {
 <a name='configuration'></a>
 ## Configuration
 
-During creation of the API instance, a configuration object may be provided for authenticated calls and other options. This may be provided by using <code>require('./config.js')</code> if this file has been prepared already, or by simply providing an object programmatically.
+During creation of the API instance, a configuration object may be provided for authenticated calls and other options. This may be provided by using <code>require('./config.js')</code> or <code>require('./config.json')</code> if this file has been prepared already, or by simply providing an object programmatically.
 
-Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/0.1.0/docs/namespaces/Settings.md)
+Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
 
 ## Documentation
 
