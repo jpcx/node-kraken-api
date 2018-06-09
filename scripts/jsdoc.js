@@ -132,6 +132,17 @@ const escapeSubNamespaceStrikethrough = string => string.replace(
 )
 
 /**
+ * Escapes 'or' code bars.
+ *
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
+const escapeOrCodeBars = string => string.replace(
+  /\|\|/gm,
+  '\\|\\|'
+)
+
+/**
  * Converts local path to GitHub URL.
  *
  * @private
@@ -437,6 +448,7 @@ const postProcess = (markdown, mappings) => Object.keys(
     proc[key] = replaceModuleLinks(proc[key], mappings)
     proc[key] = replaceSourceCodeLinks(proc[key], mappings)
     proc[key] = escapeSubNamespaceStrikethrough(proc[key])
+    proc[key] = escapeOrCodeBars(proc[key])
     proc[key] = proc[key].trim()
     return proc
   },
