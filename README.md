@@ -94,11 +94,8 @@ api.call('Time')
 _Using callbacks:_
 ```js
 api.call('Time', (err, data) => {
-  if (err) {
-    console.error(err)
-  } else {
-    console.log(data)
-  }
+  if (err) console.error(err)
+  else console.log(data)
 })
 ```
 
@@ -112,11 +109,8 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 })
 _Using callbacks (with Kraken method options):_
 ```js
 api.call('Depth', { pair: 'XXBTZUSD', count: 1 }, (err, data) => {
-  if (err) {
-    console.error(err)
-  } else {
-    console.log(data)
-  }
+  if (err) console.error(err)
+  else console.log(data)
 })
 ```
 
