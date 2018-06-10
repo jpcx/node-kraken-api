@@ -124,32 +124,100 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 }, (err, data) => {
 })
 ```
 
-__Working with persistent call scheduling:__
-```js
-const timeID = api.schedule.add('Time', (err, data) => {
-  if (err) {
-    console.error(err)
-  } else {
-    console.log(data)
-  }
-})
+__Working with data syncing:__
 
-const depthID = api.schedule.add(
-  'Depth', { pair: 'XXBTZUSD', count: 1 }, (err, data) => {
-    if (err) {
-      console.error(err)
-    } else {
-      console.log(data)
+_Creating a sync object:_
+```js
+const timeSync = api.sync('Time')
+// logs {}
+console.log(timeSync.data)
+
+// logs { unixtime: 1528607559000, rfc1123: 1528607559000 }
+// (unless call had failed)
+setTimeout(() => console.log(timeSync.data), 5000)
+```
+
+_Using syncing promises:_
+```js
+const api = require('./')()
+const timeSync = api.sync('Time')
+
+let i = 0
+const continuouslyLogUpdates = async () => {
+  while(i++ < 20) {
+    try {
+      console.log(await timeSync.next())
+    } catch(e) {
+      console.error(e)
     }
   }
-)
+}
 
-// Example schedule deletion after a given period of time
+continuouslyLogUpdates()
+```
+
+_Creating a sync object (using a listener callback):_
+```js
+const timeSync = api.sync('Time', (err, data) => {
+  if (err) console.error(err)
+  else if (data) console.log(data)
+}
+```
+
+_Adding a listener callback after creation:_
+```js
+const timeSync = api.sync('Time')
+timeSync.addListener((err, data) => {
+  if (err) console.error(err)
+  else if (data) console.log(data)
+})
+```
+
+_Closing a sync operation:_
+```js
+const timeSync = api.sync('Time')
+timeSync.addListener((err, data) => {
+  // stops executing (and syncing) after ~5000 ms
+  if (err) console.error(err)
+  else if (data) console.log(data)
+})
+setTimeout(timeSync.close, 5000)
+```
+
+_Re-opening a sync operation:_
+```js
+const timeSync = api.sync('Time')
+timeSync.addListener((err, data) => {
+  // stops executing (and syncing) after ~5000 ms
+  // starts executing (and syncing) again after ~10000 ms
+  if (err) console.error(err)
+  else if (data) console.log(data)
+})
+setTimeout(timeSync.close, 5000)
+setTimeout(timeSync.open, 10000)
+```
+
+_Removing a sync listener callback:_
+```js
+const timeSync = api.sync('Time')
+const listener = (err, data) => {
+  // stops executing after ~5000 ms
+  // (timeSync will continue to stay up to date)
+  if (err) console.error(err)
+  else if (data) console.log(data)
+}
+timeSync.addListener(listener)
+setTimeout(() => timeSync.removeListener(listener), 5000)
+```
+
+_Viewing historical errors:_
+```js
+const timeSync = api.sync('BadMethodExample')
 setTimeout(() => {
-  api.schedule.delete(timeID)
-  api.schedule.delete(depthID)
+  console.log(timeSync.errors)
+  // logs the time of the error
+  console.log(timeSync.errors[0].time)
 }, 10000)
-
 ```
 
 <a name='configuration'></a>

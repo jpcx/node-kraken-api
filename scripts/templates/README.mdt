@@ -133,21 +133,41 @@ const timeSync = api.sync('Time')
 console.log(timeSync.data)
 
 // logs { unixtime: 1528607559000, rfc1123: 1528607559000 }
+// (unless call had failed)
 setTimeout(() => console.log(timeSync.data), 5000)
+```
+
+_Using syncing promises:_
+```js
+const api = require('./')()
+const timeSync = api.sync('Time')
+
+let i = 0
+const continuouslyLogUpdates = async () => {
+  while(i++ < 20) {
+    try {
+      console.log(await timeSync.next())
+    } catch(e) {
+      console.error(e)
+    }
+  }
+}
+
+continuouslyLogUpdates()
 ```
 
 _Creating a sync object (using a listener callback):_
 ```js
-const timeSync = api.sync('Time', (err, data, event) => {
+const timeSync = api.sync('Time', (err, data) => {
   if (err) console.error(err)
   else if (data) console.log(data)
 }
 ```
 
-_Adding a listener after creation:_
+_Adding a listener callback after creation:_
 ```js
 const timeSync = api.sync('Time')
-timeSync.addListener((err, data, event) => {
+timeSync.addListener((err, data) => {
   if (err) console.error(err)
   else if (data) console.log(data)
 })
@@ -156,13 +176,10 @@ timeSync.addListener((err, data, event) => {
 _Closing a sync operation:_
 ```js
 const timeSync = api.sync('Time')
-timeSync.addListener((err, data, event) => {
+timeSync.addListener((err, data) => {
+  // stops executing (and syncing) after ~5000 ms
   if (err) console.error(err)
   else if (data) console.log(data)
-  else if (event === 'close') {
-    // logs after ~5000 ms
-    console.log('Stopped syncing!')
-  }
 })
 setTimeout(timeSync.close, 5000)
 ```
@@ -170,26 +187,22 @@ setTimeout(timeSync.close, 5000)
 _Re-opening a sync operation:_
 ```js
 const timeSync = api.sync('Time')
-timeSync.addListener((err, data, event) => {
+timeSync.addListener((err, data) => {
+  // stops executing (and syncing) after ~5000 ms
+  // starts executing (and syncing) again after ~10000 ms
   if (err) console.error(err)
   else if (data) console.log(data)
-  else if (event === 'close') {
-    // logs after ~5000 ms
-    console.log('Stopped syncing!')
-    setTimeout(timeSync.open, 5000)
-  } else if (event === 'open') {
-    // logs after ~10000 ms
-    console.log('Resumed syncing!')
-  }
 })
 setTimeout(timeSync.close, 5000)
+setTimeout(timeSync.open, 10000)
 ```
 
-_Removing a sync listener:_
+_Removing a sync listener callback:_
 ```js
 const timeSync = api.sync('Time')
-const listener = (err, data, event) => {
+const listener = (err, data) => {
   // stops executing after ~5000 ms
+  // (timeSync will continue to stay up to date)
   if (err) console.error(err)
   else if (data) console.log(data)
 }
@@ -199,10 +212,13 @@ setTimeout(() => timeSync.removeListener(listener), 5000)
 
 _Viewing historical errors:_
 ```js
-const timeSync = api.sync('Tidme')
-setTimeout
+const timeSync = api.sync('BadMethodExample')
+setTimeout(() => {
+  console.log(timeSync.errors)
+  // logs the time of the error
+  console.log(timeSync.errors[0].time)
+}, 10000)
 ```
-
 
 <a name='configuration'></a>
 ## Configuration

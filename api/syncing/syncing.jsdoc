@@ -26,8 +26,9 @@
 /**
  * Timestamped {@link API~Calls~CallError}.
  *
- * @typedef  {Error}  API~Syncing~TimestampedCallError
- * @property {number} time - Time of error (in ms).
+ * @typedef  {Error}  API~Syncing~SyncError
+ * @property {number} time     - Time of error (in ms).
+ * @property {string} [action] - Action taken in response to the error. Errors that will not resolve over time will close the sync instance.
  */
 
 /**
@@ -40,7 +41,7 @@
  * Callback for instance-specific events.
  *
  * @callback API~Syncing~EventListener
- * @param    {API~Syncing~TimestampedCallError} err - Response error.
- * @param    {API~Calls~CallData} data - Response data.
+ * @param    {API~Syncing~SyncError} err  - Response error.
+ * @param    {API~Calls~CallData}    data - Response data.
  * @param    {('error'|'data'|'open'|'close')} state - Type of event that triggered the callback.
  */

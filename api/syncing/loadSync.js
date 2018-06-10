@@ -52,47 +52,49 @@ const handleRequests = async info => {
         try {
           instance.data = await info.call(request.method, request.options)
           instance.time = Date.now()
-          if (request.hasOwnProperty('initResolve')) {
-            request.initResolve(instance.data)
-            delete request.initResolve
-            delete request.initReject
+          if (instance.state !== 'open' && requests.has(id)) {
+            instance.state = 'open'
           }
           if (listeners.has(id)) {
-            listeners.get(id).forEach(
-              cb => cb(null, instance.data, 'data')
-            )
+            listeners.get(id).forEach(cb => cb(null, instance.data))
           }
         } catch (e) {
           const err = Error(e)
+          if (err.message.match(/EGeneral:Unknown method/g) !== null) {
+            err.actions = 'Closed this request'
+            instance.close()
+          }
           err.time = Date.now()
           instance.errors.push(err)
-          if (request.hasOwnProperty('initReject')) {
-            request.initReject(err)
-            delete request.initResolve
-            delete request.initReject
-          }
           if (listeners.has(id)) {
-            listeners.get(id).forEach(cb => cb(err, null, 'error'))
+            listeners.get(id).forEach(cb => cb(err, null))
           }
         }
         await ms(calcAverageWait(info))
-        if (
-          !requests.has(id) &&
-          listeners.has(id)
-        ) {
-          listeners.get(id).forEach(cb => cb(null, null, 'close'))
-        }
       }
       info.requesting = false
-      for (let entry of listeners) {
-        if (entry[1].size > 0) {
-          entry[1].forEach(cb => cb(null, null, 'close'))
-        }
-      }
     }
   } catch (e) {
     e.lastID = lastID
     throw e
+  }
+}
+
+/**
+ * Handles request errors by attempting to find the associated error reporting avenue for a given request.
+ *
+ * @param {API~Syncing~Info} info - Instance information.
+ * @param {Error}            eID  - HandleRequests error with attached last ID.
+ */
+const reqErrorHandler = (info, eID) => {
+  const lastID = eID.lastID
+  delete eID.lastID
+  eID.time = Date.now()
+  if (info.requests.has(lastID)) {
+    info.requests.get(lastID).instance.errors.push(eID)
+  }
+  if (info.listeners.has(lastID)) {
+    info.listeners.get(lastID).forEach(cb => cb(eID, null))
   }
 }
 
@@ -145,31 +147,34 @@ module.exports = (tier, rateLimiter, call) => {
 
     let id = info.id++
 
-    if (listener instanceof Function) {
-      info.listeners.set(id, new Set([listener]))
-    }
-
     let instance
-    let initResolve, initReject
+
+    if (listener instanceof Function) {
+      if (!info.listeners.has(id)) info.listeners.set(id, new Set())
+      info.listeners.get(id).add(listener)
+    }
 
     /**
      * Instance of sync operation.
      *
      * @typedef  {Object}             API~Syncing~Instance
+     * @property {('init'|'open'|'closed')} state - State is 'init' when initializing; 'open' when data has first been received and will continue to be received; 'closed' when data will no longer be received (one update may occur if it is in progress).
      * @property {API~Calls~CallData} data   - Data received from last call.
      * @property {number}             time   - Time (in ms) of last data update.
-     * @property {API~Syncing~TimestampedCallError[]} errors - List of errors with attached time (in ms).
+     * @property {API~Syncing~SyncError[]} errors - List of errors with attached time (in ms).
      * @property {API~Syncing~Open}   open   - Function that opens the sync instance.
      * @property {API~Syncing~Close}  close  - Function that closes the sync instance.
      * @property {API~Syncing~AddListener}    addListener    - Adds a listener callback for instance-specific events.
      * @property {API~Syncing~RemoveListener} removeListener - Removes a callback from the listeners Set.
+     * @property {API~Syncing~Next}           next           - Creates a promise which resolves on next data update and rejects if an error has occurred.
      */
     instance = {
+      state: 'init',
       data: {},
       time: -1,
       errors: [],
       /**
-       * Opens the sync instance by adding it to the request queue (if not already added). Notifies event listeners only if request has been added.
+       * Opens the sync instance by adding it to the request queue (if not already added).
        *
        * @function API~Syncing~Open
        * @returns  {boolean} True if instance has been opened or is already open.
@@ -179,13 +184,9 @@ module.exports = (tier, rateLimiter, call) => {
           info.requests.set(
             id, { method, options, instance }
           )
-          if (
-            info.listeners.has(id) &&
-            info.listeners.get(id).size > 0
-          ) {
-            info.listeners.get(id).forEach(cb => cb(null, null, 'open'))
-          }
-          handleRequests(info).catch(e => { throw e })
+        }
+        if (!info.requesting) {
+          handleRequests(info).catch(eID => reqErrorHandler(info, eID))
         }
         return true
       },
@@ -197,6 +198,7 @@ module.exports = (tier, rateLimiter, call) => {
        */
       close: () => {
         info.requests.delete(id)
+        instance.state = 'closed'
         return true
       },
       /**
@@ -227,25 +229,28 @@ module.exports = (tier, rateLimiter, call) => {
         }
         return true
       },
-      next: new Promise((resolve, reject) => {
-        initResolve = resolve
-        initReject = reject
+      /**
+       * Creates a promise that resolves upon new data and rejects upon an error. Creates a self-destructing listener for errors and data.
+       *
+       * @typedef API~Syncing~Next
+       * @returns {Promise} Resolves with data; rejects with an error.
+       */
+      next: () => new Promise((resolve, reject) => {
+        let selfDestructListener
+        selfDestructListener = (err, data) => {
+          info.listeners.get(id).delete(selfDestructListener)
+          if (info.listeners.get(id).size === 0) info.listeners.delete(id)
+          if (err) {
+            reject(err)
+          } else {
+            resolve(data)
+          }
+        }
+        if (!info.listeners.has(id)) info.listeners.set(id, new Set())
+        info.listeners.get(id).add(selfDestructListener)
       })
     }
-    info.requests.set(
-      id, { method, options, instance, initResolve, initReject }
-    )
-    handleRequests(info).catch(e => {
-      const lastID = e.lastID
-      delete e.lastID
-      e.time = Date.now()
-      if (info.requests.has(lastID)) {
-        info.requests.get(lastID).instance.errors.push(e)
-      }
-      if (info.listeners.has(lastID)) {
-        info.listeners.get(lastID).forEach(cb => cb(e, null, 'error'))
-      }
-    })
+    instance.open()
     return instance
   }
 }
