@@ -17,6 +17,7 @@ test('Is function', () => {
 })
 
 test('Returns promise', async () => {
+  jest.setTimeout(15000)
   const counterCache = await readFileJSON(counterLocation)
   const limitOp = limiter(defaults.tier, defaults.rateLimiter, 'Time')
   expect(limitOp.constructor).toBe(Promise)
@@ -25,6 +26,7 @@ test('Returns promise', async () => {
 })
 
 test('Modifies counter', async () => {
+  jest.setTimeout(15000)  
   const counterCache = await readFileJSON(counterLocation)
   expect(counterCache === undefined).toBe(false)
   await limiter(defaults.tier, defaults.rateLimiter, 'Time')
@@ -33,10 +35,15 @@ test('Modifies counter', async () => {
 })
 
 test('Adds counts successfully', async () => {
+  jest.setTimeout(60000)
   const counterCache = await readFileJSON(counterLocation)
   await writeFileJSON(counterLocation, { count: 0, time: Date.now() })
   for (let i = 0; i < 10; i++) {
-    await limiter(defaults.tier, defaults.rateLimiter, 'Time')
+    try {
+      await limiter(defaults.tier, defaults.rateLimiter, 'Time')
+    } catch (e) {
+      i--
+    }
   }
   const newCounterValue = await readFileJSON(counterLocation)
   expect(newCounterValue.count).toBeGreaterThan(9.9)

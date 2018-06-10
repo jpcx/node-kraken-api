@@ -80,6 +80,32 @@ Promise | undefined
 
 ### Type Definitions
 
+<a name="~CallData"></a>
+#### CallData
+
+Response data for a given call after any parsing processes.
+
+##### Type:
+
+*   Object
+
+Source:
+
+*   [node-kraken-api/api/calls/calls.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc), [line 42](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc#L42)
+
+<a name="~CallError"></a>
+#### CallError
+
+Response errors for a given call.
+
+##### Type:
+
+*   Error
+
+Source:
+
+*   [node-kraken-api/api/calls/calls.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc), [line 36](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc#L36)
+
 <a name="~RequestData"></a>
 #### RequestData
 
@@ -137,8 +163,8 @@ Source:
       + [signRequest](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/signRequest.md)
     + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/RateLimits.md)
       + [limiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/RateLimits/limiter.md)
-    + [Schedules](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Schedules.md)
-      + [loadSchedule](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Schedules/loadSchedule.md)
+    + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
+      + [loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
     + [defaults](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/defaults.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)

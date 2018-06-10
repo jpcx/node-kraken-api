@@ -1,0 +1,46 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Types and methods specific to scheduling persistent {@link API~Caller} operations.
+ *
+ * @namespace API~Syncing
+ * @property  {module:API/Syncing/loadSync} loadSync - Loads settings and loaded call function and returns stateful sync creation function.
+ */
+
+/**
+ * Unique incrementing ID used for sync request identification.
+ *
+ * @typedef {number} API~Syncing~ID
+ */
+
+/**
+ * Maps {@link API~Syncing~ID} to request parameters. Requests are processed in insertion order and repeated until all requests are dequeued.
+ *
+ * @typedef {Map} API~Syncing~Requests
+ */
+
+/**
+ * Timestamped {@link API~Calls~CallError}.
+ *
+ * @typedef  {Error}  API~Syncing~TimestampedCallError
+ * @property {number} time - Time of error (in ms).
+ */
+
+/**
+ * Maps {@link API~Syncing~ID}s to {@link API~Syncing~EventListener}s.
+ *
+ * @typedef {Map} API~Syncing~EventListeners
+ */
+
+/**
+ * Callback for instance-specific events.
+ *
+ * @callback API~Syncing~EventListener
+ * @param    {API~Syncing~TimestampedCallError} err - Response error.
+ * @param    {API~Calls~CallData} data - Response data.
+ * @param    {('error'|'data'|'open'|'close')} state - Type of event that triggered the callback.
+ */

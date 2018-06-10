@@ -13,7 +13,7 @@ test('Is function', () => expect(kraken.constructor).toBe(Function))
 test('Returns correct object', () => {
   const api = kraken()
   expect(api.constructor).toBe(Object)
-  expect(Object.keys(api)).toEqual([ 'call', 'schedule' ])
+  expect(Object.keys(api)).toEqual([ 'call', 'sync' ])
 })
 
 test('Retrieves parsed time from Kraken servers', async () => {
@@ -28,45 +28,45 @@ test('Retrieves parsed time from Kraken servers', async () => {
   expect(time.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
 })
 
-test('Schedules calls', async () => {
-  jest.setTimeout(120000)
-  const api = kraken()
-  await new Promise(resolve => {
-    let numCompleted = 0
-    api.schedule.add('Time', (err, data) => {
-      expect(err).toBe(null)
-      expect(data.constructor).toBe(Object)
-      expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
-      expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
-      expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
-      expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
-      numCompleted++
-      if (numCompleted >= 10) resolve()
-    })
-  })
-})
+// test('Schedules calls', async () => {
+//   jest.setTimeout(120000)
+//   const api = kraken()
+//   await new Promise(resolve => {
+//     let numCompleted = 0
+//     api.schedule.add('Time', (err, data) => {
+//       expect(err).toBe(null)
+//       expect(data.constructor).toBe(Object)
+//       expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
+//       expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
+//       expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
+//       expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
+//       numCompleted++
+//       if (numCompleted >= 10) resolve()
+//     })
+//   })
+// })
 
-test('Unschedules calls', async () => {
-  jest.setTimeout(120000)
-  const api = kraken()
-  await new Promise(resolve => {
-    let numCompleted = 0
-    let numCompletedAfterCancel = 0
-    let canceled = false
-    const id = api.schedule.add('Time', (err, data) => {
-      expect(err).toBe(null)
-      expect(data === null).toBe(false)
-      if (canceled === true) numCompletedAfterCancel++
-      expect(numCompletedAfterCancel).toBeLessThanOrEqual(1)
-      numCompleted++
-      if (numCompleted >= 3) {
-        api.schedule.delete(id)
-        canceled = true
-        setTimeout(resolve, 20000)
-      }
-    })
-  })
-})
+// test('Unschedules calls', async () => {
+//   jest.setTimeout(120000)
+//   const api = kraken()
+//   await new Promise(resolve => {
+//     let numCompleted = 0
+//     let numCompletedAfterCancel = 0
+//     let canceled = false
+//     const id = api.schedule.add('Time', (err, data) => {
+//       expect(err).toBe(null)
+//       expect(data === null).toBe(false)
+//       if (canceled === true) numCompletedAfterCancel++
+//       expect(numCompletedAfterCancel).toBeLessThanOrEqual(1)
+//       numCompleted++
+//       if (numCompleted >= 3) {
+//         api.schedule.delete(id)
+//         canceled = true
+//         setTimeout(resolve, 20000)
+//       }
+//     })
+//   })
+// })
 
 test('Observes rate limits', async () => {
   jest.setTimeout(240000)

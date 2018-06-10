@@ -32,3 +32,15 @@
  *
  * @typedef  {Object} API~Calls~Signature
  */
+
+/**
+ * Response errors for a given call.
+ *
+ * @typedef  {Error} API~Calls~CallError
+ */
+
+/**
+ * Response data for a given call after any parsing processes.
+ *
+ * @typedef {Object} API~Calls~CallData
+ */

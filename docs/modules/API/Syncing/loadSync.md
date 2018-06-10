@@ -1,7 +1,7 @@
-Module: API/Schedules/loadSchedule
-==================================
+Module: API/Syncing/loadSync
+============================
 
-Loads settings and call function and returns schedule operation functions.
+Loads settings and call function and returns syncing operation functions.
 
 ##### Parameters:
 
@@ -13,15 +13,15 @@ Loads settings and call function and returns schedule operation functions.
 
 Source:
 
-*   [node-kraken-api/api/schedules/loadSchedule.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/loadSchedule.js), [line 56](https://github.com/jpcx/node-kraken-api/blob/develop/api/schedules/loadSchedule.js#L56)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 88](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L88)
 
 ##### Returns:
 
-Provides schedule operation functions.
+Provides syncing operation functions.
 
 Type
 
-[API\~Schedules~Schedule](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Schedules.md#~Schedule)
+[API\~Syncing~Sync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Sync)
 
 <hr>
 
@@ -34,8 +34,8 @@ Type
       + [signRequest](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/signRequest.md)
     + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/RateLimits.md)
       + [limiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/RateLimits/limiter.md)
-    + [Schedules](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Schedules.md)
-      + [loadSchedule](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Schedules/loadSchedule.md)
+    + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
+      + [loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
     + [defaults](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/defaults.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)

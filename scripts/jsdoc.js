@@ -123,6 +123,7 @@ const removeTopNamespace = string => string.replace(
 /**
  * Escapes sub-namespace strikethrough indicators.
  *
+ * @private
  * @param   {string} string - Search string.
  * @returns {string} Formatted string.
  */
@@ -134,6 +135,7 @@ const escapeSubNamespaceStrikethrough = string => string.replace(
 /**
  * Escapes 'or' code bars.
  *
+ * @private
  * @param   {string} string - Search string.
  * @returns {string} Formatted string.
  */

@@ -8,7 +8,7 @@
 
 const defaults = require('./settings/defaults.js')
 const loadCall = require('./api/calls/loadCall.js')
-const loadSchedule = require('./api/schedules/loadSchedule.js')
+const loadSync = require('./api/syncing/loadSync.js')
 
 /**
  * Provides an interface to the Kraken cryptocurrency exchange.
@@ -20,6 +20,6 @@ const loadSchedule = require('./api/schedules/loadSchedule.js')
 module.exports = (settings = {}) => {
   settings = { ...defaults, ...settings }
   const call = loadCall(settings)
-  const schedule = loadSchedule(settings.tier, settings.rateLimiter, call)
-  return { call, schedule }
+  const sync = loadSync(settings.tier, settings.rateLimiter, call)
+  return { call, sync }
 }

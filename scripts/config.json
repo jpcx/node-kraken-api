@@ -64,11 +64,11 @@
           }
         },
         {
-          "origin": "API-Schedules.html",
+          "origin": "API-Syncing.html",
           "destination": {
             "local": "",
             "path": "docs/namespaces/API",
-            "file": "Schedules.md"
+            "file": "Syncing.md"
           }
         },
         {
@@ -152,11 +152,11 @@
           }
         },
         {
-          "origin": "module-API_Schedules_loadSchedule.html",
+          "origin": "module-API_Syncing_loadSync.html",
           "destination": {
             "local": "",
-            "path": "docs/modules/API/Schedules",
-            "file": "loadSchedule.md"
+            "path": "docs/modules/API/Syncing",
+            "file": "loadSync.md"
           }
         }
       ],
