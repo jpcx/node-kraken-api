@@ -1,7 +1,7 @@
 {
   "name": "node-kraken-api",
   "version": "0.1.0",
-  "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Allows for persistent call scheduling.",
+  "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.",
   "engines": {
     "node": ">=8.7.0"
   },
