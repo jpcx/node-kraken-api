@@ -86,11 +86,9 @@ __Making a single call:__
 
 _Using promises:_
 ```js
-api.call('Time').then(
-  data => console.log(data)
-).catch(
-  err => console.error(err)
-)
+api.call('Time')
+  .then(data => console.log(data))
+  .catch(err => console.error(err))
 ```
 
 _Using callbacks:_
@@ -106,11 +104,9 @@ api.call('Time', (err, data) => {
 
 _Using promises (with Kraken method options):_
 ```js
-api.call('Depth', { pair: 'XXBTZUSD', count: 1 }).then(
-  data => console.log(data)
-).catch(
-  err => console.error(err)
-)
+api.call('Depth', { pair: 'XXBTZUSD', count: 1 })
+  .then(data => console.log(data))
+  .catch(err => console.error(err))
 ```
 
 _Using callbacks (with Kraken method options):_
