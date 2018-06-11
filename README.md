@@ -221,6 +221,8 @@ setTimeout(() => {
   console.log(timeSync.errors)
   // logs the time of the error
   console.log(timeSync.errors[0].time)
+  // logs 'Closed this request' (since this type of error is persistent)
+  console.log(timeSync.errors[0].actions)
 }, 10000)
 ```
 
