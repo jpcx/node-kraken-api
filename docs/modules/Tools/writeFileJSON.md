@@ -8,7 +8,8 @@ Writes JSON in a file given a path. Creates directory structure if not found. Cr
 | Name | Type | Description |
 | --- | --- | --- |
 | `path` | string | Path to file (prepended by `process.cwd()`). |
-| `data` | Object | Array | Default data to create if not found. |
+| `data` | Object \| Array | Default data to create if not found. |
+
 
 Source:
 

@@ -11,6 +11,7 @@ Generates request data for a given call.
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
 | `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | Method-specific options. |
 
+
 Source:
 
 *   [node-kraken-api/api/calls/genRequestData.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/genRequestData.js), [line 12](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/genRequestData.js#L12)

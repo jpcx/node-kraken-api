@@ -8,7 +8,8 @@ Parses objects based on [Settings~Parse](https://github.com/jpcx/node-kraken-api
 | Name | Type | Description |
 | --- | --- | --- |
 | `parseSettings` | [Settings~Parse](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Parse) | Parser settings. |
-| `obj` | Object | Array | Map | Set | Object to parse. |
+| `obj` | Object \| Array \| Map \| Set | Object to parse. |
+
 
 Source:
 

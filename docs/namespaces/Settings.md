@@ -8,6 +8,7 @@ Contains types specific to execution settings.
 | --- | --- | --- |
 | `defaults` | [module:Settings/defaults](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/defaults.md) | Default execution settings. |
 
+
 Source:
 
 *   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L7)
@@ -37,6 +38,7 @@ Contains execution settings configuration for API operations.
 | `parse` | [Settings~Parse](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Parse) | \<optional> | { numbers: true, dates: true } | Response parser settings. |
 | `rateLimiter` | [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter) | \<optional> | { use: true, getCounterLimit: tier => tier >= 3 ? 20 : 15, getCounterIntvl: tier => tier === 4 ? 1000 : tier === 3 ? 2000 : 3000, getIncrementAmt: method => ( method === 'Ledgers' \|\| method === 'TradesHistory' ? 2 : method === 'AddOrder' \|\| method === 'CancelOrder' ? 0 : 1 ), limitOrderOps: true, isOrderOp: method => method === 'AddOrder' \|\| method === 'CancelOrder' } | Limits call frequency. |
 
+
 Source:
 
 *   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L14)
@@ -51,6 +53,7 @@ Determines counter countdown interval given a tier.
 | Name | Type | Description |
 | --- | --- | --- |
 | `tier` | [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier) | Verification tier. |
+
 
 Source:
 
@@ -75,6 +78,7 @@ Determines counter limit given a tier.
 | --- | --- | --- |
 | `tier` | [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier) | Verification tier. |
 
+
 Source:
 
 *   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 37](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L37)
@@ -98,6 +102,7 @@ Determines amount to increment counter depending on the method.
 | --- | --- | --- |
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
 
+
 Source:
 
 *   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 53](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L53)
@@ -120,6 +125,7 @@ Determines whether or not a method should be limited to 1 hz.
 | Name | Type | Description |
 | --- | --- | --- |
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
+
 
 Source:
 
@@ -149,6 +155,7 @@ Configures response parsing.
 | `numbers` | boolean | Parses string numbers via unary plus. |
 | `dates` | boolean | Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module. |
 
+
 Source:
 
 *   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 29](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L29)
@@ -172,6 +179,7 @@ Limits call frequency.
 | `getIncrementAmt` | [Settings~GetIncrementAmt](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~GetIncrementAmt) | Rules for determining increment amount from method. |
 | `limitOrderOps` | boolean | Whether or not to limit order operations to 1 hz. |
 | `isOrderOp` | [Settings~IsOrderOp](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~IsOrderOp) | Rules for determining methods which should be limited to 1 hz. |
+
 
 Source:
 

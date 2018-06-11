@@ -12,6 +12,7 @@ Signs the request using the 'crypto' library based on the specifications listed 
 | `post` | [Kraken~HTTPSRequestPOSTData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~HTTPSRequestPOSTData) | POST data. |
 | `path` | [Kraken~Path](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Path) | Path to Kraken Method URL. |
 
+
 Source:
 
 *   [node-kraken-api/api/calls/signRequest.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/signRequest.js), [line 11](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/signRequest.js#L11)

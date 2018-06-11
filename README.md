@@ -4,6 +4,8 @@
 
 Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.
 
+Using the [syncing feature](#syncing) is advisable when multiple types of real-time data are required; call frequency is managed automatically in response to rate limit parameters.
+
 ## Getting Started
 
 ### Prerequisites
@@ -18,7 +20,7 @@ npm i node-kraken-api
 
 ### Testing
 
-The following command will test the package for errors. Testing provided by jest library. Testing may take several minutes to complete.
+The following command will test the package for errors using the jest library. Testing may take around ten minutes to complete.
 
 ___Note:___ In order for authenticated testing to occur, a valid auth.json file must be available in the root directory of the package. Please see the [configuration](#configuration) instructions below. An empty auth.json file has been provided; please fill the 'key', 'secret', and 'tier' properties accordingly.
 
@@ -108,17 +110,21 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 })
 
 _Using callbacks (with Kraken method options):_
 ```js
-api.call('Depth', { pair: 'XXBTZUSD', count: 1 }, (err, data) => {
-  if (err) console.error(err)
-  else console.log(data)
-})
+api.call('Depth', { pair: 'XXBTZUSD', count: 1 },
+  (err, data) => {
+    if (err) console.error(err)
+    else console.log(data)
+  }
+)
 ```
 
+<a name='syncing'></a>
 __Working with data syncing:__
 
 _Creating a sync object:_
 ```js
 const timeSync = api.sync('Time')
+
 // logs {}
 console.log(timeSync.data)
 
@@ -148,41 +154,49 @@ continuouslyLogUpdates()
 
 _Creating a sync object (using a listener callback):_
 ```js
-const timeSync = api.sync('Time', (err, data) => {
-  if (err) console.error(err)
-  else if (data) console.log(data)
-}
+const timeSync = api.sync('Time',
+  (err, data) => {
+    if (err) console.error(err)
+    else if (data) console.log(data)
+  }
+)
 ```
 
 _Adding a listener callback after creation:_
 ```js
 const timeSync = api.sync('Time')
-timeSync.addListener((err, data) => {
-  if (err) console.error(err)
-  else if (data) console.log(data)
-})
+timeSync.addListener(
+  (err, data) => {
+    if (err) console.error(err)
+    else if (data) console.log(data)
+  }
+)
 ```
 
 _Closing a sync operation:_
 ```js
 const timeSync = api.sync('Time')
-timeSync.addListener((err, data) => {
-  // stops executing (and syncing) after ~5000 ms
-  if (err) console.error(err)
-  else if (data) console.log(data)
-})
+timeSync.addListener(
+  (err, data) => {
+    // stops executing (and syncing) after ~5000 ms
+    if (err) console.error(err)
+    else if (data) console.log(data)
+  }
+)
 setTimeout(timeSync.close, 5000)
 ```
 
 _Re-opening a sync operation:_
 ```js
 const timeSync = api.sync('Time')
-timeSync.addListener((err, data) => {
-  // stops executing (and syncing) after ~5000 ms
-  // starts executing (and syncing) again after ~10000 ms
-  if (err) console.error(err)
-  else if (data) console.log(data)
-})
+timeSync.addListener(
+  (err, data) => {
+    // stops executing (and syncing) after ~5000 ms
+    // starts executing (and syncing) again after ~10000 ms
+    if (err) console.error(err)
+    else if (data) console.log(data)
+  }
+)
 setTimeout(timeSync.close, 5000)
 setTimeout(timeSync.open, 10000)
 ```
@@ -219,7 +233,27 @@ Configuration specifications are detailed in the documentation [here](https://gi
 
 ## Documentation
 
-### See:
+Please browse the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for information pertaining to call types and options.
+
+Method names are found within the 'URL' subtitle in the Kraken API docs. For example: under 'Get server time', the text 'URL: https://api.kraken.com/0/public/Time' shows that the method name is 'Time'.
+
+Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
+
+Method options are found under the 'Input:' section. For example, 'Get asset info' lists the following:
+
+```
+info = info to retrieve (optional):
+    info = all info (default)
+aclass = asset class (optional):
+    currency (default)
+asset = comma delimited list of assets to get info on (optional.  default = all for given asset class)
+```
+
+This translates to an object such as <code>{ info: 'info', aclass: 'currency', asset: 'XXBT,XETH' }</code> which should be used when passing method options to API calls.
+
+You may learn more about the types of options and response data by probing the API.
+
+### Internal:
   + [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/node-kraken-api.md)
   + [API](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API.md)
     + [Calls](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md)
@@ -252,6 +286,13 @@ Please raise an issue if you find any. Pull requests are welcome!
 ## Author
 
   + **Justin Collier** - [jpcx](https://github.com/jpcx)
+  
+Inspired by [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)).
+
+BTC donation address:
+[3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz](bitcoin:3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz)
+
+[![donate](http://i66.tinypic.com/fc67o0.jpg)](bitcoin:3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz)
 
 ## License
 

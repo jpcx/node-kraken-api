@@ -8,6 +8,7 @@ Types and methods specific to scheduling persistent API~Caller operations.
 | --- | --- | --- |
 | `loadSync` | [module:API/Syncing/loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md) | Loads settings and loaded call function and returns stateful sync creation function. |
 
+
 Source:
 
 *   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L7)
@@ -24,6 +25,7 @@ Calculates average wait time.
 | Name | Type | Description |
 | --- | --- | --- |
 | `info` | [API\~Syncing~Info](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Info) | Object containing runtime data. |
+
 
 Source:
 
@@ -48,6 +50,7 @@ Handles request queue and sends data to associated callbacks.
 | --- | --- | --- |
 | `info` | [API\~Syncing~Info](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Info) | Object containing runtime data. |
 
+
 Source:
 
 *   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 38](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L38)
@@ -70,6 +73,7 @@ Adds a listening callback to for sync operation events.
 | Name | Type | Description |
 | --- | --- | --- |
 | `listener` | [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener) | Callback for instance-specific events. |
+
 
 Source:
 
@@ -128,6 +132,7 @@ Removes a listening callback from the set of listeners.
 | --- | --- | --- |
 | `listener` | [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener) | Callback for instance-specific events. |
 
+
 Source:
 
 *   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 216](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L216)
@@ -153,7 +158,8 @@ Callback for instance-specific events.
 | --- | --- | --- |
 | `err` | [API\~Syncing~SyncError](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~SyncError) | Response error. |
 | `data` | [API\~Calls~CallData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~CallData) | Response data. |
-| `state` | 'error' | 'data' | 'open' | 'close' | Type of event that triggered the callback. |
+| `state` | 'error' \| 'data' \| 'open' \| 'close' | Type of event that triggered the callback. |
+
 
 Source:
 
@@ -204,6 +210,7 @@ Contains instance information used during sync process.
 | `requesting` | boolean | Whether or not there are currently active schedule operations. |
 | `listeners` | [API\~Syncing~EventListeners](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListeners) | Event listeners for sync instances. |
 
+
 Source:
 
 *   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 111](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L111)
@@ -221,7 +228,7 @@ Instance of sync operation.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `state` | 'init' | 'open' | 'closed' | State is 'init' when initializing; 'open' when data has first been received and will continue to be received; 'closed' when data will no longer be received (one update may occur if it is in progress). |
+| `state` | 'init' \| 'open' \| 'closed' | State is 'init' when initializing; 'open' when data has first been received and will continue to be received; 'closed' when data will no longer be received (one update may occur if it is in progress). |
 | `data` | [API\~Calls~CallData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~CallData) | Data received from last call. |
 | `time` | number | Time (in ms) of last data update. |
 | `errors` | Array.<[API\~Syncing~SyncError](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~SyncError)> | List of errors with attached time (in ms). |
@@ -230,6 +237,7 @@ Instance of sync operation.
 | `addListener` | [API\~Syncing~AddListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~AddListener) | Adds a listener callback for instance-specific events. |
 | `removeListener` | [API\~Syncing~RemoveListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~RemoveListener) | Removes a callback from the listeners Set. |
 | `next` | [API\~Syncing~Next](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Next) | Creates a promise which resolves on next data update and rejects if an error has occurred. |
+
 
 Source:
 
@@ -270,6 +278,7 @@ Creates a sync instance.
 | `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | \<optional> | Method-specific options. |
 | `listener` | [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener) | \<optional> | Callback for instance-specific events. |
 
+
 Source:
 
 *   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 133](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L133)
@@ -297,6 +306,7 @@ Timestamped [API\~Calls~CallError](https://github.com/jpcx/node-kraken-api/blob/
 | --- | --- | --- | --- |
 | `time` | number |  | Time of error (in ms). |
 | `action` | string | \<optional> | Action taken in response to the error. Errors that will not resolve over time will close the sync instance. |
+
 
 Source:
 

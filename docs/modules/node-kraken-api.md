@@ -9,6 +9,7 @@ Provides an interface to the Kraken cryptocurrency exchange.
 | --- | --- | --- |
 | `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | User-defined settings. |
 
+
 Source:
 
 *   [node-kraken-api/index.js](https://github.com/jpcx/node-kraken-api/blob/develop/index.js), [line 13](https://github.com/jpcx/node-kraken-api/blob/develop/index.js#L13)

@@ -9,6 +9,7 @@ Loads settings and returns a function which can be used to make calls to the Kra
 | --- | --- | --- |
 | `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Instance settings. |
 
+
 Source:
 
 *   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 104](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L104)

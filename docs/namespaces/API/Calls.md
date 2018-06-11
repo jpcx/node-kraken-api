@@ -10,6 +10,7 @@ Types and methods specific to making direct API calls to Kraken.
 | `GenRequestData` | [module:API/Calls/genRequestData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/genRequestData.md) | Generates request data for a given request. |
 | `SignRequest` | [module:API/Calls/signRequest](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/signRequest.md) | Applies a cryptographic signature to a given request. |
 
+
 Source:
 
 *   [node-kraken-api/api/calls/calls.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/calls.jsdoc#L7)
@@ -30,6 +31,7 @@ Handles request responses.
 | `resolve` | function | Operational promise resolve function. |
 | `reject` | function | Operational promise reject function. |
 
+
 Source:
 
 *   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 23](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L23)
@@ -49,6 +51,7 @@ Makes a request to the Kraken servers.
 | `resolve` | function | Operational promise resolve function. |
 | `reject` | function | Operational promise reject function. |
 
+
 Source:
 
 *   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 77](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L77)
@@ -65,6 +68,7 @@ Executes a call to the kraken servers using closure-loaded settings.
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) |  | Method being called. |
 | `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | \<optional> | Method-specific options. |
 | `cb` | [API~Callback](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API.md#~Callback) | \<optional> | Callback for errors and data. |
+
 
 Source:
 
@@ -121,6 +125,7 @@ Request data prepared for use with the 'https' module.
 | --- | --- | --- |
 | `options` | [Kraken~HTTPSRequestOptions](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~HTTPSRequestOptions) | Options for HTTPS request to Kraken servers. |
 | `post` | [Kraken~HTTPSRequestPOSTData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~HTTPSRequestPOSTData) | POST data for HTTPS request to Kraken servers. |
+
 
 Source:
 

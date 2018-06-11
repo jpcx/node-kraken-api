@@ -37,6 +37,7 @@ HTTPS request headers for calls to Kraken servers.
 | `API-Key` | [Kraken~Key](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Key) | Kraken API key. |
 | `API-Sign` | [API\~Calls~Signature](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Signature) | Cryptographic signature using API secret and other call parameters. |
 
+
 Source:
 
 *   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 79](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L79)
@@ -58,6 +59,7 @@ HTTPS request options for calls to Kraken servers.
 | `path` | [Kraken~Path](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Path) | Kraken method path. |
 | `method` | string | 'POST' HTTPS request specification. NOTE: This is NOT the same as the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) for the request. |
 | `headers` | [Kraken~HTTPSRequestHeaders](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~HTTPSRequestHeaders) | Kraken HTTPS request headers. |
+
 
 Source:
 

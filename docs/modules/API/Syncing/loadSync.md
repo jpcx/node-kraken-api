@@ -11,6 +11,7 @@ Loads settings and call function and returns syncing operation functions.
 | `rateLimiter` | [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter) | Rate limiter logic defined in [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config). |
 | `call` | [API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Call) | Call function. |
 
+
 Source:
 
 *   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 101](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L101)

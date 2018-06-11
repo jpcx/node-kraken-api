@@ -12,6 +12,7 @@ Contains methods and types for various client-side tools.
 | `readFileJSON` | [module:Tools/readFileJSON](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/readFileJSON.md) | Attempts to read JSON from a file given a path; creates file and directory structure with default data if not found. |
 | `writeFileJSON` | [module:Tools/writeFileJSON](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/writeFileJSON.md) | Attempts to write JSON data to a file given a path. |
 
+
 Source:
 
 *   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L7)
@@ -28,7 +29,8 @@ Reads JSON in a file given a path. Creates file with supplied default data if no
 | Name | Type | Description |
 | --- | --- | --- |
 | `path` | string | Path to file (prepended by `process.cwd()`). |
-| `data` | Object | Array | Default data to create if not found. |
+| `data` | Object \| Array | Default data to create if not found. |
+
 
 Source:
 
@@ -52,7 +54,8 @@ Writes JSON in a file given a path. Creates file with supplied default data if n
 | Name | Type | Description |
 | --- | --- | --- |
 | `path` | string | Path to file. |
-| `data` | Object | Array | Data to write as JSON. |
+| `data` | Object \| Array | Data to write as JSON. |
+
 
 Source:
 

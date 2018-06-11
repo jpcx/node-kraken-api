@@ -9,6 +9,7 @@ Attempts to access a given directory. Creates structure if not found.
 | --- | --- | --- |
 | `path` | string | Path to file (prepended by `process.cwd()`). |
 
+
 Source:
 
 *   [node-kraken-api/tools/tryDirectory.js](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tryDirectory.js), [line 11](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tryDirectory.js#L11)

@@ -28,6 +28,7 @@ Function which handles errors and data.
 | `err` | [API\~Calls~CallError](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~CallError) | Request errors. |
 | `data` | [API\~Calls~CallData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~CallData) | Response data. |
 
+
 Source:
 
 *   [node-kraken-api/api/api.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc), [line 13](https://github.com/jpcx/node-kraken-api/blob/develop/api/api.jsdoc#L13)
@@ -47,6 +48,7 @@ Provides functions which can be used to interact with the API.
 | --- | --- | --- |
 | `call` | [API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Call) | Call a single method. |
 | `sync` | [API\~Syncing~Sync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Sync) | Create a sync instance. |
+
 
 Source:
 

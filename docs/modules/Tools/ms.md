@@ -9,6 +9,7 @@ Returns a promise which resolves after a given number of milliseconds.
 | --- | --- | --- |
 | `ms` | number | Milliseconds to wait. |
 
+
 Source:
 
 *   [node-kraken-api/tools/ms.js](https://github.com/jpcx/node-kraken-api/blob/develop/tools/ms.js), [line 9](https://github.com/jpcx/node-kraken-api/blob/develop/tools/ms.js#L9)

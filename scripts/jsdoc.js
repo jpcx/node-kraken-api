@@ -145,6 +145,37 @@ const escapeOrCodeBars = string => string.replace(
 )
 
 /**
+ * Fixes the missing table end after escapeBarsWithinTables preprocessing.
+ *
+ * @private
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
+const escapeBarsWithinTablesFix = string => string.split(
+  /(^\| --- \|(?: --- \|)*?$\n[\s\S]+?\n\n)/gm
+).reduce(
+  (formatted, block, i) => {
+    if (i === 0) {
+      return block
+    } else if ((i + 1) % 2 === 0) {
+      return formatted + block.split(
+        /\n/gm
+      ).reduce(
+        (newBlock, line) => {
+          if (line.length > 1 && !line.match(/^\| --- \|(?: --- \|)*?$/gm)) {
+            return newBlock + line + '|\n'
+          } else {
+            return newBlock + line + '\n'
+          }
+        }, ''
+      )
+    } else {
+      return formatted + block
+    }
+  }, ''
+)
+
+/**
  * Converts local path to GitHub URL.
  *
  * @private
@@ -451,6 +482,7 @@ const postProcess = (markdown, mappings) => Object.keys(
     proc[key] = replaceSourceCodeLinks(proc[key], mappings)
     proc[key] = escapeSubNamespaceStrikethrough(proc[key])
     proc[key] = escapeOrCodeBars(proc[key])
+    proc[key] = escapeBarsWithinTablesFix(proc[key])
     proc[key] = proc[key].trim()
     return proc
   },
@@ -483,6 +515,12 @@ const convertHTML = HTML => {
       } else {
         return `#### ${content}`
       }
+    }
+  })
+  turndown.addRule('escapeBarsWithinTables', {
+    filter: 'td',
+    replacement: (content, node) => {
+      return '| ' + content.replace(/\|/g, '\\|') + ' '
     }
   })
   const markdown = {}

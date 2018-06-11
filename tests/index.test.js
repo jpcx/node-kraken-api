@@ -28,48 +28,61 @@ test('Retrieves parsed time from Kraken servers', async () => {
   expect(time.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
 })
 
-// test('Schedules calls', async () => {
-//   jest.setTimeout(120000)
-//   const api = kraken()
-//   await new Promise(resolve => {
-//     let numCompleted = 0
-//     api.schedule.add('Time', (err, data) => {
-//       expect(err).toBe(null)
-//       expect(data.constructor).toBe(Object)
-//       expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
-//       expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
-//       expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
-//       expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
-//       numCompleted++
-//       if (numCompleted >= 10) resolve()
-//     })
-//   })
-// })
+test('Syncs calls', async () => {
+  jest.setTimeout(240000)
+  const api = kraken()
+  await new Promise(resolve => {
+    let numCompleted = 0
+    api.sync('Time', (err, data) => {
+      expect(err).toBe(null)
+      expect(data.constructor).toBe(Object)
+      expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
+      expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
+      expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
+      expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
+      numCompleted++
+      if (numCompleted >= 10) resolve()
+    })
+  })
+})
 
-// test('Unschedules calls', async () => {
-//   jest.setTimeout(120000)
-//   const api = kraken()
-//   await new Promise(resolve => {
-//     let numCompleted = 0
-//     let numCompletedAfterCancel = 0
-//     let canceled = false
-//     const id = api.schedule.add('Time', (err, data) => {
-//       expect(err).toBe(null)
-//       expect(data === null).toBe(false)
-//       if (canceled === true) numCompletedAfterCancel++
-//       expect(numCompletedAfterCancel).toBeLessThanOrEqual(1)
-//       numCompleted++
-//       if (numCompleted >= 3) {
-//         api.schedule.delete(id)
-//         canceled = true
-//         setTimeout(resolve, 20000)
-//       }
-//     })
-//   })
-// })
+test('Unsyncs calls', async () => {
+  jest.setTimeout(240000)
+  const api = kraken()
+  await new Promise(resolve => {
+    let numCompleted = 0
+    let numCompletedAfterClose = 0
+    let closed = false
+    let timeSync
+    timeSync = api.sync('Time', (err, data) => {
+      expect(err).toBe(null)
+      expect(data === null).toBe(false)
+      numCompleted++
+      if (numCompleted >= 3) {
+        timeSync.close()
+        closed = true
+        setTimeout(resolve, 20000)
+      }
+      if (closed === true) numCompletedAfterClose++
+      expect(numCompletedAfterClose).toBeLessThanOrEqual(1)
+    })
+  })
+})
+
+test('Creates sync promises', async () => {
+  jest.setTimeout(240000)
+  const api = kraken()
+  let timeSync
+  timeSync = api.sync('Time')
+  expect(timeSync.next.constructor).toBe(Function)
+  expect(timeSync.next().constructor).toBe(Promise)
+  for (let i = 0; i < 10; i++) {
+    expect(await timeSync.next()).toEqual(timeSync.data)
+  }
+})
 
 test('Observes rate limits', async () => {
-  jest.setTimeout(240000)
+  jest.setTimeout(480000)
   const api = kraken()
   for (let i = 0; i < 30; i++) {
     try {

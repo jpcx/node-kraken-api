@@ -11,6 +11,7 @@ Prepares a rate-limiting promise according to the [Kraken~Tier](https://github.c
 | `rateLimiter` | [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter) | Rate limiter logic specified in settings configuration. |
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
 
+
 Source:
 
 *   [node-kraken-api/api/rateLimits/limiter.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/limiter.js), [line 13](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/limiter.js#L13)

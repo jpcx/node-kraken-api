@@ -8,6 +8,7 @@ Types and methods specific to limiting call frequency according to the rate limi
 | --- | --- | --- |
 | `limiter` | [module:API/RateLimits/limiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/RateLimits/limiter.md) | Prepares rate-limiting promises according to the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier), [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method), and [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter). |
 
+
 Source:
 
 *   [node-kraken-api/api/rateLimits/rateLimits.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/rateLimits.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/rateLimits.jsdoc#L7)

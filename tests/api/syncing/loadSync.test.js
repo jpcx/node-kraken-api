@@ -28,8 +28,7 @@ test('Returns time continuously', async () => {
   )
   await new Promise(resolve => {
     let numCompleted = 0
-    sync('Time', (err, data, event) => {
-      expect(event).toBe('data')
+    sync('Time', (err, data) => {
       expect(err).toBe(null)
       expect(data.constructor).toBe(Object)
       expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
@@ -50,9 +49,9 @@ test('Callback agrees with object', async () => {
   await new Promise(resolve => {
     let numCompleted = 0
     let timeSync
-    timeSync = sync('Time', (err, data, event) => {
-      expect(event).toBe('data')
+    timeSync = sync('Time', (err, data) => {
       expect(err).toBe(null)
+      expect(data === null).toBe(false)
       expect(timeSync.data).toEqual(data)
       numCompleted++
       if (numCompleted >= 10) resolve()
@@ -60,7 +59,7 @@ test('Callback agrees with object', async () => {
   })
 })
 
-test('Stops when closed and emits state', async () => {
+test('Stops when closed', async () => {
   jest.setTimeout(120000)
   const sync = loadSync(
     defaults.tier, defaults.rateLimiter, loadCall(defaults)
@@ -70,25 +69,22 @@ test('Stops when closed and emits state', async () => {
     let numCompletedAfterClose = 0
     let closed = false
     let timeSync
-    timeSync = sync('Time', (err, data, event) => {
+    timeSync = sync('Time', (err, data) => {
       expect(err).toBe(null)
-      if (event === 'data') {
-        numCompleted++
-        if (numCompleted >= 3) {
-          closed = true
-          timeSync.close()
-          setTimeout(resolve, 20000)
-        }
-        if (closed === true) numCompletedAfterClose++
-      } else if (event === 'close') {
-        expect(closed).toBe(true)
+      expect(data === null).toBe(false)
+      numCompleted++
+      if (numCompleted >= 3) {
+        timeSync.close()
+        closed = true
+        setTimeout(resolve, 20000)
       }
+      if (closed === true) numCompletedAfterClose++
       expect(numCompletedAfterClose).toBeLessThanOrEqual(1)              
     })
   })
 })
 
-test('Resumes operation after close and emits states', async () => {
+test('Resumes operation after close', async () => {
   jest.setTimeout(120000)
   const sync = loadSync(
     defaults.tier, defaults.rateLimiter, loadCall(defaults)
@@ -98,27 +94,34 @@ test('Resumes operation after close and emits states', async () => {
     let closed = false
     let opened = false
     let timeSync
-    timeSync = sync('Time', (err, data, event) => {
+    timeSync = sync('Time', (err, data) => {
       expect(err).toBe(null)
-      if (event === 'data') {
-        expect(data === null).toBe(false)
-        if (++numCompleted > 3 && !closed) {
-          closed = true
-          timeSync.close()
-        }
-        if (closed && opened) {
-          resolve()
-        }
-      } else if (event === 'open') {
-        expect(data).toBe(null)
-        expect(opened).toBe(true)
-      } else if (event === 'close') {
-        expect(data).toBe(null)
-        expect(numCompleted).toBeGreaterThan(3)
-        expect(closed).toBe(true)
-        opened = true
-        timeSync.open()
+      expect(data === null).toBe(false)
+      if (++numCompleted > 3 && !closed) {
+        timeSync.close()
+        closed = true
+        setTimeout(() => { 
+          timeSync.open()
+          opened = true
+        }, 5000)
+      }
+      if (closed && opened) {
+        resolve()
       }
     })
   })
+})
+
+test('Creates promises', async () => {
+  jest.setTimeout(240000)
+  const sync = loadSync(
+    defaults.tier, defaults.rateLimiter, loadCall(defaults)
+  )
+  let timeSync
+  timeSync = sync('Time')
+  expect(timeSync.next.constructor).toBe(Function)
+  expect(timeSync.next().constructor).toBe(Promise)
+  for (let i = 0; i < 10; i++) {
+    expect(await timeSync.next()).toEqual(timeSync.data)
+  }
 })

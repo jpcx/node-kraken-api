@@ -18,6 +18,7 @@ Default execution settings configuration.
 | `parse` | [Settings~Parse](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Parse) | Response parser settings. |
 | `rateLimiter` | [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter) | Limits call frequency. |
 
+
 Source:
 
 *   [node-kraken-api/settings/defaults.js](https://github.com/jpcx/node-kraken-api/blob/develop/settings/defaults.js), [line 24](https://github.com/jpcx/node-kraken-api/blob/develop/settings/defaults.js#L24)
