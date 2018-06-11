@@ -4,7 +4,7 @@
 
 Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.
 
-Using the [syncing feature](#syncing) is advisable when multiple types of real-time data are required; call frequency is managed automatically in response to rate limit parameters.
+Use of the [syncing feature](#syncing) is advisable when multiple types of real-time data are required; call frequency is managed automatically in response to rate limit parameters.
 
 ## Getting Started
 
@@ -249,7 +249,7 @@ aclass = asset class (optional):
 asset = comma delimited list of assets to get info on (optional.  default = all for given asset class)
 ```
 
-This translates to an object such as <code>{ info: 'info', aclass: 'currency', asset: 'XXBT,XETH' }</code> which should be used when passing method options to API calls.
+This translates to an object such as <code>{ info: 'info', aclass: 'currency', asset: 'XXBT,XETH' }</code>, which should be used when passing method options to API calls.
 
 You may learn more about the types of options and response data by probing the API.
 
