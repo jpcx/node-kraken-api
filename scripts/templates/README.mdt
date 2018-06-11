@@ -129,7 +129,7 @@ const timeSync = api.sync('Time')
 console.log(timeSync.data)
 
 // logs { unixtime: 1528607559000, rfc1123: 1528607559000 }
-// (unless call had failed)
+// (unless call had failed; error would be available under timeSync.errors)
 setTimeout(() => console.log(timeSync.data), 5000)
 ```
 
