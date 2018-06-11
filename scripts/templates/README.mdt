@@ -4,7 +4,7 @@
 
 ___{alias:node-kraken-api/description}___
 
-Using the [syncing feature](#syncing) is advisable when multiple types of real-time data are required; call frequency is managed automatically in response to rate limit parameters.
+Use of the [syncing feature](#syncing) is advisable when multiple types of real-time data are required; call frequency is managed automatically in response to rate limit parameters.
 
 ## Getting Started
 
