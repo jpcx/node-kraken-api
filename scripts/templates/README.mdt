@@ -241,19 +241,16 @@ Method names are found within the 'URL' subtitle in the Kraken API docs. For exa
 
 Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
 
-Method options are found under the 'Input:' section. For example, 'Get asset info' lists the following:
+Method options are found under the 'Input:' section. For example, 'Get order book' lists the following:
 
 ```
-info = info to retrieve (optional):
-    info = all info (default)
-aclass = asset class (optional):
-    currency (default)
-asset = comma delimited list of assets to get info on (optional.  default = all for given asset class)
+pair = asset pair to get market depth for
+count = maximum number of asks/bids (optional)
 ```
 
-This translates to an object such as <code>{ info: 'info', aclass: 'currency', asset: 'XXBT,XETH' }</code>, which should be used when passing method options to API calls.
+This translates to an object such as <code>{ pair: 'XXBTZUSD', count: 10 }</code>, which should be used when passing method options to API calls.
 
-You may learn more about the types of options and response data by probing the API.
+You may learn more about the types of options and response data by probing the API. Use the methods 'Assets' and 'AssetPairs' to discover the naming scheme for the assets tradable via Kraken.
 
 ### Internal:
 ___{file:docs/modules/node-kraken-api.md___split-gm:^<hr>\n\n## \[Home\]\(.*$\n([\s\S]+)}___
