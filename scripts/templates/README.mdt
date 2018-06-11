@@ -249,7 +249,7 @@ aclass = asset class (optional):
 asset = comma delimited list of assets to get info on (optional.  default = all for given asset class)
 ```
 
-This translates to an object such as <code>{ info: 'info', aclass: 'currency', asset: 'XXBT,XETH' }</code> which should be used when passing method options to API calls.
+This translates to an object such as <code>{ info: 'info', aclass: 'currency', asset: 'XXBT,XETH' }</code>, which should be used when passing method options to API calls.
 
 You may learn more about the types of options and response data by probing the API.
 
