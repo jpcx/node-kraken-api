@@ -158,7 +158,7 @@ test('Databuilder works', () => new Promise(
     timeSync = sync('Time', null, null, (instanceData, data) => {
       const newData = {}
       if (!instanceData.dates) newData.dates = []
-      else newData.dates = instanceData.dates  
+      else newData.dates = instanceData.dates
       newData.dates.push(new Date(data.unixtime))
       return newData
     })

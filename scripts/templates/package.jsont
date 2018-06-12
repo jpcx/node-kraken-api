@@ -21,5 +21,10 @@
   },
   "license": "MIT",
   "dependencies": ___{alias:node-kraken-api/dependencies___JSON}___,
-  "devDependencies": ___{alias:node-kraken-api/devDependencies___JSON}___
+  "devDependencies": ___{alias:node-kraken-api/devDependencies___JSON}___,
+  "standard": {
+    "ignore": [
+      "tests/**/*.test.js"
+    ]
+  }
 }

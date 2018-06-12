@@ -253,7 +253,7 @@ const tradesSync = api.sync(
 
 <a name='dataBuilder'></a>__Data Builder Functions__
 
-Sync object data may be custom tailored for various use cases by using a [dataBuilder](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/API/Syncing.md#~dataBuilder) function. Normally, the data property holds only the information retrieved from the most recent call. However, dataBuilder functions may customize this behaviour by taking the current instance data value and the newly retrieved data value, returning a new value to set as the instance data.
+Sync object data may be custom tailored for various use cases by using a [DataBuilder](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/API/Syncing.md#~DataBuilder) function. Normally, the data property holds only the information retrieved from the most recent call. However, dataBuilder functions may customize this behaviour by taking the current instance data value and the newly retrieved data value, returning a new value to set as the instance data.
 
 _Creating a realtime historical trades tracker:_
 ```js
