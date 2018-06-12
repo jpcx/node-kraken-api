@@ -50,7 +50,20 @@ const handleRequests = async info => {
         lastID = id
         const instance = request.instance
         try {
-          instance.data = await info.call(request.method, request.options)
+          let options = {}
+          Object.entries(request.options).forEach(entry => {
+            if (entry[1] instanceof Function) {
+              options[entry[0]] = entry[1](instance.data)
+            } else {
+              options[entry[0]] = entry[1]
+            }
+          })
+          const callData = await info.call(request.method, options)
+          if (request.dataBuilder instanceof Function) {
+            instance.data = request.dataBuilder(instance.data, callData)
+          } else {
+            instance.data = callData
+          }
           instance.time = Date.now()
           if (instance.state !== 'open' && requests.has(id)) {
             instance.state = 'open'
@@ -83,6 +96,7 @@ const handleRequests = async info => {
 /**
  * Handles request errors by attempting to find the associated error reporting avenue for a given request.
  *
+ * @memberof {API~Syncing}
  * @param {API~Syncing~Info} info - Instance information.
  * @param {Error}            eID  - HandleRequests error with attached last ID.
  */
@@ -134,16 +148,30 @@ module.exports = (tier, rateLimiter, call) => {
    * Creates a sync instance.
    *
    * @typedef  {Function}                  API~Syncing~Sync
-   * @param    {Kraken~Method}             method     - Kraken method to sync.
-   * @param    {Kraken~Options}            [options]  - Method-specific options.
-   * @param    {API~Syncing~EventListener} [listener] - Callback for instance-specific events.
+   * @param    {Kraken~Method}             method      - Kraken method to sync.
+   * @param    {API~Syncing~DynamicKrakenOptions} [options] - Method-specific options that may contain functions.
+   * @param    {API~Syncing~EventListener} [listener]  - Callback for instance-specific events.
+   * @param    {API~Syncing~DataBuilder}   dataBuilder - Builds instance.data given current instance.data and new data.
    * @returns  {API~Syncing~Instance}      Sync instance that holds data and manipulation functions.
    */
-  return (method, options, listener) => {
-    if (options instanceof Function) {
+  return (method, options, listener, dataBuilder) => {
+    if (
+      options instanceof Function &&
+      !listener &&
+      !dataBuilder
+    ) {
       listener = options
       options = {}
-    }
+      dataBuilder = null
+    } else if (
+      options instanceof Function &&
+      listener instanceof Function &&
+      !dataBuilder
+    ) {
+      dataBuilder = listener
+      listener = options
+      options = {}
+    } else if (!options) { options = {} }
 
     let id = info.id++
 
@@ -182,7 +210,7 @@ module.exports = (tier, rateLimiter, call) => {
       open: () => {
         if (!info.requests.has(id)) {
           info.requests.set(
-            id, { method, options, instance }
+            id, { method, options, instance, dataBuilder }
           )
         }
         if (!info.requesting) {

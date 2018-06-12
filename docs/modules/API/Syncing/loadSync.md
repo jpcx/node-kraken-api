@@ -14,7 +14,7 @@ Loads settings and call function and returns syncing operation functions.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 101](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L101)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 115](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L115)
 
 ##### Returns:
 

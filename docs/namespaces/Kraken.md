@@ -19,7 +19,7 @@ Hostname for the Kraken API endpoint. See the [Kraken API docs](https://www.krak
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 67](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L67)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 74](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L74)
 
 <a name="~HTTPSRequestHeaders"></a>
 #### HTTPSRequestHeaders
@@ -40,7 +40,7 @@ HTTPS request headers for calls to Kraken servers.
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 79](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L79)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 86](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L86)
 
 <a name="~HTTPSRequestOptions"></a>
 #### HTTPSRequestOptions
@@ -63,7 +63,7 @@ HTTPS request options for calls to Kraken servers.
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 87](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L87)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 94](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L94)
 
 <a name="~HTTPSRequestPOSTData"></a>
 #### HTTPSRequestPOSTData
@@ -76,7 +76,7 @@ HTTPS request POST data for calls to Kraken servers. Generated using 'qs' module
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 97](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L97)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 104](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L104)
 
 <a name="~Key"></a>
 #### Key
@@ -115,7 +115,20 @@ Unique ever-increasing integer used by Kraken servers to determine request valid
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 61](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L61)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 68](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L68)
+
+<a name="~Option"></a>
+#### Option
+
+A single option to be sent to the Kraken servers; varies by method type.
+
+##### Type:
+
+*   string | number
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 55](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L55)
 
 <a name="~Options"></a>
 #### Options
@@ -124,11 +137,18 @@ Method-specific options for calls to Kraken servers. See the [Kraken API docs](h
 
 ##### Type:
 
-*   string
+*   Object
+
+##### Properties:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `*` | [Kraken~Option](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Option) | An option to send to the servers. |
+
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 55](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L55)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 61](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L61)
 
 <a name="~Path"></a>
 #### Path
@@ -141,7 +161,7 @@ Path to the Kraken API endpoint for a given method. See the [Kraken API docs](ht
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 73](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L73)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 80](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L80)
 
 <a name="~PrivateMethods"></a>
 #### PrivateMethods

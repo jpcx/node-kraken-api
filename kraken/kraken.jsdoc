@@ -53,9 +53,16 @@
  */
 
 /**
+ * A single option to be sent to the Kraken servers; varies by method type.
+ *
+ * @typedef {(string|number)} Kraken~Option
+ */
+
+/**
  * Method-specific options for calls to Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
  *
- * @typedef {string} Kraken~Options
+ * @typedef  {Object} Kraken~Options
+ * @property {Kraken~Option} * - An option to send to the servers.
  */
 
 /**

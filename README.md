@@ -4,7 +4,11 @@
 
 Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.
 
-Use of the [syncing feature](#syncing) is advisable when multiple types of real-time data are required; call frequency is managed automatically in response to rate limit parameters.
+Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required; call frequency is managed automatically in response to rate limit parameters by averaging the rate limit costs.
+
+Syncing is also useful for querying new updates only, as options can be expressed dynamically. See the section on [dynamic syncing](#dynamicSync).
+
+Combining dynamic syncing and [data builder functions](#dataBuilder) can create a sync instance which contains realtime data specially tailored for various use cases, such as history and statistical analysis.
 
 ## Getting Started
 
@@ -224,6 +228,86 @@ setTimeout(() => {
   // logs 'Closed this request' (since this type of error is persistent)
   console.log(timeSync.errors[0].actions)
 }, 10000)
+```
+
+<a name='dynamicSync'></a>__Dynamic Syncing__
+Sync objects may also be created using dynamic options in order to track data.
+For example, many Kraken methods use a 'last' property to allow for querying new updates only. Options may contain properties that are functions which take previous data (aka [instanceData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~instanceData)) and return the string/number to send to the servers.
+
+_Creating a dynamic sync object:_
+```js
+const tradesSync = api.sync(
+  'Trades',
+  {
+    pair: 'XXBTZUSD',
+    since: instanceData => instanceData.last
+  },
+  (err, data) => {
+    // logs only new trades
+    if (err) console.error(err)
+    else if (data) console.log(data)
+  }
+)
+```
+
+<a name='dataBuilder'></a>__Data Builder Functions__
+Sync object data may be custom tailored for various use cases by using a [dataBuilder](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~dataBuilder) function. Normally, the data property holds only the information retrieved from the most recent call. However, dataBuilder functions may customize this behaviour by taking the current instance data value and the newly retrieved data value, returning a new value to set as the instance data.
+
+_Creating a realtime historical trades tracker:_
+```js
+const tradesHistory = api.sync(
+  'Trades',
+  {
+    pair: 'XXBTZUSD',
+    since: instanceData => instanceData.last
+  },
+  null,
+  (instanceData, data) => {
+    const newData = {
+      trades: instanceData.trades || []
+    }
+    if (data.last !== instanceData.last && data.XXBTZUSD.forEach) {
+      data.XXBTZUSD.forEach(trade => newData.trades.push(trade))
+    }
+    newData.last = data.last
+    return newData
+  }
+)
+
+tradesHistory.next()
+  .then(data => console.log(data.trades))
+  .catch(err => console.error(err))
+```
+
+_Creating a realtime simple moving average (with safe float operations):_
+```js
+const twentyTradeSMA = api.sync(
+  'Trades',
+  {
+    pair: 'XXBTZUSD',
+    since: instanceData => instanceData.last
+  },
+  null,
+  (instanceData, data) => {
+    const newData = {
+      trades: instanceData.trades || []
+    }
+    if (data.last !== instanceData.last && data.XXBTZUSD.forEach) {
+      data.XXBTZUSD.forEach(trade => newData.trades.push(trade))
+    }
+    newData.last = data.last
+    newData.trades = newData.trades.slice(-20)
+    newData.value = newData.trades.reduce(
+      (sum, trade) => sum + Math.floor(trade[0] * 100),
+      0
+    ) / newData.trades.length / 100
+    return newData
+  }
+)
+
+twentyPeriodSMA.next()
+  .then(data => console.log(data.value))
+  .catch(err => console.error(data.err))
 ```
 
 <a name='configuration'></a>
