@@ -15,20 +15,16 @@ test('Is function', () => {
 })
 
 test('Returns function', () => {
-  const sync = loadSync(
-    defaults.tier, defaults.rateLimiter, loadCall(defaults)
-  )
+  const sync = loadSync(defaults, loadCall(defaults))
   expect(sync.constructor).toBe(Function)
 })
 
 test('Returns time continuously', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(
-      defaults.tier, defaults.rateLimiter, loadCall(defaults)
-    )
+    const sync = loadSync(defaults, loadCall(defaults))
     let numCompleted = 0
-    sync('Time', (err, data) => {
+    sync('Time', (err, data, instance) => {
       if (err) reject(err)
       expect(data.constructor).toBe(Object)
       expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
@@ -36,7 +32,10 @@ test('Returns time continuously', () => new Promise(
       expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
       expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
       numCompleted++
-      if (numCompleted >= 10) resolve()
+      if (numCompleted >= 10) {
+        instance.close()
+        resolve()
+      }
     })
   }
 ))
@@ -44,17 +43,33 @@ test('Returns time continuously', () => new Promise(
 test('Callback agrees with object', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(
-      defaults.tier, defaults.rateLimiter, loadCall(defaults)
-    )
-    let numCompleted = 0
+    const sync = loadSync(defaults, loadCall(defaults))
     let timeSync
+    let pastData
     timeSync = sync('Time', (err, data) => {
       if (err) reject(err)
-      expect(data === null).toBe(false)
-      expect(timeSync.data).toEqual(data)
-      numCompleted++
-      if (numCompleted >= 10) resolve()
+      if (pastData === undefined) {
+        pastData = data
+      } else {
+        expect(timeSync.data).toEqual(pastData)
+        timeSync.close()
+        resolve()
+      }
+    })
+  }
+))
+
+test('Returns instance', () => new Promise(
+  (resolve, reject) => {
+    jest.setTimeout(120000)
+    const sync = loadSync(defaults, loadCall(defaults))
+    let numCompleted = 0
+    let timeSync
+    timeSync = sync('Time', (err, data, instance) => {
+      if (err) reject(err)
+      expect(instance).toBe(timeSync)
+      timeSync.close()
+      resolve()
     })
   }
 ))
@@ -62,19 +77,15 @@ test('Callback agrees with object', () => new Promise(
 test('Stops when closed', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(
-      defaults.tier, defaults.rateLimiter, loadCall(defaults)
-    )
+    const sync = loadSync(defaults, loadCall(defaults))
     let numCompleted = 0
     let numCompletedAfterClose = 0
     let closed = false
-    let timeSync
-    timeSync = sync('Time', (err, data) => {
+    sync('Time', (err, data, instance) => {
       if (err) reject(err)
-      expect(data === null).toBe(false)
       numCompleted++
       if (numCompleted >= 3) {
-        timeSync.close()
+        instance.close()
         closed = true
         setTimeout(resolve, 20000)
       }
@@ -87,16 +98,13 @@ test('Stops when closed', () => new Promise(
 test('Resumes operation after close', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(
-      defaults.tier, defaults.rateLimiter, loadCall(defaults)
-    )
+    const sync = loadSync(defaults, loadCall(defaults))
     let numCompleted = 0
     let closed = false
     let opened = false
     let timeSync
     timeSync = sync('Time', (err, data) => {
       if (err) reject(err)
-      expect(data === null).toBe(false)
       if (++numCompleted > 3 && !closed) {
         timeSync.close()
         closed = true
@@ -106,71 +114,64 @@ test('Resumes operation after close', () => new Promise(
         }, 5000)
       }
       if (closed && opened) {
+        timeSync.close()
         resolve()
       }
     })
   })
 )
 
-test('Creates promises', async () => {
+test('Once method works', async () => {
   jest.setTimeout(240000)
-  const sync = loadSync(
-    defaults.tier, defaults.rateLimiter, loadCall(defaults)
-  )
+  const sync = loadSync(defaults, loadCall(defaults))
   let timeSync
   timeSync = sync('Time')
-  expect(timeSync.next.constructor).toBe(Function)
-  expect(timeSync.next().constructor).toBe(Promise)
+  expect(timeSync.once.constructor).toBe(Function)
+  expect(timeSync.once().constructor).toBe(Promise)
+  expect(timeSync.once(() => { }).constructor).toBe(Boolean)
   for (let i = 0; i < 10; i++) {
-    expect(await timeSync.next()).toEqual(timeSync.data)
+    expect(await timeSync.once()).toEqual(timeSync.data)
   }
 })
 
-test('Dynamic options work', () => new Promise(
+test('Disabling auto data via callback return works', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(60000)
-    const sync = loadSync(
-      defaults.tier, defaults.rateLimiter, loadCall(defaults)
+    const sync = loadSync(defaults, loadCall(defaults))
+    let count
+    sync('Time',
+      (err, data, instance) => {
+        if (err) reject(err)
+        if (count++ === 0) {
+          return true
+        } else {
+          expect(instance.data).toEqual({})
+          instance.close()
+          resolve()
+        }
+      }
     )
-    let numCompleted = 0
-    let depthSync
-    depthSync = sync('Depth', {
-      pair: instanceData => 'XXBTZUSD',
-      count: instanceData => 1
-    }, (err, data) => {
-      if (err) reject(err)
-      expect(data.hasOwnProperty('XXBTZUSD')).toBe(true)
-      expect(data.XXBTZUSD.asks.length).toBe(1)
-      expect(data.XXBTZUSD.bids.length).toBe(1)
-      resolve()
-    })
   }
 ))
 
-test('Databuilder works', () => new Promise(
+test('Custom data compilation works', () => new Promise(
   (resolve, reject) => {
-    jest.setTimeout(240000)
-    const sync = loadSync(
-      defaults.tier, defaults.rateLimiter, loadCall(defaults)
-    )
-    let numCompleted = 0
-    let timeSync
-    timeSync = sync('Time', null, null, (instanceData, data) => {
-      const newData = {}
-      if (!instanceData.dates) newData.dates = []
-      else newData.dates = instanceData.dates
-      newData.dates.push(new Date(data.unixtime))
-      return newData
-    })
-    timeSync.addListener((err, data) => {
-      if (err) reject(err)
-      expect(data.dates.constructor).toBe(Array)
-      expect(data.dates.length).toBe(numCompleted + 1)
-      expect(data.dates[data.dates.length - 1].constructor).toBe(Date)
-      if (numCompleted++ > 3) {
-        timeSync.close()
-        resolve()
+    jest.setTimeout(60000)
+    const sync = loadSync(defaults, loadCall(defaults))
+    sync('Time',
+      (err, data, instance) => {
+        if (err) reject(err)
+        if (!(instance.data instanceof Array)) {
+          instance.data = []
+          instance.data.push(new Date(data))
+        } else {
+          expect(instance.data.constructor).toBe(Array)
+          expect(instance.data[0].constructor).toBe(Date)
+          instance.close()
+          resolve()
+        }
+        return true
       }
-    })
+    )
   }
 ))

@@ -12,7 +12,7 @@ Loads settings and returns a function which can be used to make calls to the Kra
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 104](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L104)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 103](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L103)
 
 ##### Returns:
 

@@ -20,6 +20,6 @@ const loadSync = require('./api/syncing/loadSync.js')
 module.exports = (settings = {}) => {
   settings = { ...defaults, ...settings }
   const call = loadCall(settings)
-  const sync = loadSync(settings.tier, settings.rateLimiter, call)
+  const sync = loadSync(settings, call)
   return { call, sync }
 }

@@ -6,9 +6,9 @@ ___{alias:node-kraken-api/description}___
 
 Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required; call frequency is managed automatically in response to rate limit parameters by averaging the rate limit costs.
 
-Syncing is also useful for querying new updates only, as options can be expressed dynamically. See the section on [dynamic syncing](#dynamicSync).
+Syncing is also useful for querying new updates only by modifying the call options upon each response. This can be done within a listener callback provided to the module. Some methods provide a 'since' parameter that can be used for querying only data since that ID. [See below](#syncUpdates) for an example.
 
-Combining dynamic syncing and [data builder functions](#dataBuilder) can create a sync instance which contains realtime data specially tailored for various use cases, such as history and statistical analysis.
+Additionally, sync instances can be set up for custom data formatting. If a listener sent to the sync instance returns a truthy value, data will not be automatically set and will instead only be sent to the callback for management. [See below](#syncDataHandling) for an example.
 
 ## Getting Started
 
@@ -146,7 +146,7 @@ let i = 0
 const continuouslyLogUpdates = async () => {
   while(i++ < 20) {
     try {
-      console.log(await timeSync.next())
+      console.log(await timeSync.once())
     } catch(e) {
       console.error(e)
     }
@@ -169,12 +169,27 @@ const timeSync = api.sync('Time',
 _Adding a listener callback after creation:_
 ```js
 const timeSync = api.sync('Time')
-timeSync.addListener(
-  (err, data) => {
-    if (err) console.error(err)
-    else if (data) console.log(data)
-  }
-)
+timeSync.addListener((err, data) => {
+  if (err) console.error(err)
+  else if (data) console.log(data)
+})
+```
+
+_Adding a once listener via Promises:_
+```js
+const timeSync = api.sync('Time')
+timeSync.once()
+  .then(data => console.log(data))
+  .catch(err => console.error(err))
+```
+
+_Adding a once listener callback:_
+```js
+const timeSync = api.sync('Time')
+timeSync.once((err, data) => {
+  if (err) console.error(err)
+  else if (data) console.log(data)
+})
 ```
 
 _Closing a sync operation:_
@@ -230,86 +245,98 @@ setTimeout(() => {
 }, 10000)
 ```
 
-<a name='dynamicSync'></a>__Dynamic Syncing__
+<a name='syncUpdates'></a>__Updating Instance Options__
 
-Sync objects may also be created using dynamic options in order to track data.
-For example, many Kraken methods use a 'last' property to allow for querying new updates only. Options may contain properties that are functions which take previous data (aka [instanceData](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/API/Syncing.md#~instanceData)) and return the string/number to send to the servers.
+Using a listener within a sync instance may be used for tracking new data only.
+For example, methods such as 'Trades' or 'OHLC' respond with a 'last' property to allow for querying new updates.
 
-_Creating a dynamic sync object:_
+_Logging new trades only:_
 ```js
 const tradesSync = api.sync(
   'Trades',
-  {
-    pair: 'XXBTZUSD',
-    since: instanceData => instanceData.last
-  },
-  (err, data) => {
+  { pair: 'XXBTZUSD' },
+  (err, data, instance) => {
     // logs only new trades
-    if (err) console.error(err)
-    else if (data) console.log(data)
+    if (err) {
+      console.error(err)
+    } else if (data) {
+      console.log(data)
+      instance.options.since = data.last
+    }
   }
 )
 ```
 
-<a name='dataBuilder'></a>__Data Builder Functions__
+<a name='syncDataHandling'></a>__Custom Handling of Sync Data__
 
-Sync object data may be custom tailored for various use cases by using a [DataBuilder](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/API/Syncing.md#~DataBuilder) function. Normally, the data property holds only the information retrieved from the most recent call. However, dataBuilder functions may customize this behaviour by taking the current instance data value and the newly retrieved data value, returning a new value to set as the instance data.
+Sync object data may be custom tailored for various use cases by using an event listener which returns a truthy value. Normally, the data property holds only the information retrieved from the most recent call. However, data may be set manually from within a listener callback. If the callback returns a truthy value, data will not be set automatically.
 
 _Creating a realtime historical trades tracker:_
 ```js
 const tradesHistory = api.sync(
   'Trades',
-  {
-    pair: 'XXBTZUSD',
-    since: instanceData => instanceData.last
-  },
-  null,
-  (instanceData, data) => {
-    const newData = {
-      trades: instanceData.trades || []
+  { pair: 'XXBTZUSD' },
+  (err, data, instance) => {
+    if (data) {
+      if (instance.time === -1) {
+        instance.data = []
+      }
+      if (data.last !== instance.options.since) {
+        if (data.XXBTZUSD.forEach) {
+          data.XXBTZUSD.forEach(trade => instance.data.push(trade))
+        }
+        instance.options.since = data.last
+      }
     }
-    if (data.last !== instanceData.last && data.XXBTZUSD.forEach) {
-      data.XXBTZUSD.forEach(trade => newData.trades.push(trade))
-    }
-    newData.last = data.last
-    return newData
+    return true
   }
 )
 
-tradesHistory.next()
-  .then(data => console.log(data.trades))
-  .catch(err => console.error(err))
+tradesHistory.once((err, data) => {
+  if (err) console.log(err)
+  else console.log(data)
+})
 ```
 
 _Creating a realtime simple moving average (with safe float operations):_
 ```js
-const twentyTradeSMA = api.sync(
-  'Trades',
-  {
-    pair: 'XXBTZUSD',
-    since: instanceData => instanceData.last
-  },
-  null,
-  (instanceData, data) => {
-    const newData = {
-      trades: instanceData.trades || []
+const twentyPeriodSMA = api.sync(
+  'OHLC',
+  { pair: 'XXBTZUSD' },
+  (err, data, instance) => {
+    if (data) {
+      if (!instance.bars) instance.bars = []
+      if (data.last !== instance.options.since) {
+        if (data.XXBTZUSD.forEach) {
+          data.XXBTZUSD.forEach(bar => instance.bars.push(bar))
+        }
+        instance.options.since = data.last
+      }
+      instance.bars = instance.bars.slice(-20)
+      instance.data = instance.bars.reduce(
+        (sum, bar) => (
+          sum + (
+            (
+              Math.floor(bar[1] * 100) +
+              Math.floor(bar[2] * 100) +
+              Math.floor(bar[3] * 100) +
+              Math.floor(bar[4] * 100)
+            ) / 4
+          )
+        ),
+        0
+      ) / instance.bars.length / 100
     }
-    if (data.last !== instanceData.last && data.XXBTZUSD.forEach) {
-      data.XXBTZUSD.forEach(trade => newData.trades.push(trade))
-    }
-    newData.last = data.last
-    newData.trades = newData.trades.slice(-20)
-    newData.value = newData.trades.reduce(
-      (sum, trade) => sum + Math.floor(trade[0] * 100),
-      0
-    ) / newData.trades.length / 100
-    return newData
+    instance.close()
+    setTimeout(instance.open, 60000)
+    return true
   }
 )
 
-twentyPeriodSMA.next()
-  .then(data => console.log(data.value))
-  .catch(err => console.error(data.err))
+twentyPeriodSMA.once((err, data) => {
+  if (err) console.log(err)
+  else console.log(data)
+})
 ```
 
 <a name='configuration'></a>

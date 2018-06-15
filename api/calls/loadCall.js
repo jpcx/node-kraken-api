@@ -79,8 +79,7 @@ const makeRequest = async (settings, method, options, resolve, reject) => {
     if (settings.rateLimiter.use) {
       await rateLimiter(settings.tier, settings.rateLimiter, method)
     }
-    options.nonce = Date.now() * 1000
-    settings.nonce = options.nonce
+    settings.nonce = Date.now() * 1000
     const reqData = genRequestData(settings, method, options)
     const req = https.request(
       reqData.options,

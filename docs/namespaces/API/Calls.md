@@ -72,7 +72,7 @@ Executes a call to the kraken servers using closure-loaded settings.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 112](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L112)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 111](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L111)
 
 ##### Returns:
 

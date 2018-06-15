@@ -1,24 +1,23 @@
 Module: API/Syncing/loadSync
 ============================
 
-Loads settings and call function and returns syncing operation functions.
+Creates a sync instance creator by loading relevant information into a closure.
 
 ##### Parameters:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `tier` | [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier) | Kraken verification tier. |
-| `rateLimiter` | [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter) | Rate limiter logic defined in [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config). |
-| `call` | [API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Call) | Call function. |
+| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Settings configuration. |
+| `call` | [API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Call) | Stateful call function. |
 
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 115](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L115)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 123](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L123)
 
 ##### Returns:
 
-Provides syncing operation functions.
+Function which creates sync instances.
 
 Type
 

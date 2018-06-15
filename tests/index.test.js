@@ -52,55 +52,6 @@ test('Syncs calls', () => new Promise(
   }
 ))
 
-test('Unsyncs calls', () => new Promise(
-  (resolve, reject) => {
-    jest.setTimeout(240000)
-    const api = kraken()
-    let numCompleted = 0
-    let numCompletedAfterClose = 0
-    let closed = false
-    let timeSync
-    timeSync = api.sync('Time', (err, data) => {
-      if (err) reject(err)
-      expect(data === null).toBe(false)
-      numCompleted++
-      if (numCompleted >= 3) {
-        timeSync.close()
-        closed = true
-        setTimeout(resolve, 10000)
-      }
-      if (closed === true) numCompletedAfterClose++
-      expect(numCompletedAfterClose).toBeLessThanOrEqual(1)
-    })
-  }
-))
-
-test('Creates sync promises', () => new Promise(
-  (resolve, reject) => {
-    jest.setTimeout(240000)
-    const api = kraken()
-    let timeSync
-    timeSync = api.sync('Time')
-    expect(timeSync.next.constructor).toBe(Function)
-    expect(timeSync.next().constructor).toBe(Promise)
-    let lastTime
-    timeSync.next().then(
-      data => {
-        expect(data).toEqual(timeSync.data)
-        expect(lastTime === timeSync.time).toBe(false)
-        lastTime = timeSync.time
-        timeSync.next().then(
-          data => {
-            expect(data).toEqual(timeSync.data)
-            expect(lastTime === timeSync.time).toBe(false)
-            resolve()
-          }
-        ).catch(reject)
-      }
-    ).catch(reject)
-  }
-))
-
 test('Observes rate limits', async () => {
   jest.setTimeout(640000)
   const api = kraken()

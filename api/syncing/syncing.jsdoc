@@ -12,77 +12,42 @@
  */
 
 /**
- * Unique incrementing ID used for sync request identification.
+ * Data value of the instance. Defaults to an object that is replaced with {@link API~Calls~CallData} upon every successful call, but may be customized within an {@link API~Syncing~EventListener} or otherwise.
  *
- * @typedef {number} API~Syncing~ID
+ * @typedef {(Object|*)} API~Syncing~InstanceData
  */
 
 /**
- * Request information used during sync process.
+ * Set of all open sync requests currently being processed.
  *
- * @typedef  {Object} API~Syncing~Request
- * @property {Kraken~Method} method - Method being called.
- * @property {API~Syncing~DynamicKrakenOptions} options - Dynamic options for sync operation.
- * @property {API~Syncing~Instance} instance - Sync instance.
- * @property {(API~Syncing~DataBuilder|undefined)} dataBuilder - Data building function.
+ * @typedef {Set<API~Syncing~Request>} API~Syncing~OpenRequests
  */
 
 /**
- * Maps {@link API~Syncing~ID} to request parameters. Requests are processed in insertion order and repeated until all requests are dequeued.
+ * Set of all sync requests which have been instructed to close.
  *
- * @typedef  {Map} API~Syncing~Requests
- * @property {API~Syncing~Request} * - Request information.
+ * @typedef {Set<API~Syncing~Request>} API~Syncing~ClosingRequests
  */
 
 /**
- * Timestamped {@link API~Calls~CallError}.
+ * Current state of the instance's request. 'init' if first {@link API~Calls~CallData} has not been received; 'open' if queued; 'closed' if not queued.
  *
- * @typedef  {Error}  API~Syncing~SyncError
- * @property {number} time     - Time of error (in ms).
- * @property {string} [action] - Action taken in response to the error. Errors that will not resolve over time will close the sync instance.
+ * @typedef {('init'|'open'|'closed')} API~Syncing~State
  */
 
 /**
- * Maps {@link API~Syncing~ID}s to {@link API~Syncing~EventListener}s.
+ * Callback function that is executed upon sync errors or data events. Returning a truthy value from this function will instruct the sync operation to not assign the 'data' property of the {@link API~Syncing~Instance}. In other words, returning a truthy value will inform the sync process that data will either be reassigned from within this event listener manually or does not need to be set.
  *
- * @typedef {Map} API~Syncing~EventListeners
+ * @typedef {Function} API~Syncing~EventListener
+ * @param   {API~Syncing~Error}  err  - Sync error.
+ * @param   {API~Calls~CallData} data - Data received from call.
+ * @param   {API~Syncing~Instance} [instance] - Reference to the current instance, if necessary.
+ * @returns {(boolean|undefined)} Returns truthy value if data does not need to be assigned by the sync operation internally; returns a falsy value if data does need to be assigned automatically.
  */
 
 /**
- * Callback for instance-specific events.
+ * Timestamped {@link API~Calls~CallError} (or other execution error) which is added to the instance error array and sent to any available listeners.
  *
- * @callback API~Syncing~EventListener
- * @param    {API~Syncing~SyncError} err  - Response error.
- * @param    {API~Calls~CallData}    data - Response data.
- * @param    {('error'|'data'|'open'|'close')} state - Type of event that triggered the callback.
- */
-
-/**
- * A function which dynamically generates Kraken options based on previously received data.
- *
- * @typedef {Function} API~Syncing~DynamicOption
- * @param   {API~Syncing~InstanceData} instanceData - Current instance data.
- * @returns {Kraken~Option}            Option to send to the server.
- */
-
-/**
- * An object which may contain functions that return {@link Kraken~Option}s for dynamic syncing.
- *
- * @typedef  {Object} API~Syncing~DynamicKrakenOptions
- * @property {(Kraken~Option|API~Syncing~DynamicOption)} * - May contain standard options or dynamic options.
- */
-
-/**
- * The 'data' property for an {@link API~Syncing~Instance}. Starts as <code>{}</code> and is, by default, replaced by any errorless call data received during each update. Replacements may be configured using an {@link API~Syncing~DataBuilder} function.
- *
- * @typedef   {Object} API~Syncing~InstanceData
- */
-
-/**
- * A function which returns an object to set as the 'data' property of an {@link API~Syncing~Instance}.
- *
- * @typedef {Function} API~Syncing~DataBuilder
- * @param   {API~Syncing~InstanceData}  instanceData - Instance data.
- * @param   {API~Calls~CallData}        data         - Current data.
- * @returns {API~Syncing~InstanceData}  Data to set as the instance.data property.
+ * @typedef  {Error}  API~Syncing~Error
+ * @property {number} time - Time of the error.
  */
