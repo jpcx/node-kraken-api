@@ -292,10 +292,9 @@ const tradesHistory = api.sync(
   }
 )
 
-tradesHistory.once((err, data) => {
-  if (err) console.log(err)
-  else console.log(data)
-})
+tradesHistory.once()
+  .then(data => console.log(tradesHistory.data))
+  .catch(err => console.error(err))
 ```
 
 _Creating a realtime simple moving average (with safe float operations):_
@@ -333,10 +332,9 @@ const twentyPeriodSMA = api.sync(
   }
 )
 
-twentyPeriodSMA.once((err, data) => {
-  if (err) console.log(err)
-  else console.log(data)
-})
+twentyPeriodSMA.once()
+  .then(data => console.log(twentyPeriodSMA.data))
+  .catch(err => console.error(err))
 ```
 
 <a name='configuration'></a>
