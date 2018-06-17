@@ -17,47 +17,8 @@ Source:
 
 ### Methods
 
-<a name=".handleResponse"></a>
-#### (static) handleResponse(settings, res, resolve, reject)
-
-Handles request responses.
-
-##### Parameters:
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Instance settings. |
-| `res` | Object | Provides an 'on' function which emits 'data' and 'end' events while receiving data chunks from request. |
-| `resolve` | function | Operational promise resolve function. |
-| `reject` | function | Operational promise reject function. |
-
-
-Source:
-
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 23](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L23)
-
-<a name=".makeRequest"></a>
-#### (async, static) makeRequest(settings, method, options, resolve, reject)
-
-Makes a request to the Kraken servers.
-
-##### Parameters:
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Instance settings. |
-| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
-| `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | Method-specific options. |
-| `resolve` | function | Operational promise resolve function. |
-| `reject` | function | Operational promise reject function. |
-
-
-Source:
-
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 77](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L77)
-
 <a name="~Call"></a>
-#### (inner) Call(method, optionsopt, cbopt) → \{Promise|undefined}
+#### (inner) Call(method, optionsopt, cbopt) → \{Promise|boolean}
 
 Executes a call to the kraken servers using closure-loaded settings.
 
@@ -72,15 +33,80 @@ Executes a call to the kraken servers using closure-loaded settings.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 111](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L111)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 125](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L125)
 
 ##### Returns:
 
-Promise which resolves with response data and rejects with errors (if callback is not supplied).
+Promise which resolves with response data and rejects with errors (if callback is not supplied); true if callback registered successfully.
 
 Type
 
-Promise | undefined
+Promise | boolean
+
+<a name="~handleResponse"></a>
+#### (inner) handleResponse(settings, res, resolve, onError)
+
+Handles request responses.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Instance settings. |
+| `res` | Object | Provides an 'on' function which emits 'data' and 'end' events while receiving data chunks from request. |
+| `resolve` | function | Operational promise resolve function. |
+| `onError` | function | Callback function for makeRequest that handles errors. |
+
+
+Source:
+
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L14)
+
+<a name="~makeRequest"></a>
+#### (inner) makeRequest(settings, method, options, resolve, reject, triggeredopt, retryCtopt) → \{Promise}
+
+Makes a request to the Kraken servers.
+
+##### Parameters:
+
+| Name | Type | Attributes | Default | Description |
+| --- | --- | --- | --- | --- |
+| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) |  |  | Instance settings. |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) |  |  | Method being called. |
+| `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) |  |  | Method-specific options. |
+| `resolve` | function |  |  | Operational promise resolve function. |
+| `reject` | function |  |  | Operational promise reject function. |
+| `triggered` | boolean | \<optional> | false | Whether or not makeRequest was called recursively during a call in response to a rate limit violation. |
+| `retryCt` | number | \<optional> | 0 | Number of times makeRequest has been called recursively during a call in response to an error. |
+
+
+Source:
+
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 58](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L58)
+
+##### Returns:
+
+Resolves after successful operation and rejects upon general errors.
+
+Type
+
+Promise
+
+<a name="~onError"></a>
+#### (inner) onError(err)
+
+Error handler for call errors. Recursively calls makeRequest again if settings and conditions permit; otherwise rejects the main operational promise.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `err` | Error | Any error encountered during call. |
+
+
+Source:
+
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 75](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L75)
 
 ### Type Definitions
 
@@ -171,7 +197,6 @@ Source:
     + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
       + [loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
-    + [defaults](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/defaults.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)
     + [ms](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ms.md)
     + [parseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/parseNested.md)

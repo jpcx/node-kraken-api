@@ -6,7 +6,7 @@ Contains types specific to execution settings.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `defaults` | [module:Settings/defaults](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/defaults.md) | Default execution settings. |
+| `defaults` | module:Settings/defaults | Default execution settings. |
 
 
 Source:
@@ -199,7 +199,6 @@ Source:
     + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
       + [loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
-    + [defaults](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/defaults.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)
     + [ms](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ms.md)
     + [parseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/parseNested.md)

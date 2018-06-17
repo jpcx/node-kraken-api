@@ -37,13 +37,19 @@
 /**
  * Set of server-side API methods available to all users.
  *
- * @typedef {Set} Kraken~PublicMethods
+ * @typedef {Array} Kraken~PublicMethods
  */
 
 /**
  * Set of server-side API methods available exclusively to authenticated users.
  *
- * @typedef {Set} Kraken~PrivateMethods
+ * @typedef {Array} Kraken~PrivateMethods
+ */
+
+/**
+ * Set of server-side API methods specific only to adding, canceling, or modifying orders. Used for rate-limiting based on order frequency. Must be included within the {@link Kraken~PrivateMethods}
+ *
+ * @typedef {Array} Kraken~OrderMethods
  */
 
 /**
@@ -105,4 +111,28 @@
  * HTTPS request POST data for calls to Kraken servers. Generated using 'qs' module.
  *
  * @typedef {string} Kraken~HTTPSRequestPOSTData
+ */
+
+/**
+ * Positive integer counter used for determining private API rate limit adherence. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ *
+ * @typedef {number} Kraken~RateLimitCount
+ */
+
+/**
+ * Positive integer counter limit used for determining private API rate limit adherence. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ *
+ * @typedef {Kraken~RateLimitCount} Kraken~CounterLimit
+ */
+
+/**
+ * Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the {@link Kraken~Method}. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ *
+ * @typedef {Kraken~RateLimitCount} Kraken~IncrementAmount
+ */
+
+/**
+ * Number of seconds for the {@link Kraken~RateLimitCount} to decrement by one. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ *
+ * @typedef {number} Kraken~CounterInterval
  */

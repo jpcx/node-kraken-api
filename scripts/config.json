@@ -72,14 +72,6 @@
           }
         },
         {
-          "origin": "module-Settings_defaults.html",
-          "destination": {
-            "local": "",
-            "path": "docs/modules/Settings",
-            "file": "defaults.md"
-          }
-        },
-        {
           "origin": "module-Tools_ms.html",
           "destination": {
             "local": "",

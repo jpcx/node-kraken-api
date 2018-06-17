@@ -11,22 +11,22 @@ const set = require('deep-props.set')
 const rangedDate = require('ranged-date')
 
 /**
- * Parses objects based on {@link Settings~Parse}.
+ * Parses objects based on {@link Settings~Config}.
  *
  * @module Tools/parseNested
- * @param  {Settings~Parse}         parseSettings - Parser settings.
- * @param  {(Object|Array|Map|Set)} obj           - Object to parse.
+ * @param  {Settings~Config}        settings - Execution settings configuration.
+ * @param  {(Object|Array|Map|Set)} obj      - Object to parse.
  */
-module.exports = (parseSettings, obj) => {
+module.exports = (settings, obj) => {
   const info = extract(obj)
   info.forEach(x => {
-    if (parseSettings.numbers) {
+    if (settings.parse.numbers) {
       const testNum = +x.value
       if (!isNaN(testNum)) {
         set(obj, x.path, testNum)
       }
     }
-    if (parseSettings.dates) {
+    if (settings.parse.dates) {
       const testDate = rangedDate(x.value)
       if (testDate !== false) {
         set(obj, x.path, testDate)

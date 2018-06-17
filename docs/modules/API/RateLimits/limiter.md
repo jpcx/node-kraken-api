@@ -7,6 +7,7 @@ Prepares a rate-limiting promise according to the [Kraken~Tier](https://github.c
 
 | Name | Type | Description |
 | --- | --- | --- |
+| `key` | [Kraken~Key](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Key) | Key used for private method rate limits. |
 | `tier` | [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier) | Verification tier. |
 | `rateLimiter` | [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter) | Rate limiter logic specified in settings configuration. |
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
@@ -14,7 +15,15 @@ Prepares a rate-limiting promise according to the [Kraken~Tier](https://github.c
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/limiter.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/limiter.js), [line 13](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/limiter.js#L13)
+*   [node-kraken-api/api/rateLimits/limiter.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/limiter.js), [line 144](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/limiter.js#L144)
+
+##### Returns:
+
+Resolves after adequate wait time (or immediately).
+
+Type
+
+Promise
 
 <hr>
 
@@ -30,7 +39,6 @@ Source:
     + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
       + [loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
-    + [defaults](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/defaults.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)
     + [ms](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ms.md)
     + [parseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/parseNested.md)

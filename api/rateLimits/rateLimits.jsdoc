@@ -10,3 +10,45 @@
  * @namespace API~RateLimits
  * @property  {module:API/RateLimits/limiter} limiter - Prepares rate-limiting promises according to the {@link Kraken~Tier}, {@link Kraken~Method}, and {@link Settings~RateLimiter}.
  */
+
+/**
+ * Holds rate-limit data for specific API keys.
+ *
+ * @typedef  {Object} API~RateLimits~KeyHashCounter
+ * @property {Kraken~RateLimitCount} count - Current rate limiting count.
+ * @property {number} time      - Last counter update time.
+ * @property {number} triggerCt - Number of consecutive rate limit violations for private calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry. Note: this should never be more than zero.
+ */
+
+/**
+ * Holds rate-limit data for private calls.
+ *
+ * @typedef  {Object} API~RateLimits~PrivateCounter
+ * @property {API~RateLimits~KeyHashCounter} [*] - Key-specific counter data (key specified by SHA-256 hash).
+ */
+
+/**
+ * Holds rate-limit data for public calls.
+ *
+ * @typedef  {Object} API~RateLimits~PublicCounter
+ * @property {number} [tradesTriggers] - Number of consecutive rate limit violations for 'Trades' calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry.
+ * @property {number} [ohlcTriggers]   - Number of consecutive rate limit violations for 'OHLC' calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry.
+ * @property {number} [otherTriggers]  - Number of consecutive rate limit violations for any other public calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry.
+ */
+
+/**
+ * Counter Object that tracks call times and frequency by type in order to adhere to Kraken's rate limit specifications. Saved to the disk for cross-instance and inter-session tracking.
+ *
+ * @typedef  {Object} API~RateLimits~Counter
+ * @property {API~RateLimits~PrivateCounter} [private] - Counter data for private calls.
+ * @property {API~RateLimits~PublicCounter}  [public]  - Counter data for public calls.
+ */
+
+/**
+ * Contains information pertaining to counter logic.
+ *
+ * @typedef {Object} API~RateLimits~CounterInfo
+ * @property {Kraken~CounterLimit}    limit  - Current counter limit
+ * @property {Kraken~CounterInterval} intvl  - Current counter decrement interval.
+ * @property {Kraken~IncrementAmount} incAmt - Counter increment interval based on current method.
+ */

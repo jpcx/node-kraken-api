@@ -14,24 +14,19 @@
 /**
  * Contains execution settings configuration for API operations.
  *
- * @typedef  {Object}         Settings~Config
+ * @typedef  {Object} Settings~Config
  * @property {Kraken~Key}            [key='']       - API key.
  * @property {Kraken~Secret}         [secret='']    - API secret.
  * @property {Kraken~Tier}           [tier=0]       - Verification tier.
  * @property {API~Calls~Timeout}     [timeout=5000] - Response timeout in ms.
+ * @property {API~Calls~RetryCount}  [retryct=3]    - Maximum number of times to automatically retry a call after an error.
+ * @property {Kraken~Hostname}       [hostname='api.kraken.com'] - Hostname of the Kraken API endpoint.
  * @property {Kraken~Version}        [version=0]    - Kraken API version.
- * @property {Kraken~PublicMethods}  [pubMethods=Set{ 'Time', 'Assets','AssetPairs', 'Ticker','OHLC', 'Depth', 'Trades', 'Spread' }] - API methods available for public users.
- * @property {Kraken~PrivateMethods} [privMethods=Set{ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' }] - API methods available for authenticated users.
+ * @property {Kraken~PublicMethods}  [pubMethods=[ 'Time', 'Assets','AssetPairs', 'Ticker','OHLC', 'Depth', 'Trades', 'Spread' ]] - API methods available for public users.
+ * @property {Kraken~PrivateMethods} [privMethods=[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' ]] - API methods available for authenticated users.
+ * @property {Kraken~OrderMethods}   [orderMethods=[ 'AddOrder', 'CancelOrder' ]] - All methods directly related to order modification.
  * @property {Settings~Parse}        [parse={ numbers: true, dates: true }] - Response parser settings.
- * @property {Settings~RateLimiter}  [rateLimiter={ use: true, getCounterLimit: tier => tier >= 3 ? 20 : 15, getCounterIntvl: tier => tier === 4 ? 1000 : tier === 3 ? 2000 : 3000, getIncrementAmt: method => ( method === 'Ledgers' || method === 'TradesHistory' ? 2 : method === 'AddOrder' || method === 'CancelOrder' ? 0 : 1 ), limitOrderOps: true, isOrderOp: method => method === 'AddOrder' || method === 'CancelOrder' }]         - Limits call frequency.
- */
-
-/**
- * Configures response parsing.
- *
- * @typedef  {Object}  Settings~Parse
- * @property {boolean} numbers - Parses string numbers via unary plus.
- * @property {boolean} dates   - Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module.
+ * @property {Settings~RateLimiter}  [rateLimiter={ public: true, private: true, minOrderFrequency: 1000, minViolationRetry: 4500, getCounterLimit: tier => tier >= 3 ? 20 : 15, getCounterIntvl: tier => tier === 4 ? 1000 : tier === 3 ? 2000 : 3000, getIncrementAmt: method => method === 'Ledgers' || method === 'TradesHistory' ? 2 : method === 'AddOrder' || method === 'CancelOrder' ? 0 : 1 }] - Settings for call frequency limitations.
  */
 
 /**
@@ -59,21 +54,22 @@
  */
 
 /**
- * Determines whether or not a method should be limited to 1 hz.
+ * Configures response parsing.
  *
- * @typedef {Function}      Settings~IsOrderOp
- * @param   {Kraken~Method} method - Method being called.
- * @returns {boolean}       True if it should be limited, false if not.
+ * @typedef  {Object}  Settings~Parse
+ * @property {boolean} numbers - Parses string numbers via unary plus.
+ * @property {boolean} dates   - Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module.
  */
 
 /**
  * Limits call frequency.
  *
  * @typedef  {Object}  Settings~RateLimiter
- * @property {boolean} use - Whether or not to enable rate-limiting.
+ * @property {boolean} public - Whether or not to enable rate-limiting for public methods.
+ * @property {boolean} private - Whether or not to enable rate-limiting for private methods.
+ * @property {number}  minOrderFrequency - Minimum time between order modification operations. Zero or less to disable this type of rate-limiting.
+ * @property {number}  minViolationRetry - Minimum time to wait between retries after rate limit violations. Multiplier for the number of times violated. Any number less than zero to disable retrying after rate-limit violations.
  * @property {Settings~GetCounterLimit} getCounterLimit - Rules for determining counter limit from tier.
  * @property {Settings~GetCounterIntvl} getCounterIntvl - Rules for determining counter interval from tier.
  * @property {Settings~GetIncrementAmt} getIncrementAmt - Rules for determining increment amount from method.
- * @property {boolean}                      limitOrderOps   - Whether or not to limit order operations to 1 hz.
- * @property {Settings~IsOrderOp}       isOrderOp       - Rules for determining methods which should be limited to 1 hz.
  */

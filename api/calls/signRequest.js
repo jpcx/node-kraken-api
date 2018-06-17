@@ -22,6 +22,6 @@ module.exports = (secret, nonce, post, path) => {
   const sec = Buffer.from(secret, 'base64')
   const hash = crypto.createHash('sha256')
   const hmac = crypto.createHmac('sha512', sec)
-  const hashDig = hash.update(nonce + post).digest('binary')
-  return hmac.update(path + hashDig, 'binary').digest('base64')
+  const dig = hash.update(nonce + post).digest('binary')
+  return hmac.update(path + dig, 'binary').digest('base64')
 }

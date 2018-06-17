@@ -9,17 +9,17 @@
 const ms = require('../../tools/ms.js')
 
 /**
- * Calculates average wait time.
+ * Calculates average wait time based on the current open sync requests.
  *
- * @memberof API~Syncing
+ * @function API~Syncing~calcAverageWait
  * @param    {API~Syncing~Info} info - Object containing runtime data.
  * @returns  {number}           Average wait time.
  */
 const calcAverageWait = info => {
   let sum = 0
   let count = 0
-  const inc = info.rateLimiter.getIncrementAmt
-  const int = info.rateLimiter.getCounterIntvl
+  const inc = info.settings.rateLimiter.getIncrementAmt
+  const int = info.settings.rateLimiter.getCounterIntvl
   info.open.forEach(request => {
     sum += (inc(request.method) * int(info.tier))
     count++
@@ -30,22 +30,23 @@ const calcAverageWait = info => {
 /**
  * Closes all requests sent to the closing set by dequeuing them and changing their state.
  *
- * @param {API~Syncing~Info} info - Object containing runtime data.
+ * @function API~Syncing~closeClosing
+ * @param    {API~Syncing~Info} info - Object containing runtime data.
  */
 const closeClosing = info => {
   info.closing.forEach(
     req => {
       info.open.delete(req)
       info.closing.delete(req)
-      req.state = 'closed'
+      req.instance.state = 'closed'
     }
   )
 }
 
 /**
- * Handles request queue and sends data to associated callbacks.
+ * Handles request queue and sends data to associated {@link API~Syncing~EventListener}s.
  *
- * @memberof API~Syncing
+ * @function API~Syncing~handleRequests
  * @param    {API~Syncing~Info} info - Object containing runtime data.
  * @returns  {Promise}          Promise which resolves when there are no more requests to process and rejects when an error has been thrown.
  * @throws   Will throw any error which does not result directly from a call.
@@ -55,22 +56,35 @@ const handleRequests = async (info) => {
     if (!info.requesting) {
       info.requesting = true
       while (info.open.size > 0) {
-        for (let request of info.open) {
+        for (let req of info.open) {
           try {
-            const data = await info.call(request.method, request.options)
-            request.state = 'open'
-            request.instance.data = [...request.listeners].reduce(
-              (newData, cb) => cb(null, data, request.instance)
-                ? request.instance.data
-                : newData
-              , data
+            if (req.method !== req.instance.method) {
+              if (
+                info.settings.pubMethods.includes(req.instance.method) ||
+                info.settings.privMethods.includes(req.instance.method)
+              ) {
+                req.method = req.instance.method
+              } else {
+                req.instance.method = req.method
+                req.listeners.forEach(
+                  cb => cb(
+                    Error(`Invalid method set. Reverted to ${req.method}`),
+                    null,
+                    req.instance
+                  )
+                )
+              }
+            }
+            const data = await info.call(req.method, req.options)
+            Object.keys(req.data).forEach(key => delete req.data[key])
+            Object.keys(data).forEach(key => (req.data[key] = data[key]))
+            req.instance.state = 'open'
+            req.instance.time = Date.now()
+            req.listeners.forEach(
+              cb => cb(null, req.instance.data, req.instance)
             )
-            request.instance.time = Date.now()
-          } catch (e) {
-            const err = Error(e)
-            err.time = Date.now()
-            request.instance.errors.push(err)
-            request.listeners.forEach(cb => cb(err, null, request.instance))
+          } catch (err) {
+            req.listeners.forEach(cb => cb(Error(err), null, req.instance))
           }
           closeClosing(info)
           await ms(calcAverageWait(info))
@@ -79,45 +93,7 @@ const handleRequests = async (info) => {
       }
       info.requesting = false
     }
-  } catch (e) { throw (e.time = Date.now()) && e }
-}
-
-/**
- * Parses {@link API~Syncing~Sync} input and returns correct arguments unless invalid.
- *
- * @memberof API~Syncing
- * @param    {Settings~Config} settings - Settings configuration for method verification.
- * @param    {Kraken~Method}   method   - Method being called.
- * @param    {Kraken~Options}  options  - Method-specific options.
- * @param    {API~Syncing~EventListener} listener - Listener for error and data events.
- * @returns  {Object}          Object containing correct arguments.
- * @throws   Will throw 'Invalid Method' if method is not valid.
- */
-const parseArgs = (settings, method, options, listener) => {
-  if (options instanceof Function) {
-    listener = options
-    options = {}
-  }
-
-  if (!settings.pubMethods.has(method) && !settings.privMethods.has(method)) {
-    const combined = [ ...settings.pubMethods, ...settings.privMethods ]
-    if (!combined.some(
-      x => {
-        if (method.toUpperCase() === x.toUpperCase()) {
-          method = x
-          return true
-        }
-      }
-    )) {
-      throw Error(`Invalid method '${method}'.`)
-    }
-  }
-
-  if (!(options.constructor === Object)) {
-    throw Error('Options must be an Object.')
-  }
-
-  return { method, options, listener }
+  } catch (err) { throw err }
 }
 
 /**
@@ -141,8 +117,7 @@ module.exports = (settings, call) => {
    * @property {API~Syncing~ClosingRequests} closing - Set of all requests which should be closed.
    */
   const info = {
-    tier: settings.tier,
-    rateLimiter: settings.rateLimiter,
+    settings,
     call,
     requesting: false,
     open: new Set(),
@@ -151,18 +126,17 @@ module.exports = (settings, call) => {
   /**
    * Stateful function which creates sync instances.
    *
-   * @typedef {Function}                  API~Syncing~Sync
-   * @param   {Kraken~Method}             method       - Method being called.
-   * @param   {Kraken~Options}            [options={}] - Method-specific options.
-   * @param   {API~Syncing~EventListener} [listener]   - Listener for error and data events.
-   * @returns {API~Syncing~Instance} Instance of sync operation.
+   * @function API~Syncing~Sync
+   * @param    {Kraken~Method}             method       - Method being called.
+   * @param    {Kraken~Options}            [options={}] - Method-specific options.
+   * @param    {API~Syncing~EventListener} [listener]   - Listener for error and data events.
+   * @returns  {API~Syncing~Instance} Instance of sync operation.
    */
   return (method, options = {}, listener) => {
-    const parsedArgs = parseArgs(settings, method, options, listener)
-
-    method = parsedArgs.method
-    options = parsedArgs.options
-    listener = parsedArgs.listener
+    if (options instanceof Function) {
+      listener = options
+      options = {}
+    }
 
     const listeners = new Set()
 
@@ -185,10 +159,7 @@ module.exports = (settings, call) => {
      * @property {API~Syncing~removeListener} removeListener - Removes a {@link API~Syncing~EventListener} from the request.
      * @property {API~Syncing~once}           once           - Adds a one-time {@link API~Syncing~EventListener} if provided; otherwise returns a promise which resolves/rejects on the next error/data event.
      */
-    const instance = {
-      data: {},
-      time: -1
-    }
+    const instance = { state: 'init', method }
 
     /**
      * Internal sync instance data.
@@ -202,65 +173,16 @@ module.exports = (settings, call) => {
      * @property {API~Syncing~Error[]}  errors   - Array of errors encountered during sync execution.
      */
     const request = {
-      state: 'init',
       method,
       options,
       instance,
       listeners,
-      errors: []
+      data: {}
     }
 
     const instanceStaticTemplate = {
       options: request.options,
-      errors: request.errors,
-      /**
-       * Gets the current state of the instance from the internal request.
-       *
-       * @typedef {Function} API~Syncing~getState
-       * @returns {API~Syncing~State} Current state of the request.
-       */
-      getState: () => request.state,
-      /**
-       * Gets the current {@link Kraken~Method} associated with a sync instance.
-       *
-       * @typedef {Function} API~Syncing~getMethod
-       * @returns {Kraken~Method} Method associated with the instance.
-       */
-      getMethod: () => request.method,
-      /**
-       * Sets a new {@link Kraken~Method} to the instance. Ensures that a proper method is used by referencing the {@link Kraken~PublicMethods} and the {@link Kraken~PrivateMethods} within the {@link Settings~Config}. Fixes capitalization errors.
-       *
-       * @typedef {Function}      API~Syncing~setMethod
-       * @param   {Kraken~Method} method - New method to set.
-       * @returns {boolean}       True if successful.
-       * @throws  Will throw 'Invalid Method' if method is not valid.
-       */
-      setMethod: method => {
-        if (
-          settings.pubMethods.has(method) ||
-          settings.privMethods.has(method)
-        ) {
-          request.method = method
-          return true
-        } else {
-          const combined = [ ...settings.pubMethods, ...settings.privMethods ]
-          if (!combined.some(
-            x => {
-              if (method.toUpperCase() === x.toUpperCase()) {
-                method = x
-                return true
-              }
-            }
-          )) {
-            const err = Error(`Invalid method '${method}'.`)
-            err.time = Date.now()
-            request.listeners.forEach(cb => { cb(err, null, instance) })
-            throw err
-          } else {
-            return true
-          }
-        }
-      },
+      data: request.data,
       /**
        * Opens the instance if closed.
        *
@@ -271,7 +193,6 @@ module.exports = (settings, call) => {
         info.closing.delete(request)
         info.open.add(request)
         handleRequests(info).catch(err => {
-          request.errors.push(err)
           request.listeners.forEach(cb => { cb(err, null, instance) })
         })
         return true

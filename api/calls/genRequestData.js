@@ -19,28 +19,24 @@ const signRequest = require('./signRequest.js')
  * @returns {API~Calls~RequestData} Request data.
  */
 module.exports = (settings, method, options) => {
-  const post = qs.stringify(options)
+  const nonce = Date.now() * 1000
+  const post = qs.stringify({ ...options, nonce })
   const type = (
-    settings.privMethods.has(method)
+    settings.privMethods.includes(method)
       ? 'private'
-      : settings.pubMethods.has(method)
+      : settings.pubMethods.includes(method)
         ? 'public'
         : undefined
   )
-  if (!type) throw Error('EGeneral:Unknown method').stack
+  if (!type) throw Error('Bad method')
   const path = '/' + settings.version + '/' + type + '/' + method
-  const headers = {
-    'User-Agent': 'Kraken Node.JS API Client [node-kraken-api]'
-  }
-
+  const headers = { 'User-Agent': 'Kraken Node.JS API Client' }
   if (settings.secret && type === 'private') {
-    const sig = signRequest(settings.secret, settings.nonce, post, path)
+    const sig = signRequest(settings.secret, nonce, post, path)
     headers['API-Key'] = settings.key
     headers['API-Sign'] = sig
   } else {
-    if (type === 'private') {
-      throw Error('EAPI:Invalid key').stack
-    }
+    if (type === 'private') throw Error('EAPI:Invalid key').stack
   }
   return {
     options: { hostname: settings.hostname, path, method: 'POST', headers },

@@ -44,3 +44,9 @@
  *
  * @typedef {Object} API~Calls~CallData
  */
+
+/**
+ * Number of times to retry a call that has responded with an error. Includes retries due to rate limit violations.
+ *
+ * @typedef {number} API~Calls~RetryCount
+ */
