@@ -7,6 +7,7 @@
 'use strict'
 
 const ms = require('../../tools/ms.js')
+const normalize = require('../../tools/normalize.js')
 
 /**
  * Calculates average wait time based on the current open sync requests.
@@ -15,32 +16,89 @@ const ms = require('../../tools/ms.js')
  * @param    {API~Syncing~Info} info - Object containing runtime data.
  * @returns  {number}           Average wait time.
  */
-const calcAverageWait = info => {
+const calcAverageWait = (info, starttm) => {
   let sum = 0
   let count = 0
   const inc = info.settings.rateLimiter.getIncrementAmt
   const int = info.settings.rateLimiter.getCounterIntvl
-  info.open.forEach(request => {
-    sum += (inc(request.method) * int(info.tier))
+  for (let req of info.requests) {
+    // console.log('debug: caa req[0]: ' + req[0])
+    const params = JSON.parse(req[0])
+    sum += (inc(params.method) * int(info.tier))
     count++
-  })
-  return sum / count
+  }
+  let wait = (sum / count) - (Date.now() - starttm)
+  if (wait <= 0) wait = 0
+  return wait
 }
 
-/**
- * Closes all requests sent to the closing set by dequeuing them and changing their state.
- *
- * @function API~Syncing~closeClosing
- * @param    {API~Syncing~Info} info - Object containing runtime data.
- */
-const closeClosing = info => {
-  info.closing.forEach(
-    req => {
-      info.open.delete(req)
-      info.closing.delete(req)
-      req.instance.state = 'closed'
+const verifyParams = (info, req) => {
+  for (let intl of req[1]) {
+    // handle all internals associated with params
+    let params = normalize({
+      method: intl.instance.method,
+      options: intl.instance.options
+    })
+    if (intl.state === 'closed') {
+      // instance has been closed with the close() function
+      intl.instance.state = 'closed'
+      info.requests.get(req[0]).delete(intl)
+      if (info.requests.get(req[0]).size === 0) {
+        info.requests.delete(req[0])
+      }
+    } else if (JSON.stringify(params) !== req[0]) {
+      // method and/or options have been changed via the instance
+      let changed = true
+      if (params.method !== intl.params.method) {
+        // method has been changed
+        if (
+          info.settings.pubMethods.includes(params.method) ||
+          info.settings.privMethods.includes(params.method)
+        ) {
+          // method is valid
+          intl.params.method = params.method
+        } else {
+          // if method is invalid
+          // notify listeners
+          intl.listeners.forEach(cb => cb(Error(
+            `Invalid method ${params.method}. Reverting.`
+          ), null, intl.instance))
+          // revert
+          params.method = intl.params.method
+          intl.instance.method = params.method
+          params = normalize(params)
+          // check for further changes
+          if (JSON.stringify(params) === req[0]) changed = false
+        }
+      } else if (params.options.constructor !== Object) {
+        // options have changed and are invalid
+        // notify listeners
+        intl.listeners.forEach(cb => cb(Error(
+          `Invalid options ${params.options}. Must be Object. Reverting.`
+        ), null, intl.instance))
+        // revert
+        params.options = JSON.parse(req[0]).options
+        intl.params.options = params.options
+        intl.instance.options = params.options
+        params = normalize(params)
+        changed = false
+      }
+
+      if (changed) {
+        // re-assign internal
+        const serialParams = JSON.stringify(params)
+        if (!info.requests.has(serialParams)) {
+          info.requests.set(serialParams, new Set([intl]))
+        } else {
+          info.requests.get(serialParams).add(intl)
+        }
+        info.requests.get(req[0]).delete(intl)
+        if (info.requests.get(req[0]).size === 0) {
+          info.requests.delete(req[0])
+        }
+      }
     }
-  )
+  }
 }
 
 /**
@@ -55,40 +113,29 @@ const handleRequests = async (info) => {
   try {
     if (!info.requesting) {
       info.requesting = true
-      while (info.open.size > 0) {
-        for (let req of info.open) {
-          try {
-            if (req.method !== req.instance.method) {
-              if (
-                info.settings.pubMethods.includes(req.instance.method) ||
-                info.settings.privMethods.includes(req.instance.method)
-              ) {
-                req.method = req.instance.method
-              } else {
-                req.instance.method = req.method
-                req.listeners.forEach(
-                  cb => cb(
-                    Error(`Invalid method set. Reverted to ${req.method}`),
-                    null,
-                    req.instance
-                  )
-                )
-              }
+      while (info.requests.size > 0) {
+        // loop continuously
+        for (let req of info.requests) {
+          // console.log('debug: LOOPING')
+          // handle all param sets
+          const starttm = Date.now()
+          verifyParams(info, req)
+          if (info.requests.has(req[0])) {
+            // console.log('debug: REACHED HAS')
+            // console.log('debug: req[0]: ' + req[0])
+            const params = JSON.parse(req[0])
+            const data = await info.call(params.method, params.options)
+            for (let intl of req[1]) {
+              if (intl.state === 'init') intl.state = 'open'
+              intl.instance.state = 'open'
+              Object.keys(intl.data).forEach(key => delete intl.data[key])
+              Object.keys(data).forEach(key => (intl.data[key] = data[key]))
+              intl.time = Date.now()
+              intl.listeners.forEach(cb => cb(null, data, intl.instance))
             }
-            const data = await info.call(req.method, req.options)
-            Object.keys(req.data).forEach(key => delete req.data[key])
-            Object.keys(data).forEach(key => (req.data[key] = data[key]))
-            req.instance.state = 'open'
-            req.instance.time = Date.now()
-            req.listeners.forEach(
-              cb => cb(null, req.instance.data, req.instance)
-            )
-          } catch (err) {
-            req.listeners.forEach(cb => cb(Error(err), null, req.instance))
+            // console.log('debug: WAIT: ' + calcAverageWait(info, starttm))
+            await ms(calcAverageWait(info, starttm))
           }
-          closeClosing(info)
-          await ms(calcAverageWait(info))
-          closeClosing(info)
         }
       }
       info.requesting = false
@@ -120,8 +167,7 @@ module.exports = (settings, call) => {
     settings,
     call,
     requesting: false,
-    open: new Set(),
-    closing: new Set()
+    requests: new Map()
   }
   /**
    * Stateful function which creates sync instances.
@@ -159,12 +205,12 @@ module.exports = (settings, call) => {
      * @property {API~Syncing~removeListener} removeListener - Removes a {@link API~Syncing~EventListener} from the request.
      * @property {API~Syncing~once}           once           - Adds a one-time {@link API~Syncing~EventListener} if provided; otherwise returns a promise which resolves/rejects on the next error/data event.
      */
-    const instance = { state: 'init', method }
+    const instance = { state: 'init', method, options }
 
     /**
      * Internal sync instance data.
      *
-     * @typedef  {Object}               API~Syncing~Request
+     * @typedef  {Object}               API~Syncing~Internal
      * @property {API~Syncing~State}    state    - Current state of the request.
      * @property {Kraken~Method}        method   - Current Kraken method.
      * @property {Kraken~Options}       options  - Method-specific options.
@@ -172,17 +218,19 @@ module.exports = (settings, call) => {
      * @property {Set<API~Syncing~EventListener>} listeners - Set of all associated event listeners.
      * @property {API~Syncing~Error[]}  errors   - Array of errors encountered during sync execution.
      */
-    const request = {
-      method,
-      options,
+    const internal = {
+      state: 'init',
+      params: {
+        method,
+        options
+      },
       instance,
       listeners,
       data: {}
     }
 
     const instanceStaticTemplate = {
-      options: request.options,
-      data: request.data,
+      data: internal.data,
       /**
        * Opens the instance if closed.
        *
@@ -190,10 +238,15 @@ module.exports = (settings, call) => {
        * @returns {boolean}  True if opened or already open.
        */
       open: () => {
-        info.closing.delete(request)
-        info.open.add(request)
+        const serialParams = JSON.stringify(normalize(internal.params))
+        if (!info.requests.has(serialParams)) {
+          info.requests.set(serialParams, new Set([internal]))
+        } else {
+          info.requests.get(serialParams).add(internal)
+        }
+        internal.state = 'open'
         handleRequests(info).catch(err => {
-          request.listeners.forEach(cb => { cb(err, null, instance) })
+          internal.listeners.forEach(cb => { cb(err, null, instance) })
         })
         return true
       },
@@ -203,7 +256,7 @@ module.exports = (settings, call) => {
        * @typedef {Function} API~Syncing~close
        * @returns {boolean}  True if closed or already closed.
        */
-      close: () => info.closing.add(request) && true,
+      close: () => (internal.state = 'closed') && true,
       /**
        * Adds an {@link API~Syncing~EventListener} to the instance's request listeners.
        *
@@ -211,7 +264,7 @@ module.exports = (settings, call) => {
        * @param   {API~Syncing~EventListener} listener - Listener function to add.
        * @returns {boolean}  True if added successfully.
        */
-      addListener: listener => request.listeners.add(listener) && true,
+      addListener: listener => internal.listeners.add(listener) && true,
       /**
        * Removes an {@link API~Syncing~EventListener} from the instance's request listeners.
        *
@@ -219,7 +272,7 @@ module.exports = (settings, call) => {
        * @param   {API~Syncing~EventListener} listener - Listener function to remove.
        * @returns {boolean}  True if not in the listeners set.
        */
-      removeListener: listener => request.listeners.delete(listener) && true,
+      removeListener: listener => internal.listeners.delete(listener) && true,
       /**
        * Adds a one-time {@link API~Syncing~EventListener} to the instance's request listeners. If no listener is provided as a parameter, returns a promise which resolves with the next update's error or data.
        *
@@ -232,11 +285,11 @@ module.exports = (settings, call) => {
           (resolve, reject) => {
             let selfDestructListener
             selfDestructListener = (err, data) => {
-              request.listeners.delete(selfDestructListener)
+              internal.listeners.delete(selfDestructListener)
               if (err) reject(err)
               else resolve(data)
             }
-            request.listeners.add(selfDestructListener)
+            internal.listeners.add(selfDestructListener)
           }
         )
         if (onceListener instanceof Function) {
@@ -247,7 +300,8 @@ module.exports = (settings, call) => {
         } else {
           return opPromise
         }
-      }
+      },
+      debug: { info }
     }
 
     for (let prop in instanceStaticTemplate) {

@@ -20,13 +20,13 @@
 /**
  * Set of all open sync requests currently being processed.
  *
- * @typedef {Set<API~Syncing~Request>} API~Syncing~OpenRequests
+ * @typedef {Set<API~Syncing~Internal>} API~Syncing~OpenRequests
  */
 
 /**
  * Set of all sync requests which have been instructed to close.
  *
- * @typedef {Set<API~Syncing~Request>} API~Syncing~ClosingRequests
+ * @typedef {Set<API~Syncing~Internal>} API~Syncing~ClosingRequests
  */
 
 /**
