@@ -138,7 +138,7 @@ const waitPrivate = async (settings, method, triggered) => {
 }
 
 /**
- * Calculates the time to wait for a public call retry in response to rate limit violations. As the public call frequency is not well documented by Kraken, the amount to wait is estimated using the specifications listed on this support page: {@link https://support.kraken.com/hc/en-us/articles/206548367-What-is-the-API-call-rate-limit-}
+ * Calculates the time to wait for a public call retry in response to rate limit violations. As the public call frequency is not well documented by Kraken, the amount to wait is calculated dynamically in response to violations. Minimum wait time in response to violations is determined by the information listed on this support page: {@link https://support.kraken.com/hc/en-us/articles/206548367-What-is-the-API-call-rate-limit-}
  *
  * @function API~RateLimits~calcPublicWait
  * @param    {Settings~Config} settings  - Current settings configuration.
@@ -148,17 +148,53 @@ const waitPrivate = async (settings, method, triggered) => {
  * @returns  {number} Time to wait.
  */
 const calcPublicWait = (settings, triggered, counter, type) => {
-  if (isNaN(counter.public[`${type}Triggers`])) {
-    counter.public[`${type}Triggers`] = 0
+  const currentTime = Date.now()
+  if (
+    !counter.public.hasOwnProperty(type) ||
+    !(counter.public[type].constructor === Object)
+  ) {
+    counter.public[type] = {}
   }
-  if (triggered) counter.public.public[`${type}Triggers`]++
-  else counter.public[`${type}Triggers`] = 0
-  return (
-    counter.public[`${type}Triggers`] *
-    settings.rateLimiter.minViolationRetry
-  )
-}
 
+  const loc = counter.public[type]
+
+  if (
+    !loc.hasOwnProperty('last') ||
+    !loc.hasOwnProperty('freq') ||
+    loc.last < currentTime - 60000
+  ) {
+    loc.last = currentTime
+    loc.freq = 0
+  }
+
+  if (
+    !loc.hasOwnProperty('violations') ||
+    loc.violations.constructor !== Array
+  ) {
+    loc.violations = []
+  }
+
+  loc.violations = loc.violations.filter(v => v > currentTime - 60000)
+
+  const elapsed = currentTime - loc.last
+
+  if (triggered) {
+    loc.violations.push(currentTime)
+    if (!loc.freq) loc.freq = elapsed
+    else loc.freq *= 1 + (0.05 * (loc.violations.length))
+  } else {
+    loc.freq *= 0.99
+  }
+
+  loc.last = currentTime
+
+  let wait = triggered ? settings.rateLimiter.minViolationRetry : loc.freq
+
+  wait -= elapsed
+  if (wait < 0) wait = 0
+
+  return wait
+}
 /**
  * Creates a promise which resolves in response to call frequency and rate limits for private calls. Stores data to disk under './cache/counter.json'.
  *

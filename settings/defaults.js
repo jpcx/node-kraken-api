@@ -57,7 +57,7 @@ module.exports = ({
     getIncrementAmt: method => (
       method === 'Ledgers' || method === 'TradesHistory'
         ? 2
-        : method === 'AddOrder' || method === 'CancelOrder'
+        : method === 'AddOrder' || method === 'CancelOrder' || method === 'Time' || method === 'Assets' || method === 'AssetPairs' || method === 'Ticker' || method === 'OHLC' || method === 'Depth' || method === 'Trades' || method === 'Spread'
           ? 0
           : 1
     )

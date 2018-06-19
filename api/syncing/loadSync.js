@@ -16,35 +16,53 @@ const normalize = require('../../tools/normalize.js')
  * @param    {API~Syncing~Info} info - Object containing runtime data.
  * @returns  {number}           Average wait time.
  */
-const calcAverageWait = (info, starttm) => {
+const calcAveragePrivateWait = (info, starttm) => {
   let sum = 0
   let count = 0
   const inc = info.settings.rateLimiter.getIncrementAmt
   const int = info.settings.rateLimiter.getCounterIntvl
-  for (let req of info.requests) {
-    // console.log('debug: caa req[0]: ' + req[0])
-    const params = JSON.parse(req[0])
-    sum += (inc(params.method) * int(info.tier))
-    count++
+  if (info.requests.has('private')) {
+    for (let req of info.requests.get('private')) {
+      const params = JSON.parse(req[0])
+      sum += (inc(params.method) * int(info.tier))
+      count++
+    }
+    let wait = (sum / count) - (Date.now() - starttm)
+    if (wait < 0) wait = 0
+    return wait
+  } else {
+    return 0
   }
-  let wait = (sum / count) - (Date.now() - starttm)
-  if (wait <= 0) wait = 0
-  return wait
 }
 
-const verifyParams = (info, req) => {
+const getCategory = (info, method) => method === 'OHLC'
+  ? 'ohlc'
+  : method === 'Trades'
+    ? 'trades'
+    : info.settings.pubMethods.includes(method)
+      ? 'other'
+      : 'private'
+
+const verifyParams = (info, category, req) => {
   for (let intl of req[1]) {
     // handle all internals associated with params
     let params = normalize({
       method: intl.instance.method,
       options: intl.instance.options
     })
+
+    const catMap = info.requests.get(category)
+    const reqSet = catMap.get(req[0])
+
     if (intl.state === 'closed') {
       // instance has been closed with the close() function
       intl.instance.state = 'closed'
-      info.requests.get(req[0]).delete(intl)
-      if (info.requests.get(req[0]).size === 0) {
-        info.requests.delete(req[0])
+      reqSet.delete(intl)
+      if (reqSet.size === 0) {
+        catMap.delete(req[0])
+        if (catMap.size === 0) {
+          info.requests.delete(category)
+        }
       }
     } else if (JSON.stringify(params) !== req[0]) {
       // method and/or options have been changed via the instance
@@ -87,14 +105,31 @@ const verifyParams = (info, req) => {
       if (changed) {
         // re-assign internal
         const serialParams = JSON.stringify(params)
-        if (!info.requests.has(serialParams)) {
-          info.requests.set(serialParams, new Set([intl]))
+        const newCat = getCategory(intl.params.method)
+        if (newCat !== category) {
+          if (!info.requests.has(newCat)) {
+            info.requests.set(newCat, new Map())
+            info.requests.get(newCat).set(serialParams, new Set([intl]))
+          } else {
+            if (!info.requests.get(newCat).has(serialParams)) {
+              info.requests.get(newCat).set(serialParams, new Set([intl]))
+            } else {
+              info.requests.get(newCat).get(serialParams).add(intl)
+            }
+          }
         } else {
-          info.requests.get(serialParams).add(intl)
+          if (!catMap.has(serialParams)) {
+            catMap.set(serialParams, new Set([intl]))
+          } else {
+            catMap.get(serialParams).add(intl)
+          }
         }
-        info.requests.get(req[0]).delete(intl)
-        if (info.requests.get(req[0]).size === 0) {
-          info.requests.delete(req[0])
+        reqSet.delete(intl)
+        if (reqSet.size === 0) {
+          catMap.delete(req[0])
+          if (catMap.size === 0) {
+            info.requests.delete(category)
+          }
         }
       }
     }
@@ -109,20 +144,23 @@ const verifyParams = (info, req) => {
  * @returns  {Promise}          Promise which resolves when there are no more requests to process and rejects when an error has been thrown.
  * @throws   Will throw any error which does not result directly from a call.
  */
-const handleRequests = async (info) => {
+const handleRequests = async (info, category) => {
   try {
-    if (!info.requesting) {
-      info.requesting = true
-      while (info.requests.size > 0) {
+    if (!info.requesting[category]) {
+      info.requesting[category] = true
+      while (
+        info.requests.has(category) &&
+        info.requests.get(category).size > 0
+      ) {
         // loop continuously
-        for (let req of info.requests) {
-          // console.log('debug: LOOPING')
+        for (let req of info.requests.get(category)) {
           // handle all param sets
           const starttm = Date.now()
-          verifyParams(info, req)
-          if (info.requests.has(req[0])) {
-            // console.log('debug: REACHED HAS')
-            // console.log('debug: req[0]: ' + req[0])
+          verifyParams(info, category, req)
+          if (
+            info.requests.has(category) &&
+            info.requests.get(category).has(req[0])
+          ) {
             const params = JSON.parse(req[0])
             const data = await info.call(params.method, params.options)
             for (let intl of req[1]) {
@@ -130,15 +168,16 @@ const handleRequests = async (info) => {
               intl.instance.state = 'open'
               Object.keys(intl.data).forEach(key => delete intl.data[key])
               Object.keys(data).forEach(key => (intl.data[key] = data[key]))
-              intl.time = Date.now()
+              intl.instance.time = Date.now()
               intl.listeners.forEach(cb => cb(null, data, intl.instance))
             }
-            // console.log('debug: WAIT: ' + calcAverageWait(info, starttm))
-            await ms(calcAverageWait(info, starttm))
+            if (category === 'private') {
+              await ms(calcAveragePrivateWait(info, starttm))
+            }
           }
         }
       }
-      info.requesting = false
+      info.requesting[category] = false
     }
   } catch (err) { throw err }
 }
@@ -166,7 +205,12 @@ module.exports = (settings, call) => {
   const info = {
     settings,
     call,
-    requesting: false,
+    requesting: {
+      ohlc: false,
+      trades: false,
+      other: false,
+      private: false
+    },
     requests: new Map()
   }
   /**
@@ -234,51 +278,69 @@ module.exports = (settings, call) => {
       /**
        * Opens the instance if closed.
        *
-       * @typedef {Function} API~Syncing~open
-       * @returns {boolean}  True if opened or already open.
+       * @function API~Syncing~open
+       * @returns  {boolean}  True if opened or already open.
        */
       open: () => {
+        const category = getCategory(info, internal.params.method)
         const serialParams = JSON.stringify(normalize(internal.params))
-        if (!info.requests.has(serialParams)) {
-          info.requests.set(serialParams, new Set([internal]))
+
+        if (!info.requests.has(category)) info.requests.set(category, new Map())
+
+        const loc = info.requests.get(category)
+
+        if (!loc.has(serialParams)) {
+          loc.set(serialParams, new Set([internal]))
         } else {
-          info.requests.get(serialParams).add(internal)
+          loc.get(serialParams).add(internal)
         }
+
         internal.state = 'open'
-        handleRequests(info).catch(err => {
+
+        handleRequests(info, category).catch(err => {
           internal.listeners.forEach(cb => { cb(err, null, instance) })
         })
+
         return true
       },
       /**
        * Closes the instance if opened.
        *
-       * @typedef {Function} API~Syncing~close
-       * @returns {boolean}  True if closed or already closed.
+       * @function API~Syncing~close
+       * @returns  {boolean}  True if closed or already closed.
        */
       close: () => (internal.state = 'closed') && true,
       /**
        * Adds an {@link API~Syncing~EventListener} to the instance's request listeners.
        *
-       * @typedef {Function} API~Syncing~addListener
-       * @param   {API~Syncing~EventListener} listener - Listener function to add.
-       * @returns {boolean}  True if added successfully.
+       * @function API~Syncing~addListener
+       * @param    {API~Syncing~EventListener} listener - Listener function to add.
+       * @returns  {boolean}  True if added successfully.
        */
       addListener: listener => internal.listeners.add(listener) && true,
       /**
        * Removes an {@link API~Syncing~EventListener} from the instance's request listeners.
        *
-       * @typedef {Function} API~Syncing~removeListener
-       * @param   {API~Syncing~EventListener} listener - Listener function to remove.
-       * @returns {boolean}  True if not in the listeners set.
+       * @function API~Syncing~removeListener
+       * @param    {API~Syncing~EventListener} listener - Listener function to remove.
+       * @returns  {boolean}  True if not in the listeners set.
        */
       removeListener: listener => internal.listeners.delete(listener) && true,
       /**
+       * Removes all event listeners.
+       *
+       * @function API~Syncing~removeAllListeners
+       * @returns  {boolean} True if all listeners have been deleted.
+       */
+      removeAllListeners: () => (
+        internal.listeners.forEach(l => internal.listeners.delete(l)) && true
+      ),
+      /**
        * Adds a one-time {@link API~Syncing~EventListener} to the instance's request listeners. If no listener is provided as a parameter, returns a promise which resolves with the next update's error or data.
        *
-       * @typedef {Function} API~Syncing~once
-       * @param   {API~Syncing~EventListener} [listener] - Once listener function to add.
-       * @returns {(boolean|Promise)} Returns true if added successfully or a promise if a listener function is not provided.
+       * @function API~Syncing~once
+       * @param    {API~Syncing~EventListener} [listener] - Once listener function to add.
+       * @returns  {(boolean|Promise)}         Returns true if added successfully or a promise if a listener function is not provided.
        */
       once: onceListener => {
         const opPromise = new Promise(

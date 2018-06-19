@@ -82,7 +82,7 @@ const makeRequest = async (
     if (!erroredOut) {
       erroredOut = true
       if (err.message.match(/Rate limit exceeded/g) !== null) {
-        if (settings.rateLimits.minViolationRetry >= 0) {
+        if (settings.rateLimiter.minViolationRetry >= 0) {
           makeRequest(
             settings, method, options,
             resolve, reject, true, retryCt + 1
@@ -91,7 +91,6 @@ const makeRequest = async (
           reject()
         }
       } else if (settings.retryCt > 0 && retryCt < settings.retryCt) {
-        console.log('retrying ' + retryCt + ' ' + Date.now())
         makeRequest(
           settings, method, options, resolve, reject, false, retryCt + 1
         )
