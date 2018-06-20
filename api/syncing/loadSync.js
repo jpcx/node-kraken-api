@@ -12,11 +12,11 @@ const normalize = require('../../tools/normalize.js')
 /**
  * Calculates average wait time based on the current open sync requests.
  *
- * @function API~Syncing~calcAverageWait
+ * @function API~Syncing~calcAvgPrivateWait
  * @param    {API~Syncing~State} state - Object containing runtime data.
  * @returns  {number}           Average wait time.
  */
-const calcAveragePrivateWait = (state, starttm) => {
+const calcAvgPrivateWait = (state, starttm) => {
   let sum = 0
   let count = 0
   const inc = state.settings.rateLimiter.getIncrementAmt
@@ -107,6 +107,7 @@ const verifyParams = (state, category, req) => {
         const serialParams = JSON.stringify(params)
         const newCat = getCategory(intl.params.method)
         if (newCat !== category) {
+          // category has changed
           if (!state.internals.has(newCat)) {
             state.internals.set(newCat, new Map())
             state.internals.get(newCat).set(serialParams, new Set([intl]))
@@ -118,6 +119,7 @@ const verifyParams = (state, category, req) => {
             }
           }
         } else {
+          // params have changed
           if (!catMap.has(serialParams)) {
             catMap.set(serialParams, new Set([intl]))
           } else {
@@ -145,51 +147,45 @@ const verifyParams = (state, category, req) => {
  * @throws   Will throw any error which does not result directly from a call.
  */
 const handleRequests = async (state, category) => {
-  try {
-    if (!state.gates.has(category)) {
-      state.gates.add(category)
-      while (
-        state.internals.has(category) &&
-        state.internals.get(category).size > 0
+  while (
+    state.internals.has(category) &&
+    state.internals.get(category).size > 0
+  ) {
+    // loop continuously
+    for (let req of state.internals.get(category)) {
+      // handle all param sets
+      const starttm = Date.now()
+      verifyParams(state, category, req)
+      if (
+        !state.internals.has(category) ||
+        !state.internals.get(category).has(req[0])
       ) {
-        // loop continuously
-        for (let req of state.internals.get(category)) {
-          // handle all param sets
-          const starttm = Date.now()
-          verifyParams(state, category, req)
-          if (
-            state.internals.has(category) &&
-            state.internals.get(category).has(req[0])
-          ) {
-            const params = JSON.parse(req[0])
-            let data
-            try {
-              data = await state.call(params.method, params.options)
-              for (let intl of req[1]) {
-                if (intl.state === 'init') intl.state = 'open'
-                intl.instance.state = 'open'
-                Object.keys(intl.data).forEach(key => delete intl.data[key])
-                Object.keys(data).forEach(key => (intl.data[key] = data[key]))
-                intl.instance.time = Date.now()
-                intl.listeners.forEach(cb => cb(null, data, intl.instance))
-              }
-            } catch (err) {
-              for (let intl of req[1]) {
-                if (intl.state === 'init') intl.state = 'open'
-                intl.instance.state = 'open'
-                intl.listeners.forEach(cb => cb(err, null, intl.instance))
-              }
-            }
-            if (category === 'private') {
-              console.log(calcAveragePrivateWait(state, starttm))
-              await ms(calcAveragePrivateWait(state, starttm))
-            }
-          }
+        continue
+      }
+      const params = JSON.parse(req[0])
+      let data
+      try {
+        data = await state.call(params.method, params.options)
+        for (let intl of req[1]) {
+          if (intl.state === 'init') intl.state = 'open'
+          intl.instance.state = 'open'
+          Object.keys(intl.data).forEach(key => delete intl.data[key])
+          Object.keys(data).forEach(key => (intl.data[key] = data[key]))
+          intl.instance.time = Date.now()
+          intl.listeners.forEach(cb => cb(null, data, intl.instance))
+        }
+      } catch (err) {
+        for (let intl of req[1]) {
+          if (intl.state === 'init') intl.state = 'open'
+          intl.instance.state = 'open'
+          intl.listeners.forEach(cb => cb(err, null, intl.instance))
         }
       }
-      state.gates.delete(category)
+      if (category === 'private') {
+        await ms(calcAvgPrivateWait(state, starttm))
+      }
     }
-  } catch (err) { throw err }
+  }
 }
 
 /**
@@ -278,7 +274,7 @@ module.exports = (settings, call) => {
       data: {}
     }
 
-    const instanceStaticTemplate = {
+    const instancePermTemplate = {
       data: internal.data,
       /**
        * Opens the instance if closed.
@@ -298,15 +294,28 @@ module.exports = (settings, call) => {
 
         if (!loc.has(serialParams)) {
           loc.set(serialParams, new Set([internal]))
-        } else {
-          loc.get(serialParams).add(internal)
-        }
+        } else loc.get(serialParams).add(internal)
 
         internal.state = 'open'
 
-        handleRequests(state, category).catch(err => {
-          internal.listeners.forEach(cb => { cb(err, null, instance) })
-        })
+        if (!state.gates.has(category)) {
+          state.gates.add(category)
+          handleRequests(state, category).then(
+            () => state.gates.delete(category)
+          ).catch(
+            err => {
+              if (state.internals.has(category)) {
+                state.internals.get(category).forEach(entry => {
+                  entry[1].forEach(internal => {
+                    internal.listeners.forEach(cb => {
+                      cb(err, null, internal.instance)
+                    })
+                  })
+                })
+              }
+            }
+          )
+        }
 
         return true
       },
@@ -373,9 +382,9 @@ module.exports = (settings, call) => {
       debug: { state }
     }
 
-    for (let prop in instanceStaticTemplate) {
+    for (let prop in instancePermTemplate) {
       Object.defineProperty(instance, prop, {
-        value: instanceStaticTemplate[prop],
+        value: instancePermTemplate[prop],
         writable: false,
         enumerable: true,
         configurable: false

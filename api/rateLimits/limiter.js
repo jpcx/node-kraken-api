@@ -19,7 +19,7 @@ const ms = require('../../tools/ms.js')
  * @param    {API~RateLimits~Counter} counter  - Counter object.
  * @returns  {Object} Reference to nested object within counter containing rate-limit information for the current configured key.
  */
-const getPrivateRef = (settings, counter) => {
+const getPrivateLoc = (settings, counter) => {
   const key = settings.key
   const hash = crypto.createHash('sha256').update(key).digest('hex')
   if (!(counter.private instanceof Object)) counter.private = {}
@@ -31,21 +31,21 @@ const getPrivateRef = (settings, counter) => {
  * Calculates the wait required for a private method.
  *
  * @function API~RateLimits~calcPrivateWait
- * @param    {API~RateLimits~KeyHashCounter} ref   - Reference to key-specific counter object.
+ * @param    {API~RateLimits~KeyHashCounter} loc   - Reference to key-specific counter object.
  * @param    {API~RateLimits~CounterInfo}    cInfo - Information pertaining to counter behavior.
  * @param    {number} currentTime - Time of limiter operation.
  * @returns  {number} Time to wait.
  */
-const calcPrivateWait = (ref, cInfo, currentTime) => {
-  if (ref.count && ref.time) {
-    ref.count -= (currentTime - ref.time) / cInfo.intvl
-    if (ref.count < 0) ref.count = 0
+const calcPrivateWait = (loc, cInfo, currentTime) => {
+  if (loc.count && loc.time) {
+    loc.count -= (currentTime - loc.time) / cInfo.intvl
+    if (loc.count < 0) loc.count = 0
   } else {
-    ref.count = 0
+    loc.count = 0
   }
-  ref.count += cInfo.incAmt
-  ref.time = currentTime
-  if (ref.count > cInfo.limit) return (ref.count - cInfo.limit) * cInfo.intvl
+  loc.count += cInfo.incAmt
+  loc.time = currentTime
+  if (loc.count > cInfo.limit) return (loc.count - cInfo.limit) * cInfo.intvl
   else return 0
 }
 
@@ -54,20 +54,20 @@ const calcPrivateWait = (ref, cInfo, currentTime) => {
  *
  * @function API~RateLimits~calcOrderWait
  * @param    {Settings~Config} settings - Current settings configuration.
- * @param    {API~RateLimits~KeyHashCounter} ref - Reference to key-specific counter object.
+ * @param    {API~RateLimits~KeyHashCounter} loc - Reference to key-specific counter object.
  * @param    {number} currentTime - Time of limiter operation.
  * @returns  {number} Time to wait.
  */
-const calcOrderWait = (settings, ref, currentTime) => {
+const calcOrderWait = (settings, loc, currentTime) => {
   if (
-    !isNaN(ref.lastOTime) &&
-    (currentTime - ref.lastOTime) < settings.rateLimiter.minOrderFrequency
+    !isNaN(loc.lastOTime) &&
+    (currentTime - loc.lastOTime) < settings.rateLimiter.minOrderFrequency
   ) {
-    let oWait = currentTime - ref.lastOTime
+    let oWait = currentTime - loc.lastOTime
     if (oWait < 0) oWait = 0
     return settings.rateLimiter.minOrderFrequency - oWait
   } else {
-    ref.lastOTime = currentTime
+    loc.lastOTime = currentTime
     return 0
   }
 }
@@ -75,28 +75,33 @@ const calcOrderWait = (settings, ref, currentTime) => {
 /**
  * Adjusts the counter object in response to the current calculated wait time and counter interval.
  *
- * @function API~RateLimits~adjustCount
- * @param    {API~RateLimits~KeyHashCounter} ref   - Reference to key-specific counter object.
+ * @function API~RateLimits~adjustPrivateCount
+ * @param    {API~RateLimits~KeyHashCounter} loc   - Reference to key-specific counter object.
  * @param    {API~RateLimits~CounterInfo}    cInfo - Information pertaining to counter behavior.
  * @param    {number} wait - Current summed time to wait.
  */
-const adjustCount = (ref, cInfo, wait) => {
-  ref.count -= (wait / cInfo.intvl)
-  if (ref.count < 0) ref.count = 0
-  ref.time += wait
+const adjustPrivateCount = (loc, cInfo, wait) => {
+  loc.count -= (wait / cInfo.intvl)
+  if (loc.count < 0) loc.count = 0
+  loc.time += wait
 }
 
-/**
- * Calculates the additional wait in response to rate limit violations for private methods. Should not be necessary unless excessive calling with multiple keys (or by IP) has occurred. Multiplies the {@link API~RateLimits~KeyHashCounter}.triggerCt by the {@link Settings~Config}.rateLimiter.minViolationRetry.
- *
- * @function API~RateLimits~calcTriggerWait
- * @param    {Settings~Config} settings - Current settings configuration.
- * @param    {API~RateLimits~KeyHashCounter} ref - Reference to key-specific counter object.
- * @returns  {number} Time to wait.
- */
-const calcPrivateTriggerWait = (settings, ref) => {
-  ref.triggerCt = !isNaN(ref.triggerCt) ? ref.triggerCt + 1 : 0
-  return ref.triggerCt * settings.rateLimiter.minViolationRetry
+const calcPrivateViolationWait = (settings, violated, loc, currentTime) => {
+  if (
+    !loc.hasOwnProperty('violations') ||
+    loc.violations.constructor !== Array
+  ) {
+    loc.violations = []
+  }
+  loc.violations = loc.violations.filter(t => t > currentTime - 60000)
+  if (violated) {
+    loc.violations.push(currentTime)
+    return (
+      settings.rateLimiter.minViolationRetry *
+      (1 + (0.1 * loc.violations.length))
+    )
+  }
+  return 0
 }
 
 /**
@@ -110,7 +115,7 @@ const calcPrivateTriggerWait = (settings, ref) => {
  */
 const waitPrivate = async (settings, method, violated) => {
   const counter = await readFileJSON('/cache/counter.json', {})
-  const ref = getPrivateRef(settings, counter)
+  const loc = getPrivateLoc(settings, counter)
   const cInfo = {
     limit: settings.rateLimiter.getCounterLimit(settings.tier),
     intvl: settings.rateLimiter.getCounterIntvl(settings.tier),
@@ -118,19 +123,15 @@ const waitPrivate = async (settings, method, violated) => {
   }
   const currentTime = Date.now()
   let wait = 0
-  wait += calcPrivateWait(ref, cInfo, currentTime)
+  wait += calcPrivateWait(loc, cInfo, currentTime)
   if (
     settings.orderMethods.includes(method) &&
     settings.rateLimiter.minOrderFrequency > 0
   ) {
-    wait += calcOrderWait(settings, ref, currentTime)
+    wait += calcOrderWait(settings, loc, currentTime)
   }
-  adjustCount(ref, cInfo, wait)
-  if (violated) {
-    wait += calcPrivateTriggerWait(settings, ref)
-  } else {
-    ref.triggerCt = 0
-  }
+  adjustPrivateCount(loc, cInfo, wait)
+  wait += calcPrivateViolationWait(settings, violated, loc, currentTime)
   await writeFileJSON('/cache/counter.json', counter)
   wait -= Date.now() - currentTime
   if (wait < 0) wait = 0
@@ -174,7 +175,7 @@ const calcPublicWait = (settings, violated, counter, type) => {
     loc.violations = []
   }
 
-  loc.violations = loc.violations.filter(v => v > currentTime - 60000)
+  loc.violations = loc.violations.filter(t => t > currentTime - 60000)
 
   const elapsed = currentTime - loc.last
 

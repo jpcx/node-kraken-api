@@ -72,7 +72,9 @@ const handleResponse = (settings, res) => new Promise(
  * @param    {number}          [retryCt=0]       - Number of times makeRequest has been called recursively during a call in response to an error.
  * @returns  {Promise}         Resolves after successful operation and rejects upon general errors.
  */
-const makeRequest = (settings, params, violated = false, retryCt = 0) => (
+const makeRequest = (
+  settings, params, violated = false, retryCt = 0
+) => (
   new Promise((resolve, reject) => {
     let erroredOut = false
     /**
@@ -141,7 +143,6 @@ const execute = async (state) => {
           state.params.delete(serialParams)
         }
       })
-      await ms(state.settings.minCallFrequency)
     }
   }
 }
