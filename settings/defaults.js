@@ -47,6 +47,7 @@ module.exports = ({
     numbers: true,
     dates: true
   },
+  minCallFrequency: 400,
   rateLimiter: {
     public: true,
     private: true,

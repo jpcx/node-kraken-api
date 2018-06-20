@@ -13,18 +13,18 @@ const normalize = require('../../tools/normalize.js')
  * Calculates average wait time based on the current open sync requests.
  *
  * @function API~Syncing~calcAverageWait
- * @param    {API~Syncing~Info} info - Object containing runtime data.
+ * @param    {API~Syncing~State} state - Object containing runtime data.
  * @returns  {number}           Average wait time.
  */
-const calcAveragePrivateWait = (info, starttm) => {
+const calcAveragePrivateWait = (state, starttm) => {
   let sum = 0
   let count = 0
-  const inc = info.settings.rateLimiter.getIncrementAmt
-  const int = info.settings.rateLimiter.getCounterIntvl
-  if (info.requests.has('private')) {
-    for (let req of info.requests.get('private')) {
+  const inc = state.settings.rateLimiter.getIncrementAmt
+  const int = state.settings.rateLimiter.getCounterIntvl
+  if (state.internals.has('private')) {
+    for (let req of state.internals.get('private')) {
       const params = JSON.parse(req[0])
-      sum += (inc(params.method) * int(info.tier))
+      sum += (inc(params.method) * int(state.tier))
       count++
     }
     let wait = (sum / count) - (Date.now() - starttm)
@@ -35,15 +35,15 @@ const calcAveragePrivateWait = (info, starttm) => {
   }
 }
 
-const getCategory = (info, method) => method === 'OHLC'
+const getCategory = (state, method) => method === 'OHLC'
   ? 'ohlc'
   : method === 'Trades'
     ? 'trades'
-    : info.settings.pubMethods.includes(method)
+    : state.settings.pubMethods.includes(method)
       ? 'other'
       : 'private'
 
-const verifyParams = (info, category, req) => {
+const verifyParams = (state, category, req) => {
   for (let intl of req[1]) {
     // handle all internals associated with params
     let params = normalize({
@@ -51,7 +51,7 @@ const verifyParams = (info, category, req) => {
       options: intl.instance.options
     })
 
-    const catMap = info.requests.get(category)
+    const catMap = state.internals.get(category)
     const reqSet = catMap.get(req[0])
 
     if (intl.state === 'closed') {
@@ -61,7 +61,7 @@ const verifyParams = (info, category, req) => {
       if (reqSet.size === 0) {
         catMap.delete(req[0])
         if (catMap.size === 0) {
-          info.requests.delete(category)
+          state.internals.delete(category)
         }
       }
     } else if (JSON.stringify(params) !== req[0]) {
@@ -70,8 +70,8 @@ const verifyParams = (info, category, req) => {
       if (params.method !== intl.params.method) {
         // method has been changed
         if (
-          info.settings.pubMethods.includes(params.method) ||
-          info.settings.privMethods.includes(params.method)
+          state.settings.pubMethods.includes(params.method) ||
+          state.settings.privMethods.includes(params.method)
         ) {
           // method is valid
           intl.params.method = params.method
@@ -107,14 +107,14 @@ const verifyParams = (info, category, req) => {
         const serialParams = JSON.stringify(params)
         const newCat = getCategory(intl.params.method)
         if (newCat !== category) {
-          if (!info.requests.has(newCat)) {
-            info.requests.set(newCat, new Map())
-            info.requests.get(newCat).set(serialParams, new Set([intl]))
+          if (!state.internals.has(newCat)) {
+            state.internals.set(newCat, new Map())
+            state.internals.get(newCat).set(serialParams, new Set([intl]))
           } else {
-            if (!info.requests.get(newCat).has(serialParams)) {
-              info.requests.get(newCat).set(serialParams, new Set([intl]))
+            if (!state.internals.get(newCat).has(serialParams)) {
+              state.internals.get(newCat).set(serialParams, new Set([intl]))
             } else {
-              info.requests.get(newCat).get(serialParams).add(intl)
+              state.internals.get(newCat).get(serialParams).add(intl)
             }
           }
         } else {
@@ -128,7 +128,7 @@ const verifyParams = (info, category, req) => {
         if (reqSet.size === 0) {
           catMap.delete(req[0])
           if (catMap.size === 0) {
-            info.requests.delete(category)
+            state.internals.delete(category)
           }
         }
       }
@@ -140,44 +140,54 @@ const verifyParams = (info, category, req) => {
  * Handles request queue and sends data to associated {@link API~Syncing~EventListener}s.
  *
  * @function API~Syncing~handleRequests
- * @param    {API~Syncing~Info} info - Object containing runtime data.
+ * @param    {API~Syncing~State} state - Object containing runtime data.
  * @returns  {Promise}          Promise which resolves when there are no more requests to process and rejects when an error has been thrown.
  * @throws   Will throw any error which does not result directly from a call.
  */
-const handleRequests = async (info, category) => {
+const handleRequests = async (state, category) => {
   try {
-    if (!info.requesting[category]) {
-      info.requesting[category] = true
+    if (!state.gates.has(category)) {
+      state.gates.add(category)
       while (
-        info.requests.has(category) &&
-        info.requests.get(category).size > 0
+        state.internals.has(category) &&
+        state.internals.get(category).size > 0
       ) {
         // loop continuously
-        for (let req of info.requests.get(category)) {
+        for (let req of state.internals.get(category)) {
           // handle all param sets
           const starttm = Date.now()
-          verifyParams(info, category, req)
+          verifyParams(state, category, req)
           if (
-            info.requests.has(category) &&
-            info.requests.get(category).has(req[0])
+            state.internals.has(category) &&
+            state.internals.get(category).has(req[0])
           ) {
             const params = JSON.parse(req[0])
-            const data = await info.call(params.method, params.options)
-            for (let intl of req[1]) {
-              if (intl.state === 'init') intl.state = 'open'
-              intl.instance.state = 'open'
-              Object.keys(intl.data).forEach(key => delete intl.data[key])
-              Object.keys(data).forEach(key => (intl.data[key] = data[key]))
-              intl.instance.time = Date.now()
-              intl.listeners.forEach(cb => cb(null, data, intl.instance))
+            let data
+            try {
+              data = await state.call(params.method, params.options)
+              for (let intl of req[1]) {
+                if (intl.state === 'init') intl.state = 'open'
+                intl.instance.state = 'open'
+                Object.keys(intl.data).forEach(key => delete intl.data[key])
+                Object.keys(data).forEach(key => (intl.data[key] = data[key]))
+                intl.instance.time = Date.now()
+                intl.listeners.forEach(cb => cb(null, data, intl.instance))
+              }
+            } catch (err) {
+              for (let intl of req[1]) {
+                if (intl.state === 'init') intl.state = 'open'
+                intl.instance.state = 'open'
+                intl.listeners.forEach(cb => cb(err, null, intl.instance))
+              }
             }
             if (category === 'private') {
-              await ms(calcAveragePrivateWait(info, starttm))
+              console.log(calcAveragePrivateWait(state, starttm))
+              await ms(calcAveragePrivateWait(state, starttm))
             }
           }
         }
       }
-      info.requesting[category] = false
+      state.gates.delete(category)
     }
   } catch (err) { throw err }
 }
@@ -194,7 +204,7 @@ module.exports = (settings, call) => {
   /**
    * Contains runtime information to be passed around within sync operations.
    *
-   * @typedef  {Object} API~Syncing~Info
+   * @typedef  {Object} API~Syncing~State
    * @property {Kraken~Tier}          tier        - Kraken verification tier.
    * @property {Settings~RateLimiter} rateLimiter - RateLimiter configuration.
    * @property {API~Calls~Call}       call        - Stateful call function.
@@ -202,16 +212,11 @@ module.exports = (settings, call) => {
    * @property {API~Syncing~OpenRequests}    open    - Set of all open requests.
    * @property {API~Syncing~ClosingRequests} closing - Set of all requests which should be closed.
    */
-  const info = {
+  const state = {
     settings,
     call,
-    requesting: {
-      ohlc: false,
-      trades: false,
-      other: false,
-      private: false
-    },
-    requests: new Map()
+    internals: new Map(),
+    gates: new Set()
   }
   /**
    * Stateful function which creates sync instances.
@@ -282,12 +287,14 @@ module.exports = (settings, call) => {
        * @returns  {boolean}  True if opened or already open.
        */
       open: () => {
-        const category = getCategory(info, internal.params.method)
+        const category = getCategory(state, internal.params.method)
         const serialParams = JSON.stringify(normalize(internal.params))
 
-        if (!info.requests.has(category)) info.requests.set(category, new Map())
+        if (!state.internals.has(category)) {
+          state.internals.set(category, new Map())
+        }
 
-        const loc = info.requests.get(category)
+        const loc = state.internals.get(category)
 
         if (!loc.has(serialParams)) {
           loc.set(serialParams, new Set([internal]))
@@ -297,7 +304,7 @@ module.exports = (settings, call) => {
 
         internal.state = 'open'
 
-        handleRequests(info, category).catch(err => {
+        handleRequests(state, category).catch(err => {
           internal.listeners.forEach(cb => { cb(err, null, instance) })
         })
 
@@ -363,7 +370,7 @@ module.exports = (settings, call) => {
           return opPromise
         }
       },
-      debug: { info }
+      debug: { state }
     }
 
     for (let prop in instanceStaticTemplate) {

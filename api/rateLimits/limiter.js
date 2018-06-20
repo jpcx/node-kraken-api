@@ -108,7 +108,7 @@ const calcPrivateTriggerWait = (settings, ref) => {
  * @param    {boolean}         triggered - Whether or not limiter was called automatically after a rate limit violation.
  * @returns  {Promise} - Resolves after waiting has completed; rejects with any internal errors.
  */
-const waitPrivate = async (settings, method, triggered) => {
+const waitPrivate = async (settings, method, violated) => {
   const counter = await readFileJSON('/cache/counter.json', {})
   const ref = getPrivateRef(settings, counter)
   const cInfo = {
@@ -126,7 +126,7 @@ const waitPrivate = async (settings, method, triggered) => {
     wait += calcOrderWait(settings, ref, currentTime)
   }
   adjustCount(ref, cInfo, wait)
-  if (triggered) {
+  if (violated) {
     wait += calcPrivateTriggerWait(settings, ref)
   } else {
     ref.triggerCt = 0
@@ -147,7 +147,7 @@ const waitPrivate = async (settings, method, triggered) => {
  * @param    {('trades'|'ohlc'|'other')} type    - Type of method; 'trades' for 'Trades', 'ohlc' for 'OHLC', and 'other' for anything else.
  * @returns  {number} Time to wait.
  */
-const calcPublicWait = (settings, triggered, counter, type) => {
+const calcPublicWait = (settings, violated, counter, type) => {
   const currentTime = Date.now()
   if (
     !counter.public.hasOwnProperty(type) ||
@@ -178,7 +178,7 @@ const calcPublicWait = (settings, triggered, counter, type) => {
 
   const elapsed = currentTime - loc.last
 
-  if (triggered) {
+  if (violated) {
     loc.violations.push(currentTime)
     if (!loc.freq) loc.freq = elapsed
     else loc.freq *= 1 + (0.05 * (loc.violations.length))
@@ -188,7 +188,7 @@ const calcPublicWait = (settings, triggered, counter, type) => {
 
   loc.last = currentTime
 
-  let wait = triggered ? settings.rateLimiter.minViolationRetry : loc.freq
+  let wait = violated ? settings.rateLimiter.minViolationRetry : loc.freq
 
   wait -= elapsed
   if (wait < 0) wait = 0
@@ -201,20 +201,20 @@ const calcPublicWait = (settings, triggered, counter, type) => {
  * @function API~RateLimits~waitPublic
  * @param    {Settings~Config} settings  - Current settings configuration.
  * @param    {Kraken~Method}   method    - Current Kraken method.
- * @param    {boolean}         triggered - Whether or not the most recent response was a rate limit violation.
+ * @param    {boolean}         violated  - Whether or not the most recent response was a rate limit violation.
  * @returns  {Promise} Resolves when waiting has completed.
  */
-const waitPublic = async (settings, method, triggered) => {
+const waitPublic = async (settings, method, violated) => {
   const counter = await readFileJSON('/cache/counter.json', {})
   if (!counter.public) counter.public = {}
   let wait = 0
   const currentTime = Date.now()
   if (method === 'Trades') {
-    wait += calcPublicWait(settings, triggered, counter, 'trades')
+    wait += calcPublicWait(settings, violated, counter, 'trades')
   } else if (method === 'OHLC') {
-    wait += calcPublicWait(settings, triggered, counter, 'ohlc')
+    wait += calcPublicWait(settings, violated, counter, 'ohlc')
   } else {
-    wait += calcPublicWait(settings, triggered, counter, 'other')
+    wait += calcPublicWait(settings, violated, counter, 'other')
   }
   await writeFileJSON('/cache/counter.json', counter)
   wait -= Date.now() - currentTime
@@ -228,21 +228,23 @@ const waitPublic = async (settings, method, triggered) => {
  * @module  API/RateLimits/limiter
  * @param   {Settings~Config} settings  - Current execution settings.
  * @param   {Kraken~Method}   method    - Method being called.
- * @param   {boolean}         triggered - Whether or not the immediately preceeding call response was a rate-limit violation.
+ * @param   {boolean}         violated  - Whether or not the immediately preceeding call response was a rate-limit violation.
  * @returns {Promise} Resolves after adequate wait time (or immediately).
  */
-module.exports = (settings, method, triggered = false) => {
-  if (settings.pubMethods.includes(method)) {
-    if (settings.rateLimiter.public) {
-      return waitPublic(settings, method, triggered)
+module.exports = (settings, method, violated = false) => new Promise(
+  (resolve, reject) => {
+    if (settings.pubMethods.includes(method)) {
+      if (settings.rateLimiter.public) {
+        waitPublic(settings, method, violated)
+          .then(resolve)
+          .catch(reject)
+      } else { resolve() }
     } else {
-      return new Promise(resolve => resolve())
-    }
-  } else {
-    if (settings.rateLimiter.private) {
-      return waitPrivate(settings, method, triggered)
-    } else {
-      return new Promise(resolve => resolve())
+      if (settings.rateLimiter.private) {
+        waitPrivate(settings, method, violated)
+          .then(resolve)
+          .catch(reject)
+      } else { resolve() }
     }
   }
-}
+)

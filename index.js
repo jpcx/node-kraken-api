@@ -19,6 +19,7 @@ const loadSync = require('./api/syncing/loadSync.js')
  */
 module.exports = (settings = {}) => {
   settings = { ...defaults, ...settings }
+  Object.freeze(settings)
   const call = loadCall(settings)
   const sync = loadSync(settings, call)
   return { call, sync }
