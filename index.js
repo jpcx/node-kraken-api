@@ -9,6 +9,7 @@
 const defaults = require('./settings/defaults.js')
 const loadCall = require('./api/calls/loadCall.js')
 const loadSync = require('./api/syncing/loadSync.js')
+const loadLimiter = require('./api/rateLimits/loadLimiter.js')
 
 /**
  * Provides an interface to the Kraken cryptocurrency exchange.
@@ -20,7 +21,8 @@ const loadSync = require('./api/syncing/loadSync.js')
 module.exports = (settings = {}) => {
   settings = { ...defaults, ...settings }
   Object.freeze(settings)
-  const call = loadCall(settings)
-  const sync = loadSync(settings, call)
+  const limiter = loadLimiter(settings)
+  const call = loadCall(settings, limiter)
+  const sync = loadSync(settings, limiter, call)
   return { call, sync }
 }

@@ -9,19 +9,8 @@
 const https = require('https')
 const parseNested = require('../../tools/parseNested.js')
 const normalize = require('../../tools/normalize.js')
-const ms = require('../../tools/ms.js')
 const genRequestData = require('./genRequestData.js')
-const limiter = require('../rateLimits/limiter.js')
 
-/**
- * Handles request responses.
- *
- * @function API~Calls~handleResponse
- * @param    {Settings~Config} settings - Instance settings.
- * @param    {Object}          res      - Provides an 'on' function which emits 'data' and 'end' events while receiving data chunks from request.
- * @param    {Function}        resolve  - Operational promise resolve function.
- * @param    {Function}        onError  - Callback function for makeRequest that handles errors.
- */
 const handleResponse = (settings, res) => new Promise(
   (resolve, reject) => {
     let body = ''
@@ -59,168 +48,122 @@ const handleResponse = (settings, res) => new Promise(
   }
 )
 
-/**
- * Makes a request to the Kraken servers.
- *
- * @function API~Calls~makeRequest
- * @param    {Settings~Config} settings - Instance settings.
- * @param    {Kraken~Method}   method   - Method being called.
- * @param    {Kraken~Options}  options  - Method-specific options.
- * @param    {Function}        resolve  - Operational promise resolve function.
- * @param    {Function}        reject   - Operational promise reject function.
- * @param    {boolean}         [triggered=false] - Whether or not makeRequest was called recursively during a call in response to a rate limit violation.
- * @param    {number}          [retryCt=0]       - Number of times makeRequest has been called recursively during a call in response to an error.
- * @returns  {Promise}         Resolves after successful operation and rejects upon general errors.
- */
-const makeRequest = (
-  settings, params, violated = false, retryCt = 0
-) => (
-  new Promise((resolve, reject) => {
-    let erroredOut = false
-    /**
-   * Error handler for call errors. Recursively calls makeRequest again if settings and conditions permit; otherwise rejects the main operational promise.
-   *
-   * @function API~Calls~onError
-   * @param    {Error} err - Any error encountered during call.
-   */
-    const onError = err => {
-      if (!erroredOut) {
-        erroredOut = true
-        if (typeof err === 'string') err = Error(err)
-        if (err.message.match(/Rate limit exceeded/g) !== null) {
-          if (settings.rateLimiter.minViolationRetry >= 0) {
-            resolve(makeRequest(settings, params, true, retryCt + 1))
-          } else {
-            reject(err)
-          }
-        } else if (
-          settings.retryCt > 0 &&
-          retryCt < settings.retryCt
-        ) {
-          resolve(makeRequest(settings, params, false, retryCt + 1))
-        } else {
-          reject(err)
-        }
-      }
-    }
-    limiter(settings, params.method, violated).then(
-      () => {
-        const reqData = genRequestData(settings, params)
-        const req = https.request(
-          reqData.options,
-          res => handleResponse(settings, res).then(resolve).catch(onError)
-        )
-        req.on('error', e => {
-          req.abort()
-          onError(e)
-        })
-        req.setTimeout(settings.timeout, () => {
-          req.abort()
-          onError(Error('ETIMEDOUT'))
-        })
-        req.write(reqData.post)
-        req.end()
-      }
-    ).catch(onError)
-  })
+const makeRequest = (settings, params) => new Promise(
+  (resolve, reject) => {
+    try {
+      const reqData = genRequestData(settings, params)
+      const req = https.request(
+        reqData.options,
+        res => handleResponse(settings, res).then(resolve).catch(reject)
+      )
+      req.on('error', e => {
+        req.abort()
+        reject(e)
+      })
+      req.setTimeout(settings.timeout, () => {
+        req.abort()
+        reject(Error('ETIMEDOUT'))
+      })
+      req.write(reqData.post)
+      req.end()
+    } catch (err) { reject(err) }
+  }
 )
 
-const execute = async (state) => {
-  while (state.listeners.size > 0) {
-    for (let entry of state.listeners) {
-      const serialParams = entry[0]
-      const params = state.params.get(serialParams).params
-      const callbacks = new Set([...entry[1]])
-      makeRequest(state.settings, params)
-        .then(data => { callbacks.forEach(cb => cb(null, data)) })
-        .catch(err => { callbacks.forEach(cb => cb(err, null)) })
-      callbacks.forEach(cb => {
-        state.listeners.get(serialParams).delete(cb)
-        if (state.listeners.get(serialParams).size === 0) {
-          state.listeners.delete(serialParams)
+const processCalls = async (settings, type, serials, paramMap, limiter) => {
+  while (serials.size > 0) {
+    for (let serial of serials.keys()) {
+      const params = { ...paramMap.get(serial) }
+      await limiter.attempt(type)
+      if (!serials.has(serial) || serials.get(serial).size === 0) {
+        limiter.addPass(type)
+        continue
+      }
+      const group = new Set([...serials.get(serial)])
+      makeRequest(settings, params).then(
+        data => {
+          limiter.addPass(type)
+          group.forEach(listener => listener(null, data))
         }
-        if (--state.params.get(serialParams).count === 0) {
-          state.params.delete(serialParams)
+      ).catch(
+        err => {
+          if (err.message.match(/rate limit/gi)) {
+            limiter.addFail(type)
+          } else limiter.addPass(type)
+
+          group.forEach(listener => listener(err, null))
         }
-      })
+      )
+      group.forEach(listener => serials.get(serial).delete(listener))
+      if (serials.get(serial).size === 0) {
+        serials.delete(serial)
+        paramMap.delete(serial)
+      }
     }
   }
 }
 
-/**
- * Loads settings and returns a function which can be used to make calls to the Kraken servers.
- *
- * @module   API/Calls/loadCall
- * @param    {Settings~Config}  settings - Instance settings.
- * @returns  {API~Calls~Call}   Calling function.
- */
-module.exports = settings => {
+const queueCall = (settings, state, args, topListener, retryCt = 0) => {
+  const thisListener = (err, data) => {
+    if (err) {
+      if (settings.retryCt > retryCt) {
+        queueCall(settings, state, args, topListener, ++retryCt)
+      } else {
+        topListener(err, null)
+      }
+    } else {
+      topListener(null, data)
+    }
+  }
+  const params = { method: args.method, options: { ...args.options } }
+  const serial = JSON.stringify(normalize(params))
+  const type = state.limiter.getType(params.method)
+  state.fromSerial.set(serial, params)
+  if (!state.threads.has(type)) {
+    state.threads.set(type, new Map([[serial, new Set([thisListener])]]))
+  } else if (!state.threads.get(type).has(serial)) {
+    state.threads.get(type).set(serial, new Set([thisListener]))
+  } else {
+    state.threads.get(type).get(serial).add(thisListener)
+  }
+  if (state.threads.get(type).size === 1) {
+    const serials = state.threads.get(type)
+    processCalls(settings, type, serials, state.fromSerial, state.limiter)
+      .then(() => state.threads.delete(type))
+      .catch(err => thisListener(err, null))
+  }
+}
+
+const parseArgs = (settings, method, options, cb) => {
+  const isPub = method => settings.pubMethods.includes(method)
+  const isPriv = method => settings.privMethods.includes(method)
+
+  if (!isPub(method) && !isPriv(method)) throw Error('Invalid method')
+  if (options instanceof Function) cb = options
+  if (!options || options.constructor !== Object) options = {}
+
+  return { method, options, cb }
+}
+
+module.exports = (settings, limiter) => {
   const state = {
     settings,
-    params: new Map(),
-    listeners: new Map(),
-    gates: new Set()
+    limiter,
+    threads: new Map(),
+    fromSerial: new Map()
   }
-  /**
-   * Executes a call to the kraken servers using closure-loaded settings.
-   *
-   * @function API~Calls~Call
-   * @param    {Kraken~Method}  method    - Method being called.
-   * @param    {Kraken~Options} [options] - Method-specific options.
-   * @param    {API~Callback}   [cb]      - Callback for errors and data.
-   * @returns  {(Promise|boolean)}        Promise which resolves with response data and rejects with errors (if callback is not supplied); true if callback registered successfully.
-   * @throws   Throws 'Invalid method' if method is not found within the valid method arrays.
-   */
-  return (method, options = {}, cb) => {
-    if (
-      !settings.pubMethods.includes(method) &&
-      !settings.privMethods.includes(method)
-    ) {
-      throw Error('Invalid method')
-    }
 
-    if (options instanceof Function) {
-      cb = options
-      options = {}
-    }
-
-    if (options.constructor !== Object) options = {}
-
-    const params = { method, options: { ...options } }
-    const serialParams = JSON.stringify(normalize(params))
-
-    if (!state.params.has(serialParams)) {
-      state.params.set(serialParams, { params, count: 1 })
-    } else {
-      state.params.get(serialParams).count++
-    }
+  return (method, options, cb) => {
+    const args = parseArgs(settings, method, options, cb)
 
     const op = new Promise(
       (resolve, reject) => {
-        const listener = (err, data) => {
-          if (err) reject(err)
-          else resolve(data)
-        }
-
-        if (!state.listeners.has(serialParams)) {
-          state.listeners.set(serialParams, new Set([listener]))
-        } else {
-          state.listeners.get(serialParams).add(listener)
-        }
-
-        if (!state.gates.has('executing')) {
-          state.gates.add('executing')
-          execute(state)
-            .then(() => state.gates.delete('executing'))
-            .catch(listener)
-        }
+        const topListener = (err, data) => err ? reject(err) : resolve(data)
+        queueCall(settings, state, args, topListener)
       }
     )
 
     if (!(cb instanceof Function)) return op
-    else {
-      op.then(data => cb(null, data)).catch(err => cb(err, null))
-      return true
-    }
+    else op.then(data => cb(null, data)).catch(err => cb(err, null))
   }
 }

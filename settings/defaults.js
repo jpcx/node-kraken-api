@@ -42,25 +42,14 @@ module.exports = ({
     'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus',
     'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel'
   ],
-  orderMethods: [ 'AddOrder', 'CancelOrder' ],
   parse: {
     numbers: true,
     dates: true
   },
   minCallFrequency: 400,
   rateLimiter: {
-    public: true,
-    private: true,
+    use: true,
     minOrderFrequency: 1000,
-    minViolationRetry: 4500,
-    getCounterLimit: tier => tier >= 3 ? 20 : 15,
-    getCounterIntvl: tier => tier === 4 ? 1000 : tier === 3 ? 2000 : 3000,
-    getIncrementAmt: method => (
-      method === 'Ledgers' || method === 'TradesHistory'
-        ? 2
-        : method === 'AddOrder' || method === 'CancelOrder' || method === 'Time' || method === 'Assets' || method === 'AssetPairs' || method === 'Ticker' || method === 'OHLC' || method === 'Depth' || method === 'Trades' || method === 'Spread'
-          ? 0
-          : 1
-    )
+    minViolationRetry: 4500
   }
 })

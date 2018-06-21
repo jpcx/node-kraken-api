@@ -12,19 +12,17 @@ const normalize = require('../../tools/normalize.js')
 /**
  * Calculates average wait time based on the current open sync requests.
  *
- * @function API~Syncing~calcAvgPrivateWait
+ * @function API~Syncing~calcAvgAuthWait
  * @param    {API~Syncing~State} state - Object containing runtime data.
  * @returns  {number}           Average wait time.
  */
-const calcAvgPrivateWait = (state, starttm) => {
+const calcAvgAuthWait = (state, starttm) => {
   let sum = 0
   let count = 0
-  const inc = state.settings.rateLimiter.getIncrementAmt
-  const int = state.settings.rateLimiter.getCounterIntvl
-  if (state.internals.has('private')) {
-    for (let req of state.internals.get('private')) {
+  if (state.internals.has('auth')) {
+    for (let req of state.internals.get('auth')) {
       const params = JSON.parse(req[0])
-      sum += (inc(params.method) * int(state.tier))
+      sum += state.limiter.getAuthRegenFreq(params.method, state.tier)
       count++
     }
     let wait = (sum / count) - (Date.now() - starttm)
@@ -35,15 +33,7 @@ const calcAvgPrivateWait = (state, starttm) => {
   }
 }
 
-const getCategory = (state, method) => method === 'OHLC'
-  ? 'ohlc'
-  : method === 'Trades'
-    ? 'trades'
-    : state.settings.pubMethods.includes(method)
-      ? 'other'
-      : 'private'
-
-const verifyParams = (state, category, req) => {
+const verifyParams = (state, type, req) => {
   for (let intl of req[1]) {
     // handle all internals associated with params
     let params = normalize({
@@ -51,17 +41,17 @@ const verifyParams = (state, category, req) => {
       options: intl.instance.options
     })
 
-    const catMap = state.internals.get(category)
-    const reqSet = catMap.get(req[0])
+    const typeMap = state.internals.get(type)
+    const reqSet = typeMap.get(req[0])
 
     if (intl.state === 'closed') {
       // instance has been closed with the close() function
       intl.instance.state = 'closed'
       reqSet.delete(intl)
       if (reqSet.size === 0) {
-        catMap.delete(req[0])
-        if (catMap.size === 0) {
-          state.internals.delete(category)
+        typeMap.delete(req[0])
+        if (typeMap.size === 0) {
+          state.internals.delete(type)
         }
       }
     } else if (JSON.stringify(params) !== req[0]) {
@@ -105,32 +95,32 @@ const verifyParams = (state, category, req) => {
       if (changed) {
         // re-assign internal
         const serialParams = JSON.stringify(params)
-        const newCat = getCategory(intl.params.method)
-        if (newCat !== category) {
-          // category has changed
-          if (!state.internals.has(newCat)) {
-            state.internals.set(newCat, new Map())
-            state.internals.get(newCat).set(serialParams, new Set([intl]))
+        const newType = state.limiter.getType(intl.params.method)
+        if (newType !== type) {
+          // type has changed
+          if (!state.internals.has(newType)) {
+            state.internals.set(newType, new Map())
+            state.internals.get(newType).set(serialParams, new Set([intl]))
           } else {
-            if (!state.internals.get(newCat).has(serialParams)) {
-              state.internals.get(newCat).set(serialParams, new Set([intl]))
+            if (!state.internals.get(newType).has(serialParams)) {
+              state.internals.get(newType).set(serialParams, new Set([intl]))
             } else {
-              state.internals.get(newCat).get(serialParams).add(intl)
+              state.internals.get(newType).get(serialParams).add(intl)
             }
           }
         } else {
           // params have changed
-          if (!catMap.has(serialParams)) {
-            catMap.set(serialParams, new Set([intl]))
+          if (!typeMap.has(serialParams)) {
+            typeMap.set(serialParams, new Set([intl]))
           } else {
-            catMap.get(serialParams).add(intl)
+            typeMap.get(serialParams).add(intl)
           }
         }
         reqSet.delete(intl)
         if (reqSet.size === 0) {
-          catMap.delete(req[0])
-          if (catMap.size === 0) {
-            state.internals.delete(category)
+          typeMap.delete(req[0])
+          if (typeMap.size === 0) {
+            state.internals.delete(type)
           }
         }
       }
@@ -146,19 +136,19 @@ const verifyParams = (state, category, req) => {
  * @returns  {Promise}          Promise which resolves when there are no more requests to process and rejects when an error has been thrown.
  * @throws   Will throw any error which does not result directly from a call.
  */
-const handleRequests = async (state, category) => {
+const handleRequests = async (state, type) => {
   while (
-    state.internals.has(category) &&
-    state.internals.get(category).size > 0
+    state.internals.has(type) &&
+    state.internals.get(type).size > 0
   ) {
     // loop continuously
-    for (let req of state.internals.get(category)) {
+    for (let req of state.internals.get(type)) {
       // handle all param sets
       const starttm = Date.now()
-      verifyParams(state, category, req)
+      verifyParams(state, type, req)
       if (
-        !state.internals.has(category) ||
-        !state.internals.get(category).has(req[0])
+        !state.internals.has(type) ||
+        !state.internals.get(type).has(req[0])
       ) {
         continue
       }
@@ -181,8 +171,8 @@ const handleRequests = async (state, category) => {
           intl.listeners.forEach(cb => cb(err, null, intl.instance))
         }
       }
-      if (category === 'private') {
-        await ms(calcAvgPrivateWait(state, starttm))
+      if (type === 'auth') {
+        await ms(calcAvgAuthWait(state, starttm))
       }
     }
   }
@@ -196,7 +186,7 @@ const handleRequests = async (state, category) => {
  * @param   {API~Calls~Call}       call        - Stateful call function.
  * @returns {API~Syncing~Sync}     Function which creates sync instances.
  */
-module.exports = (settings, call) => {
+module.exports = (settings, limiter, call) => {
   /**
    * Contains runtime information to be passed around within sync operations.
    *
@@ -210,6 +200,7 @@ module.exports = (settings, call) => {
    */
   const state = {
     settings,
+    limiter,
     call,
     internals: new Map(),
     gates: new Set()
@@ -283,14 +274,14 @@ module.exports = (settings, call) => {
        * @returns  {boolean}  True if opened or already open.
        */
       open: () => {
-        const category = getCategory(state, internal.params.method)
+        const type = limiter.getType(internal.params.method)
         const serialParams = JSON.stringify(normalize(internal.params))
 
-        if (!state.internals.has(category)) {
-          state.internals.set(category, new Map())
+        if (!state.internals.has(type)) {
+          state.internals.set(type, new Map())
         }
 
-        const loc = state.internals.get(category)
+        const loc = state.internals.get(type)
 
         if (!loc.has(serialParams)) {
           loc.set(serialParams, new Set([internal]))
@@ -298,14 +289,14 @@ module.exports = (settings, call) => {
 
         internal.state = 'open'
 
-        if (!state.gates.has(category)) {
-          state.gates.add(category)
-          handleRequests(state, category).then(
-            () => state.gates.delete(category)
+        if (!state.gates.has(type)) {
+          state.gates.add(type)
+          handleRequests(state, type).then(
+            () => state.gates.delete(type)
           ).catch(
             err => {
-              if (state.internals.has(category)) {
-                state.internals.get(category).forEach(entry => {
+              if (state.internals.has(type)) {
+                state.internals.get(type).forEach(entry => {
                   entry[1].forEach(internal => {
                     internal.listeners.forEach(cb => {
                       cb(err, null, internal.instance)
