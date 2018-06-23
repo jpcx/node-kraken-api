@@ -111,7 +111,7 @@
  */
 
 /**
- * Maps serial params to sets of listeners associated with those params.
+ * Maps serial params to sets of associated listeners.
  *
  * @typedef {Map<API~Calls~SerialParams,API~Calls~ListenerSet>} API~Calls~Thread
  */

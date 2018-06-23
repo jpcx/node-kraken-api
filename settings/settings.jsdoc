@@ -24,21 +24,21 @@
  * @property {Kraken~PublicMethods}  [pubMethods=[ 'Time', 'Assets','AssetPairs', 'Ticker','OHLC', 'Depth', 'Trades', 'Spread' ]] - API methods available for public users.
  * @property {Kraken~PrivateMethods} [privMethods=[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' ]] - API methods available for authenticated users.
  * @property {Tools~ParseNestedConfig}        [parse={ numbers: true, dates: true }] - Response parser settings.
- * @property {Settings~RateLimiter}  [limiter={ baseFreq: 500, minFreq: 250, pileUpWindow: 60000, pileUpThreshold: 1.1, pileUpResetFreq: 1000, pileUpMultiplier: 1.05, violationResetFreq: 4500, violationMultiplier: 1.1, anyPassDecay: 0.95, specificPassDecay: 0.95 }] - Settings for call frequency limitations.
+ * @property {Settings~RateLimiter}  [limiter={ baseIntvl: 500, minIntvl: 250, pileUpWindow: 60000, pileUpThreshold: 5, pileUpResetIntvl: 1000, pileUpMultiplier: 1.05, violationResetIntvl: 4500, violationMultiplier: 1.1, anyPassDecay: 0.95, specificPassDecay: 0.95 }] - Settings for call interval limitations.
  */
 
 /**
- * Limits call frequency. Call frequency is split into two main categories: all call frequency and specific call frequency. All call frequency determines the request rate for any kind of call. Specific call frequency is split into several categories of distinct server-side rate-limiting behavior.
+ * Limits calls frequency. Frequencies are split into two main categories: all calls and specific calls. All calls frequency determines the request rate for any kind of call. Specific call frequencies are split into several categories of distinct server-side rate-limiting behavior.
  *
  * @typedef  {Object} Settings~RateLimiter
- * @property {number} baseFreq - Default call frequency.
- * @property {number} minFreq  - Minimum call frequency.
+ * @property {number} baseIntvl - Default call interval.
+ * @property {number} minIntvl  - Minimum call interval.
  * @property {number} pileUpWindow - Moving window of call logs to determine whether or not more calls are being made than received.
- * @property {number} pileUpThreshold - Call attempts over call responses must be less than this number or call frequency will be increased.
- * @property {number} pileUpResetFreq - Frequency to reset all calls to in response to more calls made than received.
- * @property {number} pileUpMultiplier - Amount to multiply by call frequency in response to excessive calling.
- * @property {number} violationResetFreq - Frequency to reset a call type to in response to a rate limit violation
- * @property {number} violationMultiplier - Multiplies call type frequency in response to rate limit violations (if greater than violationResetFreq).
- * @property {number} anyPassDecay - Amount to multiply all call frequency in response to a successful call.
- * @property {number} specificPassDecay - Amount to multiply call type frequency in response to a successful call.
+ * @property {number} pileUpThreshold - Number of unanswered calls necessary to trigger frequency decrease.
+ * @property {number} pileUpResetIntvl - Interval to reset all calls to in response to more calls made than received.
+ * @property {number} pileUpMultiplier - Amount to multiply by call interval in response to excessive calling.
+ * @property {number} violationResetIntvl - Interval to reset a call type to in response to a rate limit violation
+ * @property {number} violationMultiplier - Multiplies call type interval in response to rate limit violations (if greater than violationResetIntvl).
+ * @property {number} anyPassDecay - Amount to multiply all calls interval in response to a successful call.
+ * @property {number} specificPassDecay - Amount to multiply call type interval in response to a successful call.
  */

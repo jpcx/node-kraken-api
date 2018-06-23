@@ -1,39 +1,26 @@
-# Tools
+Module: API/RateLimits/LoadLimiter
+==================================
 
-Contains methods and types for various client-side tools.
+Loads settings and returns an object with rate-limiting functions.
 
-##### Properties:
+##### Parameters:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `AlphabetizeNested` | [module:Tools/AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md) | Alphabetizes a nested Object. |
-| `ParseNested` | [module:Tools/ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md) | Parses a nested Object, Array, Map, or Set according to the rules defined in Settings~Parse |
+| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Current settings configuration. |
 
 
 Source:
 
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L7)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/loadLimiter.js), [line 77](https://github.com/jpcx/node-kraken-api/blob/develop/api/rateLimits/loadLimiter.js#L77)
 
-### Type Definitions
+##### Returns:
 
-<a name="~ParseNestedConfig"></a>
-#### ParseNestedConfig
+Rate-limiting functions.
 
-##### Type:
+Type
 
-*   Object
-
-##### Properties:
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `numbers` | boolean | Parses string numbers via unary plus. |
-| `dates` | boolean | Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module. |
-
-
-Source:
-
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 15](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L15)
+[API\~RateLimits~Functions](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/RateLimits.md#~Functions)
 
 <hr>
 

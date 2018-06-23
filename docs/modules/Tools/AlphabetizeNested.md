@@ -1,39 +1,26 @@
-# Tools
+Module: Tools/AlphabetizeNested
+===============================
 
-Contains methods and types for various client-side tools.
+Alphabetizes a nested object.
 
-##### Properties:
+##### Parameters:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `AlphabetizeNested` | [module:Tools/AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md) | Alphabetizes a nested Object. |
-| `ParseNested` | [module:Tools/ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md) | Parses a nested Object, Array, Map, or Set according to the rules defined in Settings~Parse |
+| `object` | Object | Object to alphabetize. |
 
 
 Source:
 
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L7)
+*   [node-kraken-api/tools/alphabetizeNested.js](https://github.com/jpcx/node-kraken-api/blob/develop/tools/alphabetizeNested.js), [line 4](https://github.com/jpcx/node-kraken-api/blob/develop/tools/alphabetizeNested.js#L4)
 
-### Type Definitions
+##### Returns:
 
-<a name="~ParseNestedConfig"></a>
-#### ParseNestedConfig
+Alphabetized object.
 
-##### Type:
+Type
 
-*   Object
-
-##### Properties:
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `numbers` | boolean | Parses string numbers via unary plus. |
-| `dates` | boolean | Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module. |
-
-
-Source:
-
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 15](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L15)
+Object
 
 <hr>
 

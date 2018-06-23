@@ -7,23 +7,26 @@
 'use strict'
 
 const loadCall = require('../../../api/calls/loadCall.js')
-const defaults = require('../../../settings/defaults.js')
+const defaults = require('../../../settings/defaults.json')
+const loadLimiter = require('../../../api/rateLimits/loadLimiter.js')
 
 test('Is function', () => {
   expect(loadCall.constructor).toBe(Function)
 })
 
 test('Returns function', () => {
-  expect(loadCall(defaults).constructor).toBe(Function)
+  expect(loadCall(defaults, loadLimiter(defaults)).constructor).toBe(Function)
 })
 
 test('Returns promise from method', () => {
-  expect(loadCall(defaults)('Time').constructor).toBe(Promise)
+  expect(
+    loadCall(defaults, loadLimiter(defaults))('Time').constructor
+  ).toBe(Promise)
 })
 
 test('Returns parsed time data from Kraken', async () => {
   jest.setTimeout(60000)
-  const time = await loadCall(defaults)('Time')
+  const time = await loadCall(defaults, loadLimiter(defaults))('Time')
   expect(typeof time.unixtime).toBe('number')
   expect(typeof time.rfc1123).toBe('number')
   expect(time.unixtime).toBeLessThanOrEqual(Date.now() + 60000)

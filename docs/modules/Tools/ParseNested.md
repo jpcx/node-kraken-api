@@ -1,39 +1,27 @@
-# Tools
+Module: Tools/ParseNested
+=========================
 
-Contains methods and types for various client-side tools.
+Parses objects based on [Tools~ParseNestedConfig](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md#~ParseNestedConfig).
 
-##### Properties:
+##### Parameters:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `AlphabetizeNested` | [module:Tools/AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md) | Alphabetizes a nested Object. |
-| `ParseNested` | [module:Tools/ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md) | Parses a nested Object, Array, Map, or Set according to the rules defined in Settings~Parse |
+| `config` | [Tools~ParseNestedConfig](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md#~ParseNestedConfig) | Parse types config. |
+| `obj` | Object \| Array \| Map \| Set | Object to parse. |
 
 
 Source:
 
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L7)
+*   [node-kraken-api/tools/parseNested.js](https://github.com/jpcx/node-kraken-api/blob/develop/tools/parseNested.js), [line 13](https://github.com/jpcx/node-kraken-api/blob/develop/tools/parseNested.js#L13)
 
-### Type Definitions
+##### Returns:
 
-<a name="~ParseNestedConfig"></a>
-#### ParseNestedConfig
+Parsed object
 
-##### Type:
+Type
 
-*   Object
-
-##### Properties:
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `numbers` | boolean | Parses string numbers via unary plus. |
-| `dates` | boolean | Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module. |
-
-
-Source:
-
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 15](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L15)
+Object | Array | Map | Set
 
 <hr>
 

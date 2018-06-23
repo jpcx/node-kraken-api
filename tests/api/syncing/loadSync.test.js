@@ -7,22 +7,27 @@
 'use strict'
 
 const loadSync = require('../../../api/syncing/loadSync.js')
-const defaults = require('../../../settings/defaults.js')
+const defaults = require('../../../settings/defaults.json')
 const loadCall = require('../../../api/calls/loadCall.js')
+const loadLimiter = require('../../../api/rateLimits/loadLimiter.js')
 
 test('Is function', () => {
   expect(loadSync.constructor).toBe(Function)
 })
 
 test('Returns function', () => {
-  const sync = loadSync(defaults, loadCall(defaults))
+  const limiter = loadLimiter(defaults)
+  const call = loadCall(defaults, limiter)
+  const sync = loadSync(defaults, limiter, call)
   expect(sync.constructor).toBe(Function)
 })
 
 test('Returns time continuously', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(defaults, loadCall(defaults))
+    const limiter = loadLimiter(defaults)
+    const call = loadCall(defaults, limiter)
+    const sync = loadSync(defaults, limiter, call)
     let numCompleted = 0
     sync('Time', (err, data, instance) => {
       if (err) reject(err)
@@ -43,18 +48,15 @@ test('Returns time continuously', () => new Promise(
 test('Callback agrees with object', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(defaults, loadCall(defaults))
+    const limiter = loadLimiter(defaults)
+    const call = loadCall(defaults, limiter)
+    const sync = loadSync(defaults, limiter, call)
     let timeSync
-    let pastData
     timeSync = sync('Time', (err, data) => {
       if (err) reject(err)
-      if (pastData === undefined) {
-        pastData = data
-      } else {
-        expect(timeSync.data).toEqual(pastData)
-        timeSync.close()
-        resolve()
-      }
+      expect(timeSync.data).toEqual(data)
+      timeSync.close()
+      resolve()
     })
   }
 ))
@@ -62,7 +64,9 @@ test('Callback agrees with object', () => new Promise(
 test('Returns instance', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(defaults, loadCall(defaults))
+    const limiter = loadLimiter(defaults)
+    const call = loadCall(defaults, limiter)
+    const sync = loadSync(defaults, limiter, call)
     let numCompleted = 0
     let timeSync
     timeSync = sync('Time', (err, data, instance) => {
@@ -77,7 +81,9 @@ test('Returns instance', () => new Promise(
 test('Stops when closed', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(defaults, loadCall(defaults))
+    const limiter = loadLimiter(defaults)
+    const call = loadCall(defaults, limiter)
+    const sync = loadSync(defaults, limiter, call)
     let numCompleted = 0
     let numCompletedAfterClose = 0
     let closed = false
@@ -98,7 +104,9 @@ test('Stops when closed', () => new Promise(
 test('Resumes operation after close', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(120000)
-    const sync = loadSync(defaults, loadCall(defaults))
+    const limiter = loadLimiter(defaults)
+    const call = loadCall(defaults, limiter)
+    const sync = loadSync(defaults, limiter, call)
     let numCompleted = 0
     let closed = false
     let opened = false
@@ -123,7 +131,9 @@ test('Resumes operation after close', () => new Promise(
 
 test('Once method works', async () => {
   jest.setTimeout(240000)
-  const sync = loadSync(defaults, loadCall(defaults))
+  const limiter = loadLimiter(defaults)
+  const call = loadCall(defaults, limiter)
+  const sync = loadSync(defaults, limiter, call)
   let timeSync
   timeSync = sync('Time')
   expect(timeSync.once.constructor).toBe(Function)
@@ -134,43 +144,24 @@ test('Once method works', async () => {
   }
 })
 
-test('Disabling auto data via callback return works', () => new Promise(
+test('Custom interaction with instance works', () => new Promise(
   (resolve, reject) => {
     jest.setTimeout(60000)
-    const sync = loadSync(defaults, loadCall(defaults))
-    let count
+    const limiter = loadLimiter(defaults)
+    const call = loadCall(defaults, limiter)
+    const sync = loadSync(defaults, limiter, call)
     sync('Time',
       (err, data, instance) => {
         if (err) reject(err)
-        if (count++ === 0) {
-          return true
+        if (!(instance.dateHist instanceof Array)) {
+          instance.dateHist = []
+          instance.dateHist.push(new Date(data))
         } else {
-          expect(instance.data).toEqual({})
+          expect(instance.dateHist.constructor).toBe(Array)
+          expect(instance.dateHist[0].constructor).toBe(Date)
           instance.close()
           resolve()
         }
-      }
-    )
-  }
-))
-
-test('Custom data compilation works', () => new Promise(
-  (resolve, reject) => {
-    jest.setTimeout(60000)
-    const sync = loadSync(defaults, loadCall(defaults))
-    sync('Time',
-      (err, data, instance) => {
-        if (err) reject(err)
-        if (!(instance.data instanceof Array)) {
-          instance.data = []
-          instance.data.push(new Date(data))
-        } else {
-          expect(instance.data.constructor).toBe(Array)
-          expect(instance.data[0].constructor).toBe(Date)
-          instance.close()
-          resolve()
-        }
-        return true
       }
     )
   }

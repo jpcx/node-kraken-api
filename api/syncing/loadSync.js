@@ -9,7 +9,7 @@
 const alphabetizeNested = require('../../tools/alphabetizeNested.js')
 
 /**
- * Calculates average wait time (for sustainable authenticated calling) based on the current open sync requests. Uses {@link Kraken~CounterLimit}, {@link Kraken~IncrementAmount}, and {@link Kraken~CounterInterval} to determine the minimum sustainable wait time. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ * Calculates average wait time (for sustainable authenticated calling) based on the current open sync requests. Uses {@link Kraken~CounterLimit}, {@link Kraken~IncrementAmount}, and {@link Kraken~CounterInterval} to determine the minimum sustainable wait time. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
  * @function API~Syncing~CalcAvgAuthWait
  * @param    {API~Syncing~State} state - Object containing runtime data.
@@ -19,9 +19,9 @@ const calcAvgAuthWait = (state, starttm) => {
   let sum = 0
   let count = 0
   if (state.catThreads.has('auth')) {
-    for (let req of state.catThreads.get('auth')) {
-      const params = JSON.parse(req[0])
-      sum += state.limiter.getAuthRegenFreq(params.method, state.tier)
+    for (let threadNT of state.catThreads.get('auth')) {
+      const params = JSON.parse(threadNT[0])
+      sum += state.limiter.getAuthRegenIntvl(params.method, state.tier)
       count++
     }
     let wait = (sum / count) - (Date.now() - starttm)
@@ -36,12 +36,13 @@ const calcAvgAuthWait = (state, starttm) => {
  * Responds to changes to changes within the instances associated with the current thread. Pushes out errors if the params are invalid and reverts changes.
  *
  * @function API~Syncing~VerifyInternals
- * @param    {API~Syncing~State}       state  - Object containing runtime data.
- * @param    {API~RateLimits~Category} cat    - Rate limiting category of the current thread.
- * @param    {API~Syncing~Thread}      thread - Maps serial params to internal sets.
+ * @param    {API~Syncing~State}       state     - Object containing runtime data.
+ * @param    {API~RateLimits~Category} cat       - Rate limiting category of the current thread.
+ * @param    {API~Calls~SerialParams}  serial    - Serial currently associated with the call that triggered verifyInternals.
+ * @param    {API~Syncing~InternalSet} internals - Set of all internals associated with the current thread.
  */
-const verifyInternals = (state, cat, thread) => {
-  for (let intl of thread[1]) {
+const verifyInternals = (state, cat, serial, internals) => {
+  for (let intl of internals) {
     // handle all internals associated with serial
     let params = alphabetizeNested({
       method: intl.instance.method,
@@ -49,20 +50,20 @@ const verifyInternals = (state, cat, thread) => {
     })
 
     const catMap = state.catThreads.get(cat)
-    const intlSet = catMap.get(thread[0])
+    const intlSet = catMap.get(serial)
 
     if (intl.status === 'closed') {
       // instance has been closed with the close() function
       intl.instance.status = 'closed'
       intlSet.delete(intl)
       if (intlSet.size === 0) {
-        catMap.delete(thread[0])
-        state.serialReg.delete(thread[0])
+        catMap.delete(serial)
+        state.serialReg.delete(serial)
         if (catMap.size === 0) {
           state.catThreads.delete(cat)
         }
       }
-    } else if (JSON.stringify(params) !== thread[0]) {
+    } else if (JSON.stringify(params) !== serial) {
       // method and/or options have been changed via the instance
       let changed = true
       if (params.method !== intl.params.method) {
@@ -84,7 +85,7 @@ const verifyInternals = (state, cat, thread) => {
           intl.instance.method = params.method
           params = alphabetizeNested(params)
           // check for further changes
-          if (JSON.stringify(params) === thread[0]) changed = false
+          if (JSON.stringify(params) === serial) changed = false
         }
       } else if (params.options.constructor !== Object) {
         // options have changed and are invalid
@@ -93,7 +94,7 @@ const verifyInternals = (state, cat, thread) => {
           `Invalid options ${params.options}. Must be Object. Reverting.`
         ), null, intl.instance))
         // revert
-        params.options = JSON.parse(thread[0]).options
+        params.options = JSON.parse(serial).options
         intl.params.options = params.options
         intl.instance.options = params.options
         params = alphabetizeNested(params)
@@ -102,33 +103,33 @@ const verifyInternals = (state, cat, thread) => {
 
       if (changed) {
         // re-assign internal
-        const serial = JSON.stringify(params)
-        state.serialReg.set(serial, params)
+        const newSerial = JSON.stringify(params)
+        state.serialReg.set(newSerial, params)
         const newCat = state.limiter.getCategory(intl.params.method)
         if (newCat !== cat) {
           // category has changed
           if (!state.catThreads.has(newCat)) {
             state.catThreads.set(newCat, new Map())
-            state.catThreads.get(newCat).set(serial, new Set([intl]))
+            state.catThreads.get(newCat).set(newSerial, new Set([intl]))
           } else {
-            if (!state.catThreads.get(newCat).has(serial)) {
-              state.catThreads.get(newCat).set(serial, new Set([intl]))
+            if (!state.catThreads.get(newCat).has(newSerial)) {
+              state.catThreads.get(newCat).set(newSerial, new Set([intl]))
             } else {
-              state.catThreads.get(newCat).get(serial).add(intl)
+              state.catThreads.get(newCat).get(newSerial).add(intl)
             }
           }
         } else {
           // params have changed
-          if (!catMap.has(serial)) {
-            catMap.set(serial, new Set([intl]))
+          if (!catMap.has(newSerial)) {
+            catMap.set(newSerial, new Set([intl]))
           } else {
-            catMap.get(serial).add(intl)
+            catMap.get(newSerial).add(intl)
           }
         }
         intlSet.delete(intl)
         if (intlSet.size === 0) {
-          catMap.delete(thread[0])
-          state.serialReg.delete(thread[0])
+          catMap.delete(serial)
+          state.serialReg.delete(serial)
           if (catMap.size === 0) {
             state.catThreads.delete(cat)
           }
@@ -152,19 +153,20 @@ const handleRequests = async (state, cat) => {
     state.catThreads.get(cat).size > 0
   ) {
     // loop continuously
-    for (let thread of state.catThreads.get(cat)) {
+    for (let serial of state.catThreads.get(cat).keys()) {
+      const internals = state.catThreads.get(cat).get(serial)
       // handle all param sets
       const starttm = Date.now()
 
-      verifyInternals(state, cat, thread)
+      verifyInternals(state, cat, serial, internals)
       if (!state.catThreads.has(cat)) break
-      if (!state.catThreads.get(cat).has(thread[0])) continue
+      if (!state.catThreads.get(cat).has(serial)) continue
 
-      const params = state.serialReg.get(thread[0])
+      const params = state.serialReg.get(serial)
       let data
       try {
         data = await state.call(params.method, params.options)
-        for (let intl of thread[1]) {
+        for (let intl of internals) {
           if (intl.status === 'init') intl.status = 'open'
           intl.instance.status = 'open'
           Object.keys(intl.data).forEach(key => delete intl.data[key])
@@ -173,7 +175,7 @@ const handleRequests = async (state, cat) => {
           intl.listeners.forEach(cb => cb(null, data, intl.instance))
         }
       } catch (err) {
-        for (let intl of thread[1]) {
+        for (let intl of internals) {
           if (intl.status === 'init') intl.status = 'open'
           intl.instance.status = 'open'
           intl.listeners.forEach(cb => cb(err, null, intl.instance))
@@ -305,8 +307,8 @@ module.exports = (settings, limiter, call) => {
           handleRequests(state, cat).catch(
             err => {
               if (state.catThreads.has(cat)) {
-                state.catThreads.get(cat).forEach(entry => {
-                  entry[1].forEach(internal => {
+                state.catThreads.get(cat).forEach(thread => {
+                  thread.forEach(internal => {
                     internal.listeners.forEach(cb => {
                       cb(err, null, internal.instance)
                     })
@@ -378,8 +380,7 @@ module.exports = (settings, limiter, call) => {
         } else {
           return op
         }
-      },
-      debug: { state }
+      }
     }
 
     for (let prop in instancePermTemplate) {

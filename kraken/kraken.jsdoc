@@ -29,7 +29,7 @@
  */
 
 /**
- * Server-side API version.
+ * Server-side API version. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
  *
  * @typedef {number} Kraken~Version
  */
@@ -47,7 +47,7 @@
  */
 
 /**
- * Type of method being called on Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ * Type of method being called on Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
  *
  * @typedef {string} Kraken~Method
  */
@@ -59,26 +59,26 @@
  */
 
 /**
- * Method-specific options for calls to Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ * Method-specific options for calls to Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
  *
  * @typedef  {Object} Kraken~Options
  * @property {Kraken~Option} * - An option to send to the servers.
  */
 
 /**
- * Unique ever-increasing integer used by Kraken servers to determine request validity. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info. As recommended by Kraken, nonce is the current time in microseconds.
+ * Unique ever-increasing integer used by Kraken servers to determine request validity. See the [Kraken API docs]{@link https://www.kraken.com/help/api#general-usage} for more info. As recommended by Kraken, nonce is the current time in microseconds.
  *
  * @typedef {number} Kraken~Nonce
  */
 
 /**
- * Hostname for the Kraken API endpoint. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ * Hostname for the Kraken API endpoint. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
  *
  * @typedef {string} Kraken~Hostname
  */
 
 /**
- * Path to the Kraken API endpoint for a given method. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
+ * Path to the Kraken API endpoint for a given method. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
  *
  * @typedef {string} Kraken~Path
  */
@@ -108,25 +108,25 @@
  */
 
 /**
- * Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ * Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
  * @typedef {number} Kraken~RateLimitCount
  */
 
 /**
- * Positive integer counter limit used for determining private API rate limit adherence. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ * Positive integer counter limit used for determining private API rate limit adherence. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
  * @typedef {Kraken~RateLimitCount} Kraken~CounterLimit
  */
 
 /**
- * Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the {@link Kraken~Method}. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ * Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the {@link Kraken~Method}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
  * @typedef {Kraken~RateLimitCount} Kraken~IncrementAmount
  */
 
 /**
- * Number of seconds for the {@link Kraken~RateLimitCount} to decrement by one. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ * Number of seconds for the {@link Kraken~RateLimitCount} to decrement by one. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
  * @typedef {number} Kraken~CounterInterval
  */

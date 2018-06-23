@@ -55,12 +55,12 @@ test('Syncs calls', () => new Promise(
 test('Observes rate limits', () => new Promise(
   resolve => {
     jest.setTimeout(640000)
-    const api = kraken()
+    const api = kraken({ retryCt: 5 })
     let numCompleted = 0
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 20; i++) {
       api.call('OHLC', { pair: 'XXBTZUSD', i })
-        .then(() => { ++numCompleted >= 30 && resolve() })
-        .catch(err => expect(e.message.match(/rate limit/gi)).toBe(null))
+        .then(() => { ++numCompleted >= 20 && resolve() })
+        .catch(err => expect(err.message.match(/rate limit/gi)).toBe(null))
     }
   }
 ))

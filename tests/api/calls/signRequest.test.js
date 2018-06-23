@@ -7,7 +7,7 @@
 'use strict'
 
 const signRequest = require('../../../api/calls/signRequest.js')
-const defaults = require('../../../settings/defaults.js')
+const defaults = require('../../../settings/defaults.json')
 
 test('Is function', () => {
   expect(signRequest.constructor).toBe(Function)

@@ -72,83 +72,59 @@
           }
         },
         {
-          "origin": "module-Tools_ms.html",
+          "origin": "module-Tools_AlphabetizeNested.html",
           "destination": {
             "local": "",
             "path": "docs/modules/Tools",
-            "file": "ms.md"
+            "file": "AlphabetizeNested.md"
           }
         },
         {
-          "origin": "module-Tools_parseNested.html",
+          "origin": "module-Tools_ParseNested.html",
           "destination": {
             "local": "",
             "path": "docs/modules/Tools",
-            "file": "parseNested.md"
+            "file": "ParseNested.md"
           }
         },
         {
-          "origin": "module-Tools_readFileJSON.html",
-          "destination": {
-            "local": "",
-            "path": "docs/modules/Tools",
-            "file": "readFileJSON.md"
-          }
-        },
-        {
-          "origin": "module-Tools_tryDirectory.html",
-          "destination": {
-            "local": "",
-            "path": "docs/modules/Tools",
-            "file": "tryDirectory.md"
-          }
-        },
-        {
-          "origin": "module-Tools_writeFileJSON.html",
-          "destination": {
-            "local": "",
-            "path": "docs/modules/Tools",
-            "file": "writeFileJSON.md"
-          }
-        },
-        {
-          "origin": "module-API_Calls_genRequestData.html",
+          "origin": "module-API_Calls_GenRequestData.html",
           "destination": {
             "local": "",
             "path": "docs/modules/API/Calls",
-            "file": "genRequestData.md"
+            "file": "GenRequestData.md"
           }
         },
         {
-          "origin": "module-API_Calls_loadCall.html",
+          "origin": "module-API_Calls_LoadCall.html",
           "destination": {
             "local": "",
             "path": "docs/modules/API/Calls",
-            "file": "loadCall.md"
+            "file": "LoadCall.md"
           }
         },
         {
-          "origin": "module-API_Calls_signRequest.html",
+          "origin": "module-API_Calls_SignRequest.html",
           "destination": {
             "local": "",
             "path": "docs/modules/API/Calls",
-            "file": "signRequest.md"
+            "file": "SignRequest.md"
           }
         },
         {
-          "origin": "module-API_RateLimits_limiter.html",
+          "origin": "module-API_RateLimits_LoadLimiter.html",
           "destination": {
             "local": "",
             "path": "docs/modules/API/RateLimits",
-            "file": "limiter.md"
+            "file": "LoadLimiter.md"
           }
         },
         {
-          "origin": "module-API_Syncing_loadSync.html",
+          "origin": "module-API_Syncing_LoadSync.html",
           "destination": {
             "local": "",
             "path": "docs/modules/API/Syncing",
-            "file": "loadSync.md"
+            "file": "LoadSync.md"
           }
         }
       ],

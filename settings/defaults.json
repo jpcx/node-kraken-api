@@ -22,13 +22,13 @@
     "dates": true
   },
   "limiter": {
-    "baseFreq": 500,
-    "minFreq": 250,
+    "baseIntvl": 500,
+    "minIntvl": 250,
     "pileUpWindow": 60000,
-    "pileUpThreshold": 1.1,
-    "pileUpResetFreq": 1000,
+    "pileUpThreshold": 5,
+    "pileUpResetIntvl": 1000,
     "pileUpMultiplier": 1.05,
-    "violationResetFreq": 4500,
+    "violationResetIntvl": 4500,
     "violationMultiplier": 1.1,
     "anyPassDecay": 0.95,
     "specificPassDecay": 0.95

@@ -1,39 +1,27 @@
-# Tools
+Module: API/Calls/LoadCall
+==========================
 
-Contains methods and types for various client-side tools.
+Loads settings and limiter instance and generates a stateful call function.
 
-##### Properties:
+##### Parameters:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `AlphabetizeNested` | [module:Tools/AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md) | Alphabetizes a nested Object. |
-| `ParseNested` | [module:Tools/ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md) | Parses a nested Object, Array, Map, or Set according to the rules defined in Settings~Parse |
+| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Execution settings configuration. |
+| `limiter` | [API\~RateLimits~Functions](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/RateLimits.md#~Functions) | Limiter instance. |
 
 
 Source:
 
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L7)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 199](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L199)
 
-### Type Definitions
+##### Returns:
 
-<a name="~ParseNestedConfig"></a>
-#### ParseNestedConfig
+Stateful call function.
 
-##### Type:
+Type
 
-*   Object
-
-##### Properties:
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `numbers` | boolean | Parses string numbers via unary plus. |
-| `dates` | boolean | Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module. |
-
-
-Source:
-
-*   [node-kraken-api/tools/tools.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc), [line 15](https://github.com/jpcx/node-kraken-api/blob/develop/tools/tools.jsdoc#L15)
+[API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Call)
 
 <hr>
 

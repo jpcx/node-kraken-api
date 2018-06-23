@@ -8,10 +8,36 @@ Source:
 
 ### Type Definitions
 
+<a name="~CounterInterval"></a>
+#### CounterInterval
+
+Number of seconds for the [Kraken~RateLimitCount](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~RateLimitCount) to decrement by one. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+
+##### Type:
+
+*   number
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 128](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L128)
+
+<a name="~CounterLimit"></a>
+#### CounterLimit
+
+Positive integer counter limit used for determining private API rate limit adherence. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+
+##### Type:
+
+*   [Kraken~RateLimitCount](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~RateLimitCount)
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 116](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L116)
+
 <a name="~Hostname"></a>
 #### Hostname
 
-Hostname for the Kraken API endpoint. See the [Kraken API docs](https://www.kraken.com/help/api) for more info.
+Hostname for the Kraken API endpoint. See the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for more info.
 
 ##### Type:
 
@@ -78,6 +104,19 @@ Source:
 
 *   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 104](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L104)
 
+<a name="~IncrementAmount"></a>
+#### IncrementAmount
+
+Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+
+##### Type:
+
+*   [Kraken~RateLimitCount](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~RateLimitCount)
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 122](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L122)
+
 <a name="~Key"></a>
 #### Key
 
@@ -94,7 +133,7 @@ Source:
 <a name="~Method"></a>
 #### Method
 
-Type of method being called on Kraken servers. See the [Kraken API docs](https://www.kraken.com/help/api) for more info.
+Type of method being called on Kraken servers. See the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for more info.
 
 ##### Type:
 
@@ -107,7 +146,7 @@ Source:
 <a name="~Nonce"></a>
 #### Nonce
 
-Unique ever-increasing integer used by Kraken servers to determine request validity. See the [Kraken API docs](https://www.kraken.com/help/api) for more info. As recommended by Kraken, nonce is the current time in microseconds.
+Unique ever-increasing integer used by Kraken servers to determine request validity. See the [Kraken API docs](https://www.kraken.com/help/api#general-usage) for more info. As recommended by Kraken, nonce is the current time in microseconds.
 
 ##### Type:
 
@@ -133,7 +172,7 @@ Source:
 <a name="~Options"></a>
 #### Options
 
-Method-specific options for calls to Kraken servers. See the [Kraken API docs](https://www.kraken.com/help/api) for more info.
+Method-specific options for calls to Kraken servers. See the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for more info.
 
 ##### Type:
 
@@ -153,7 +192,7 @@ Source:
 <a name="~Path"></a>
 #### Path
 
-Path to the Kraken API endpoint for a given method. See the [Kraken API docs](https://www.kraken.com/help/api) for more info.
+Path to the Kraken API endpoint for a given method. See the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for more info.
 
 ##### Type:
 
@@ -170,7 +209,7 @@ Set of server-side API methods available exclusively to authenticated users.
 
 ##### Type:
 
-*   Set
+*   Array
 
 Source:
 
@@ -183,11 +222,24 @@ Set of server-side API methods available to all users.
 
 ##### Type:
 
-*   Set
+*   Array
 
 Source:
 
 *   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 37](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L37)
+
+<a name="~RateLimitCount"></a>
+#### RateLimitCount
+
+Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+
+##### Type:
+
+*   number
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 110](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L110)
 
 <a name="~Secret"></a>
 #### Secret
@@ -218,7 +270,7 @@ Source:
 <a name="~Version"></a>
 #### Version
 
-Server-side API version.
+Server-side API version. See the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for more info.
 
 ##### Type:
 
@@ -234,18 +286,15 @@ Source:
   + [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/node-kraken-api.md)
   + [API](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API.md)
     + [Calls](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md)
-      + [genRequestData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/genRequestData.md)
-      + [loadCall](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/loadCall.md)
-      + [signRequest](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/signRequest.md)
+      + [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/GenRequestData.md)
+      + [LoadCall](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/LoadCall.md)
+      + [SignRequest](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/SignRequest.md)
     + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/RateLimits.md)
-      + [limiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/RateLimits/limiter.md)
+      + [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/RateLimits/LoadLimiter.md)
     + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
-      + [loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md)
+      + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/LoadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)
-    + [ms](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ms.md)
-    + [parseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/parseNested.md)
-    + [readFileJSON](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/readFileJSON.md)
-    + [tryDirectory](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/tryDirectory.md)
-    + [writeFileJSON](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/writeFileJSON.md)
+    + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md)
+    + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md)
   + [Kraken](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md)

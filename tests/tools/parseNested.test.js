@@ -7,7 +7,7 @@
 'use strict'
 
 const parseNested = require('../../tools/parseNested.js')
-const defaults = require('../../settings/defaults.js')
+const defaultParseSettings = { numbers: true, dates: true }
 
 test('Is function', () => expect(parseNested.constructor).toBe(Function))
 
@@ -26,7 +26,7 @@ test('Parses objects successfully', () => {
     }
   }
 
-  expect(parseNested(defaults.parse, obj)).toEqual(parsedObj)
+  expect(parseNested(defaultParseSettings, obj)).toEqual(parsedObj)
 })
 
 test('Parses arrays successfully', () => {
@@ -44,5 +44,5 @@ test('Parses arrays successfully', () => {
     ]
   ]
   
-  expect(parseNested(defaults.parse, arr)).toEqual(parsedArr)
+  expect(parseNested(defaultParseSettings, arr)).toEqual(parsedArr)
 })

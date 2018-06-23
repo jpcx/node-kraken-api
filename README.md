@@ -4,11 +4,11 @@
 
 Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.
 
-Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required; call frequency is managed automatically in response to rate limit parameters by averaging the rate limit costs.
+Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required. For public calls, data is repeatedly requested upon receipt of data; rate is limited automatically. For private calls, rate is managed according to the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) such that calls may be performed continuously without triggering any rate limit violations.
 
 Syncing is also useful for querying new updates only by modifying the call options upon each response. This can be done within a listener callback provided to the module. Some methods provide a 'since' parameter that can be used for querying only data since that ID. [See below](#syncUpdates) for an example.
 
-Additionally, sync instances can be set up for custom data formatting. If a listener sent to the sync instance returns a truthy value, data will not be automatically set and will instead only be sent to the callback for management. [See below](#syncDataHandling) for an example.
+Additionally, sync instances can be used to store other kinds of data. [See below](#syncInstanceMods) for an example.
 
 ## Getting Started
 
@@ -24,7 +24,7 @@ npm i node-kraken-api
 
 ### Testing
 
-The following command will test the package for errors using the jest library. Testing may take around ten minutes to complete.
+The following command will test the package for errors using the jest library. Testing may take a few minutes to complete.
 
 ___Note:___ In order for authenticated testing to occur, a valid auth.json file must be available in the root directory of the package. Please see the [configuration](#configuration) instructions below. An empty auth.json file has been provided; please fill the 'key', 'secret', and 'tier' properties accordingly.
 
@@ -267,9 +267,9 @@ const tradesSync = api.sync(
 )
 ```
 
-<a name='syncDataHandling'></a>__Custom Handling of Sync Data__
+<a name='syncInstanceMods'></a>__Custom Handling of Sync Data__
 
-Sync object data may be custom tailored for various use cases by using an event listener which returns a truthy value. Normally, the data property holds only the information retrieved from the most recent call. However, data may be set manually from within a listener callback. If the callback returns a truthy value, data will not be set automatically.
+Sync object data may be custom tailored for various use cases by using an event listener. Event listeners are provided with a reference to the instance, so they can be defined to transform received data in any way and store it within a custom property.
 
 _Creating a realtime historical trades tracker:_
 ```js
@@ -279,21 +279,20 @@ const tradesHistory = api.sync(
   (err, data, instance) => {
     if (data) {
       if (instance.time === -1) {
-        instance.data = []
+        instance.hist = []
       }
       if (data.last !== instance.options.since) {
         if (data.XXBTZUSD.forEach) {
-          data.XXBTZUSD.forEach(trade => instance.data.push(trade))
+          data.XXBTZUSD.forEach(trade => instance.hist.push(trade))
         }
         instance.options.since = data.last
       }
     }
-    return true
   }
 )
 
 tradesHistory.once()
-  .then(data => console.log(tradesHistory.data))
+  .then(data => console.log(tradesHistory.hist))
   .catch(err => console.error(err))
 ```
 
@@ -312,7 +311,7 @@ const twentyPeriodSMA = api.sync(
         instance.options.since = data.last
       }
       instance.bars = instance.bars.slice(-20)
-      instance.data = instance.bars.reduce(
+      instance.value = instance.bars.reduce(
         (sum, bar) => (
           sum + (
             (
@@ -326,14 +325,14 @@ const twentyPeriodSMA = api.sync(
         0
       ) / instance.bars.length / 100
     }
+    // closing and re-opening the instance every 60 seconds as calls are only necessary every minute
     instance.close()
     setTimeout(instance.open, 60000)
-    return true
   }
 )
 
 twentyPeriodSMA.once()
-  .then(data => console.log(twentyPeriodSMA.data))
+  .then(data => console.log(twentyPeriodSMA.value))
   .catch(err => console.error(err))
 ```
 
@@ -367,20 +366,17 @@ You may learn more about the types of options and response data by probing the A
   + [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/node-kraken-api.md)
   + [API](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API.md)
     + [Calls](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md)
-      + [genRequestData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/genRequestData.md)
-      + [loadCall](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/loadCall.md)
-      + [signRequest](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/signRequest.md)
+      + [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/GenRequestData.md)
+      + [LoadCall](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/LoadCall.md)
+      + [SignRequest](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Calls/SignRequest.md)
     + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/RateLimits.md)
-      + [limiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/RateLimits/limiter.md)
+      + [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/RateLimits/LoadLimiter.md)
     + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
-      + [loadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/loadSync.md)
+      + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/LoadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)
-    + [ms](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ms.md)
-    + [parseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/parseNested.md)
-    + [readFileJSON](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/readFileJSON.md)
-    + [tryDirectory](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/tryDirectory.md)
-    + [writeFileJSON](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/writeFileJSON.md)
+    + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md)
+    + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md)
   + [Kraken](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md)
 
 
@@ -398,10 +394,11 @@ Please raise an issue if you find any. Pull requests are welcome!
   
 Inspired by [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)).
 
-BTC donation address:
-[3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz](bitcoin:3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz)
+___BTC donation address:___
 
-[![donate](http://i66.tinypic.com/fc67o0.jpg)](bitcoin:3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz)
+3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz
+
+[![donate](http://i66.tinypic.com/fc67o0.jpg)]
 
 ## License
 

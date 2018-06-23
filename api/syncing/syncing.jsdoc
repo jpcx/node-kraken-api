@@ -5,7 +5,7 @@
  */
 
 /**
- * Types and methods specific to scheduling persistent {@link API~Caller} operations.
+ * Types and methods specific to scheduling persistent {@link API~Calls~Call} operations.
  *
  * @namespace API~Syncing
  * @property  {module:API/Syncing/LoadSync} LoadSync - Loads settings and loaded call function and returns stateful sync creation function.

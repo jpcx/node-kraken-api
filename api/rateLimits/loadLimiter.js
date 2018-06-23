@@ -14,11 +14,11 @@
  * @param    {API~RateLimits~CallInfo} any         - Rate information for all calls.
  */
 const checkPileUp = (limitConfig, any) => {
-  if (any.attmp.length > any.compl.length * limitConfig.pileUpThreshold) {
-    if (any.freq < limitConfig.pileUpResetFreq) {
-      any.freq = limitConfig.pileUpResetFreq
+  if (any.attmp.length - any.compl.length > limitConfig.pileUpThreshold) {
+    if (any.intvl < limitConfig.pileUpResetIntvl) {
+      any.intvl = limitConfig.pileUpResetIntvl
     }
-    any.freq *= limitConfig.pileUpMultiplier
+    any.intvl *= limitConfig.pileUpMultiplier
   }
 }
 
@@ -33,18 +33,18 @@ const checkPileUp = (limitConfig, any) => {
  */
 const checkContext = (context, limitConfig, any, spec) => {
   if (context === 'fail') {
-    if (spec.freq < limitConfig.violationResetFreq) {
-      spec.freq = limitConfig.violationResetFreq
+    if (spec.intvl < limitConfig.violationResetIntvl) {
+      spec.intvl = limitConfig.violationResetIntvl
     }
-    spec.freq *= limitConfig.violationMultiplier
+    spec.intvl *= limitConfig.violationMultiplier
   } else if (context === 'pass') {
-    any.freq *= limitConfig.anyPassDecay
-    spec.freq *= limitConfig.specificPassDecay
+    any.intvl *= limitConfig.anyPassDecay
+    spec.intvl *= limitConfig.specificPassDecay
   }
 }
 
 /**
- * Updates {API~RateLimits~CallStats} and {API~RateLimits~CallStats} frequencies in response to server response behavior.
+ * Updates {@link API~RateLimits~CallInfo} and {@link API~RateLimits~CatInfo} intervals in response to server response behavior.
  *
  * @function API~RateLimits~Update
  * @param    {API~RateLimits~State}    state     - Stateful registry of limiter information.
@@ -56,7 +56,7 @@ const update = (state, category, context) => {
   const now = Date.now()
   const any = state.calls
   if (!state.catInfo.has(category)) {
-    state.catInfo.set(category, { freq: limitConfig.baseFreq, last: 0 })
+    state.catInfo.set(category, { intvl: limitConfig.baseIntvl, last: 0 })
   }
   if (context === 'pass' || context === 'fail') {
     any.compl.push(now)
@@ -70,8 +70,8 @@ const update = (state, category, context) => {
   checkPileUp(limitConfig, any)
   checkContext(context, limitConfig, any, spec)
 
-  if (any.freq < limitConfig.minFreq) any.freq = limitConfig.minFreq
-  if (spec.freq < limitConfig.minFreq) spec.freq = limitConfig.minFreq
+  if (any.intvl < limitConfig.minIntvl) any.intvl = limitConfig.minIntvl
+  if (spec.intvl < limitConfig.minIntvl) spec.intvl = limitConfig.minIntvl
 }
 
 /**
@@ -93,7 +93,7 @@ module.exports = settings => {
   const state = {
     settings,
     calls: {
-      freq: settings.limiter.baseFreq,
+      intvl: settings.limiter.baseIntvl,
       attmp: [],
       compl: []
     },
@@ -107,7 +107,7 @@ module.exports = settings => {
    * @property {API~RateLimits~AddPass} addPass - Register a new successful call response.
    * @property {API~RateLimits~AddFail} addFail - Register a new rate-limit violation.
    * @property {API~RateLimits~GetCategory} getCategory - Gets the type of rate-limiting behavior based on the method.
-   * @property {API~RateLimits~GetAuthRegenFreq} getAuthRegenFreq - Gets the amount of time necessary for a given private method to be called sustainably.
+   * @property {API~RateLimits~GetAuthRegenIntvl} getAuthRegenIntvl - Gets the amount of time necessary for a given private method to be called sustainably.
    */
   return {
     /**
@@ -128,35 +128,23 @@ module.exports = settings => {
 
       let wait
 
-      if (elapsedAny > any.freq) {
-        if (elapsedSpec > spec.freq) {
+      if (elapsedAny > any.intvl) {
+        if (elapsedSpec > spec.intvl) {
           wait = 0
         } else {
-          wait = spec.freq - elapsedSpec
+          wait = spec.intvl - elapsedSpec
         }
       } else {
-        if (elapsedSpec > spec.freq) {
-          wait = any.freq - elapsedAny
+        if (elapsedSpec > spec.intvl) {
+          wait = any.intvl - elapsedAny
         } else {
-          wait = spec.freq - elapsedSpec
+          if (spec.intvl - elapsedSpec > any.intvl - elapsedAny) {
+            wait = spec.intvl - elapsedSpec
+          } else {
+            wait = any.intvl - elapsedAny
+          }
         }
       }
-      // =======================================================================
-      // DEBUG
-      // =======================================================================
-      const debug = {
-        callFreq: state.calls.freq,
-        callAttm: state.calls.attmp.length,
-        callComp: state.calls.compl.length
-      }
-      for (let category of state.catInfo.keys()) {
-        debug[category] = state.catInfo.get(category).freq
-      }
-      console.dir(debug, { depth: null, colors: true })
-      console.log('Wait time: ' + wait)
-      // =======================================================================
-      // END DEBUG
-      // =======================================================================
       setTimeout(resolve, wait)
     }),
     /**
@@ -166,7 +154,10 @@ module.exports = settings => {
      * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
      * @returns  {boolean}                 True if successfully updated.
      */
-    addPass: category => update(state, category, 'pass') && true,
+    addPass: category => {
+      update(state, category, 'pass')
+      return true
+    },
     /**
      * Registers a new rate-limit violation and updates frequencies accordingly.
      *
@@ -174,7 +165,10 @@ module.exports = settings => {
      * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
      * @returns  {boolean}                 True if successfully updated.
      */
-    addFail: category => update(state, category, 'fail') && true,
+    addFail: category => {
+      update(state, category, 'fail')
+      return true
+    },
     /**
      * Gets the type of server-side rate-limiter category based on the method.
      *
@@ -194,19 +188,19 @@ module.exports = settings => {
     /**
      * Gets the frequency required for sustainable execution of a private method.
      *
-     * @function API~RateLimits~GetAuthRegenFreq
+     * @function API~RateLimits~GetAuthRegenIntvl
      * @param    {Kraken~Method} method - Method being called.
      * @param    {Kraken~Tier}   tier   - Current verification tier.
-     * @returns  {number}        Optimal frequency.
+     * @returns  {number}        Optimal interval.
      */
-    getAuthRegenFreq: (method, tier) => {
+    getAuthRegenIntvl: (method, tier) => {
       const increment = method === 'Ledgers' || method === 'TradesHistory'
         ? 2
         : method === 'AddOrder' || method === 'CancelOrder'
           ? 0
           : 1
-      const interval = tier === 4 ? 1000 : tier === 3 ? 2000 : 3000
-      return increment * interval
+      const decIntvl = tier === 4 ? 1000 : tier === 3 ? 2000 : 3000
+      return increment * decIntvl
     }
   }
 }

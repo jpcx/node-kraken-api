@@ -21,7 +21,7 @@
  * Contains rate information for all calls.
  *
  * @typedef  {Object} API~RateLimits~CallInfo
- * @property {number} freq - Current calculated safe frequency.
+ * @property {number} intvl - Current calculated safe interval.
  * @property {Array}  attmp - Array of call times for attempted calls.
  * @property {Array}  compl - Array of call times for responses.
  */
@@ -33,9 +33,9 @@
  */
 
 /**
- * Holds information for category-specific rates.
+ * Holds information for category-specific frequencies.
  *
  * @typedef  {Object} API~RateLimits~CatInfo
- * @property {number} freq - Current calculated safe frequency.
- * @property {number} last - Time of last call attempt.
+ * @property {number} intvl - Current calculated safe interval.
+ * @property {number} last  - Time of last call attempt.
  */
