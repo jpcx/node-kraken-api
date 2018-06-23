@@ -6,7 +6,7 @@ ___{alias:node-kraken-api/description}___
 
 Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required. For public calls, data is repeatedly requested upon receipt of data; rate is limited automatically. For private calls, rate is managed according to the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) such that calls may be performed continuously without triggering any rate limit violations.
 
-Syncing is also useful for querying new updates only by modifying the call options upon each response. This can be done within a listener callback provided to the module. Some methods provide a 'since' parameter that can be used for querying only data since that ID. [See below](#syncUpdates) for an example.
+Syncing is also useful for querying new updates only by modifying the call options upon each response. This can be done within a listener callback provided to the module. Some methods provide a 'since' parameter that can be used for querying only new data. [See below](#syncUpdates) for an example.
 
 Additionally, sync instances can be used to store other kinds of data. [See below](#syncInstanceMods) for an example.
 
@@ -133,7 +133,6 @@ const timeSync = api.sync('Time')
 console.log(timeSync.data)
 
 // logs { unixtime: 1528607559000, rfc1123: 1528607559000 }
-// (unless call had failed; error would be available under timeSync.errors)
 setTimeout(() => console.log(timeSync.data), 5000)
 ```
 
@@ -143,7 +142,7 @@ const api = require('./')()
 const timeSync = api.sync('Time')
 
 let i = 0
-const continuouslyLogUpdates = async () => {
+const logUpdates = async () => {
   while(i++ < 20) {
     try {
       console.log(await timeSync.once())
@@ -153,7 +152,7 @@ const continuouslyLogUpdates = async () => {
   }
 }
 
-continuouslyLogUpdates()
+logUpdates()
 ```
 
 _Creating a sync object (using a listener callback):_
@@ -231,18 +230,6 @@ const listener = (err, data) => {
 }
 timeSync.addListener(listener)
 setTimeout(() => timeSync.removeListener(listener), 5000)
-```
-
-_Viewing historical errors:_
-```js
-const timeSync = api.sync('BadMethodExample')
-setTimeout(() => {
-  console.log(timeSync.errors)
-  // logs the time of the error
-  console.log(timeSync.errors[0].time)
-  // logs 'Closed this request' (since this type of error is persistent)
-  console.log(timeSync.errors[0].actions)
-}, 10000)
 ```
 
 <a name='syncUpdates'></a>__Updating Instance Options__
@@ -384,7 +371,7 @@ ___BTC donation address:___
 
 3KZw9KTCo3T5MksE7byasq3J8btmLt5BTz
 
-[![donate](http://i66.tinypic.com/fc67o0.jpg)]
+![donate](http://i66.tinypic.com/fc67o0.jpg)
 
 ## License
 
