@@ -11,7 +11,7 @@ const crypto = require('crypto')
 /**
  * Signs the request using the 'crypto' library based on the specifications listed in the [Kraken API Docs]{@link https://www.kraken.com/help/api#general-usage}.
  *
- * @module  API/Calls/signRequest
+ * @module  API/Calls/SignRequest
  * @param   {Kraken~Secret}               secret   - Kraken API secret key.
  * @param   {Kraken~Nonce}                nonce    - Kraken API nonce.
  * @param   {Kraken~HTTPSRequestPOSTData} post     - POST data.

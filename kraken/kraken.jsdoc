@@ -47,12 +47,6 @@
  */
 
 /**
- * Set of server-side API methods specific only to adding, canceling, or modifying orders. Used for rate-limiting based on order frequency. Must be included within the {@link Kraken~PrivateMethods}
- *
- * @typedef {Array} Kraken~OrderMethods
- */
-
-/**
  * Type of method being called on Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more info.
  *
  * @typedef {string} Kraken~Method
@@ -114,7 +108,7 @@
  */
 
 /**
- * Positive integer counter used for determining private API rate limit adherence. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
+ * Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
  *
  * @typedef {number} Kraken~RateLimitCount
  */

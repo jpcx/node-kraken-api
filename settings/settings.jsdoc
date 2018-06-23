@@ -8,7 +8,6 @@
  * Contains types specific to execution settings.
  *
  * @namespace Settings
- * @property  {module:Settings/defaults} defaults - Default execution settings.
  */
 
 /**
@@ -24,52 +23,22 @@
  * @property {Kraken~Version}        [version=0]    - Kraken API version.
  * @property {Kraken~PublicMethods}  [pubMethods=[ 'Time', 'Assets','AssetPairs', 'Ticker','OHLC', 'Depth', 'Trades', 'Spread' ]] - API methods available for public users.
  * @property {Kraken~PrivateMethods} [privMethods=[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' ]] - API methods available for authenticated users.
- * @property {Kraken~OrderMethods}   [orderMethods=[ 'AddOrder', 'CancelOrder' ]] - All methods directly related to order modification.
- * @property {Settings~Parse}        [parse={ numbers: true, dates: true }] - Response parser settings.
- * @property {Settings~RateLimiter}  [rateLimiter={ public: true, private: true, minOrderFrequency: 1000, minViolationRetry: 4500, getCounterLimit: tier => tier >= 3 ? 20 : 15, getCounterIntvl: tier => tier === 4 ? 1000 : tier === 3 ? 2000 : 3000, getIncrementAmt: method => method === 'Ledgers' || method === 'TradesHistory' ? 2 : method === 'AddOrder' || method === 'CancelOrder' ? 0 : 1 }] - Settings for call frequency limitations.
+ * @property {Tools~ParseNestedConfig}        [parse={ numbers: true, dates: true }] - Response parser settings.
+ * @property {Settings~RateLimiter}  [limiter={ baseFreq: 500, minFreq: 250, pileUpWindow: 60000, pileUpThreshold: 1.1, pileUpResetFreq: 1000, pileUpMultiplier: 1.05, violationResetFreq: 4500, violationMultiplier: 1.1, anyPassDecay: 0.95, specificPassDecay: 0.95 }] - Settings for call frequency limitations.
  */
 
 /**
- * Determines counter limit given a tier.
+ * Limits call frequency. Call frequency is split into two main categories: all call frequency and specific call frequency. All call frequency determines the request rate for any kind of call. Specific call frequency is split into several categories of distinct server-side rate-limiting behavior.
  *
- * @typedef {Function}            Settings~GetCounterLimit
- * @param   {Kraken~Tier}         tier - Verification tier.
- * @returns {Kraken~CounterLimit} Counter limit.
- */
-
-/**
- * Determines counter countdown interval given a tier.
- *
- * @typedef {Function}               Settings~GetCounterIntvl
- * @param   {Kraken~Tier}            tier - Verification tier.
- * @returns {Kraken~CounterInterval} Counter interval.
- */
-
-/**
- * Determines amount to increment counter depending on the method.
- *
- * @typedef {Function}               Settings~GetIncrementAmt
- * @param   {Kraken~Method}          method - Method being called.
- * @returns {Kraken~IncrementAmount} Amount to increment counter.
- */
-
-/**
- * Configures response parsing.
- *
- * @typedef  {Object}  Settings~Parse
- * @property {boolean} numbers - Parses string numbers via unary plus.
- * @property {boolean} dates   - Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module.
- */
-
-/**
- * Limits call frequency.
- *
- * @typedef  {Object}  Settings~RateLimiter
- * @property {boolean} public - Whether or not to enable rate-limiting for public methods.
- * @property {boolean} private - Whether or not to enable rate-limiting for private methods.
- * @property {number}  minOrderFrequency - Minimum time between order modification operations. Zero or less to disable this type of rate-limiting.
- * @property {number}  minViolationRetry - Minimum time to wait between retries after rate limit violations. Multiplier for the number of times violated. Any number less than zero to disable retrying after rate-limit violations.
- * @property {Settings~GetCounterLimit} getCounterLimit - Rules for determining counter limit from tier.
- * @property {Settings~GetCounterIntvl} getCounterIntvl - Rules for determining counter interval from tier.
- * @property {Settings~GetIncrementAmt} getIncrementAmt - Rules for determining increment amount from method.
+ * @typedef  {Object} Settings~RateLimiter
+ * @property {number} baseFreq - Default call frequency.
+ * @property {number} minFreq  - Minimum call frequency.
+ * @property {number} pileUpWindow - Moving window of call logs to determine whether or not more calls are being made than received.
+ * @property {number} pileUpThreshold - Call attempts over call responses must be less than this number or call frequency will be increased.
+ * @property {number} pileUpResetFreq - Frequency to reset all calls to in response to more calls made than received.
+ * @property {number} pileUpMultiplier - Amount to multiply by call frequency in response to excessive calling.
+ * @property {number} violationResetFreq - Frequency to reset a call type to in response to a rate limit violation
+ * @property {number} violationMultiplier - Multiplies call type frequency in response to rate limit violations (if greater than violationResetFreq).
+ * @property {number} anyPassDecay - Amount to multiply all call frequency in response to a successful call.
+ * @property {number} specificPassDecay - Amount to multiply call type frequency in response to a successful call.
  */

@@ -6,54 +6,122 @@
 
 'use strict'
 
-const update = (state, type, context) => {
+/**
+ * Checks for more calls being made than responses received and adjusts call frequency accordingly.
+ *
+ * @function API~RateLimits~CheckPileUp
+ * @param    {Settings~RateLimiter}    limitConfig - Current rate-limiter settings configuration.
+ * @param    {API~RateLimits~CallInfo} any         - Rate information for all calls.
+ */
+const checkPileUp = (limitConfig, any) => {
+  if (any.attmp.length > any.compl.length * limitConfig.pileUpThreshold) {
+    if (any.freq < limitConfig.pileUpResetFreq) {
+      any.freq = limitConfig.pileUpResetFreq
+    }
+    any.freq *= limitConfig.pileUpMultiplier
+  }
+}
+
+/**
+ * Checks the response context for {@link API~RateLimits~Update} and adjusts call frequency accordingly.
+ *
+ * @function API~RateLimits~CheckContext
+ * @param    {('pass'|'fail'|undefined)} context     - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
+ * @param    {Settings~RateLimiter}      limitConfig - Rate-limiter settings configuration.
+ * @param    {API~RateLimits~CallInfo}   any         - Rate information for all calls.
+ * @param    {API~RateLimits~CatInfo}    spec        - Rate information for specific {@link API~RateLimits~Category}.
+ */
+const checkContext = (context, limitConfig, any, spec) => {
+  if (context === 'fail') {
+    if (spec.freq < limitConfig.violationResetFreq) {
+      spec.freq = limitConfig.violationResetFreq
+    }
+    spec.freq *= limitConfig.violationMultiplier
+  } else if (context === 'pass') {
+    any.freq *= limitConfig.anyPassDecay
+    spec.freq *= limitConfig.specificPassDecay
+  }
+}
+
+/**
+ * Updates {API~RateLimits~CallStats} and {API~RateLimits~CallStats} frequencies in response to server response behavior.
+ *
+ * @function API~RateLimits~Update
+ * @param    {API~RateLimits~State}    state     - Stateful registry of limiter information.
+ * @param    {API~RateLimits~Category} category  - Type of category based on rate-limiting behavior.
+ * @param    {('pass'|'fail')}         [context] - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
+ */
+const update = (state, category, context) => {
+  const limitConfig = state.settings.limiter
   const now = Date.now()
   const any = state.calls
-  if (!state.types.has(type)) {
-    state.types.set(type, { freq: 500, last: 0 })
+  if (!state.catInfo.has(category)) {
+    state.catInfo.set(category, { freq: limitConfig.baseFreq, last: 0 })
   }
   if (context === 'pass' || context === 'fail') {
     any.compl.push(now)
   } else any.attmp.push(now)
 
-  const spec = state.types.get(type)
+  const spec = state.catInfo.get(category)
 
-  any.attmp = any.attmp.filter(t => t > now - 60000)
-  any.compl = any.compl.filter(t => t > now - 60000)
+  any.attmp = any.attmp.filter(t => t > now - limitConfig.pileUpWindow)
+  any.compl = any.compl.filter(t => t > now - limitConfig.pileUpWindow)
 
-  if (any.attmp.length > any.compl.length * 1.1) {
-    if (any.freq < 1000) any.freq = 1000
-    any.freq *= 1.05
-  }
+  checkPileUp(limitConfig, any)
+  checkContext(context, limitConfig, any, spec)
 
-  if (context === 'fail') {
-    if (spec.freq < 4500) spec.freq = 4500
-    spec.freq *= 1.1
-  }
-  if (context === 'pass') {
-    if (any.freq < 1) any.freq = 0
-    else any.freq *= 0.95
-    if (spec.freq < 1) spec.freq = 0
-    else spec.freq *= 0.95
-  }
+  if (any.freq < limitConfig.minFreq) any.freq = limitConfig.minFreq
+  if (spec.freq < limitConfig.minFreq) spec.freq = limitConfig.minFreq
 }
 
+/**
+ * Loads settings and returns an object with rate-limiting functions.
+ *
+ * @module  API/RateLimits/LoadLimiter
+ * @param   {Settings~Config}          settings - Current settings configuration.
+ * @returns {API~RateLimits~Functions} Rate-limiting functions.
+ */
 module.exports = settings => {
+  /**
+   * Holds data relevant to current execution state.
+   *
+   * @typedef  API~RateLimits~State
+   * @property {Settings~Config}         settings - Current settings configuration.
+   * @property {API~RateLimits~CallInfo} calls    - Rate info for all calls.
+   * @property {API~RateLimits~CatInfo}  catInfo  - Map of category to object containing category-specific rate information.
+   */
   const state = {
     settings,
     calls: {
-      freq: 500,
+      freq: settings.limiter.baseFreq,
       attmp: [],
       compl: []
     },
-    types: new Map()
+    catInfo: new Map()
   }
+  /**
+   * Contains functions for working with rate-limits.
+   *
+   * @typedef  {Object}                 API~RateLimits~Functions
+   * @property {API~RateLimits~Attempt} attempt - Register a new call attempt.
+   * @property {API~RateLimits~AddPass} addPass - Register a new successful call response.
+   * @property {API~RateLimits~AddFail} addFail - Register a new rate-limit violation.
+   * @property {API~RateLimits~GetCategory} getCategory - Gets the type of rate-limiting behavior based on the method.
+   * @property {API~RateLimits~GetAuthRegenFreq} getAuthRegenFreq - Gets the amount of time necessary for a given private method to be called sustainably.
+   */
   return {
-    attempt: type => new Promise(resolve => {
+    /**
+     * Registers a new call attempt and returns a promise that signifies that the call placement may be submitted.
+     *
+     * @function API~RateLimits~Attempt
+     * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
+     * @returns  {Promise}                 Resolves when an adequate wait period has been completed.
+     */
+    attempt: category => new Promise(resolve => {
       const now = Date.now()
       const any = state.calls
-      update(state, type)
-      const spec = state.types.get(type)
+      update(state, category)
+      const spec = state.catInfo.get(category)
       const elapsedAny = now - any.attmp.slice(-2)[0]
       const elapsedSpec = now - spec.last
       spec.last = now
@@ -81,8 +149,8 @@ module.exports = settings => {
         callAttm: state.calls.attmp.length,
         callComp: state.calls.compl.length
       }
-      for (let type of state.types.keys()) {
-        debug[type] = state.types.get(type).freq
+      for (let category of state.catInfo.keys()) {
+        debug[category] = state.catInfo.get(category).freq
       }
       console.dir(debug, { depth: null, colors: true })
       console.log('Wait time: ' + wait)
@@ -91,9 +159,30 @@ module.exports = settings => {
       // =======================================================================
       setTimeout(resolve, wait)
     }),
-    addPass: type => update(state, type, 'pass') && true,
-    addFail: type => update(state, type, 'fail') && true,
-    getType: method => (
+    /**
+     * Registers any response that is not a rate-limit violation and updates frequencies accordingly.
+     *
+     * @function API~RateLimits~AddPass
+     * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
+     * @returns  {boolean}                 True if successfully updated.
+     */
+    addPass: category => update(state, category, 'pass') && true,
+    /**
+     * Registers a new rate-limit violation and updates frequencies accordingly.
+     *
+     * @function API~RateLimits~AddFail
+     * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
+     * @returns  {boolean}                 True if successfully updated.
+     */
+    addFail: category => update(state, category, 'fail') && true,
+    /**
+     * Gets the type of server-side rate-limiter category based on the method.
+     *
+     * @function API~RateLimits~GetCategory
+     * @param    {Kraken~Method}           method - Method being called.
+     * @returns  {API~RateLimits~Category} Type of rate-limiter category.
+     */
+    getCategory: method => (
       method === 'OHLC'
         ? 'ohlc'
         : method === 'Trades'
@@ -102,6 +191,14 @@ module.exports = settings => {
             ? 'auth'
             : 'other'
     ),
+    /**
+     * Gets the frequency required for sustainable execution of a private method.
+     *
+     * @function API~RateLimits~GetAuthRegenFreq
+     * @param    {Kraken~Method} method - Method being called.
+     * @param    {Kraken~Tier}   tier   - Current verification tier.
+     * @returns  {number}        Optimal frequency.
+     */
     getAuthRegenFreq: (method, tier) => {
       const increment = method === 'Ledgers' || method === 'TradesHistory'
         ? 2

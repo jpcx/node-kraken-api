@@ -6,21 +6,20 @@
 
 'use strict'
 
-const ms = require('../../tools/ms.js')
-const normalize = require('../../tools/normalize.js')
+const alphabetizeNested = require('../../tools/alphabetizeNested.js')
 
 /**
- * Calculates average wait time based on the current open sync requests.
+ * Calculates average wait time (for sustainable authenticated calling) based on the current open sync requests. Uses {@link Kraken~CounterLimit}, {@link Kraken~IncrementAmount}, and {@link Kraken~CounterInterval} to determine the minimum sustainable wait time. See the [Kraken API docs]{@link https://www.kraken.com/help/api} for more information.
  *
- * @function API~Syncing~calcAvgAuthWait
+ * @function API~Syncing~CalcAvgAuthWait
  * @param    {API~Syncing~State} state - Object containing runtime data.
- * @returns  {number}           Average wait time.
+ * @returns  {number}            Average wait time.
  */
 const calcAvgAuthWait = (state, starttm) => {
   let sum = 0
   let count = 0
-  if (state.internals.has('auth')) {
-    for (let req of state.internals.get('auth')) {
+  if (state.catThreads.has('auth')) {
+    for (let req of state.catThreads.get('auth')) {
       const params = JSON.parse(req[0])
       sum += state.limiter.getAuthRegenFreq(params.method, state.tier)
       count++
@@ -33,28 +32,37 @@ const calcAvgAuthWait = (state, starttm) => {
   }
 }
 
-const verifyParams = (state, type, req) => {
-  for (let intl of req[1]) {
-    // handle all internals associated with params
-    let params = normalize({
+/**
+ * Responds to changes to changes within the instances associated with the current thread. Pushes out errors if the params are invalid and reverts changes.
+ *
+ * @function API~Syncing~VerifyInternals
+ * @param    {API~Syncing~State}       state  - Object containing runtime data.
+ * @param    {API~RateLimits~Category} cat    - Rate limiting category of the current thread.
+ * @param    {API~Syncing~Thread}      thread - Maps serial params to internal sets.
+ */
+const verifyInternals = (state, cat, thread) => {
+  for (let intl of thread[1]) {
+    // handle all internals associated with serial
+    let params = alphabetizeNested({
       method: intl.instance.method,
       options: intl.instance.options
     })
 
-    const typeMap = state.internals.get(type)
-    const reqSet = typeMap.get(req[0])
+    const catMap = state.catThreads.get(cat)
+    const intlSet = catMap.get(thread[0])
 
-    if (intl.state === 'closed') {
+    if (intl.status === 'closed') {
       // instance has been closed with the close() function
-      intl.instance.state = 'closed'
-      reqSet.delete(intl)
-      if (reqSet.size === 0) {
-        typeMap.delete(req[0])
-        if (typeMap.size === 0) {
-          state.internals.delete(type)
+      intl.instance.status = 'closed'
+      intlSet.delete(intl)
+      if (intlSet.size === 0) {
+        catMap.delete(thread[0])
+        state.serialReg.delete(thread[0])
+        if (catMap.size === 0) {
+          state.catThreads.delete(cat)
         }
       }
-    } else if (JSON.stringify(params) !== req[0]) {
+    } else if (JSON.stringify(params) !== thread[0]) {
       // method and/or options have been changed via the instance
       let changed = true
       if (params.method !== intl.params.method) {
@@ -74,9 +82,9 @@ const verifyParams = (state, type, req) => {
           // revert
           params.method = intl.params.method
           intl.instance.method = params.method
-          params = normalize(params)
+          params = alphabetizeNested(params)
           // check for further changes
-          if (JSON.stringify(params) === req[0]) changed = false
+          if (JSON.stringify(params) === thread[0]) changed = false
         }
       } else if (params.options.constructor !== Object) {
         // options have changed and are invalid
@@ -85,42 +93,44 @@ const verifyParams = (state, type, req) => {
           `Invalid options ${params.options}. Must be Object. Reverting.`
         ), null, intl.instance))
         // revert
-        params.options = JSON.parse(req[0]).options
+        params.options = JSON.parse(thread[0]).options
         intl.params.options = params.options
         intl.instance.options = params.options
-        params = normalize(params)
+        params = alphabetizeNested(params)
         changed = false
       }
 
       if (changed) {
         // re-assign internal
-        const serialParams = JSON.stringify(params)
-        const newType = state.limiter.getType(intl.params.method)
-        if (newType !== type) {
-          // type has changed
-          if (!state.internals.has(newType)) {
-            state.internals.set(newType, new Map())
-            state.internals.get(newType).set(serialParams, new Set([intl]))
+        const serial = JSON.stringify(params)
+        state.serialReg.set(serial, params)
+        const newCat = state.limiter.getCategory(intl.params.method)
+        if (newCat !== cat) {
+          // category has changed
+          if (!state.catThreads.has(newCat)) {
+            state.catThreads.set(newCat, new Map())
+            state.catThreads.get(newCat).set(serial, new Set([intl]))
           } else {
-            if (!state.internals.get(newType).has(serialParams)) {
-              state.internals.get(newType).set(serialParams, new Set([intl]))
+            if (!state.catThreads.get(newCat).has(serial)) {
+              state.catThreads.get(newCat).set(serial, new Set([intl]))
             } else {
-              state.internals.get(newType).get(serialParams).add(intl)
+              state.catThreads.get(newCat).get(serial).add(intl)
             }
           }
         } else {
           // params have changed
-          if (!typeMap.has(serialParams)) {
-            typeMap.set(serialParams, new Set([intl]))
+          if (!catMap.has(serial)) {
+            catMap.set(serial, new Set([intl]))
           } else {
-            typeMap.get(serialParams).add(intl)
+            catMap.get(serial).add(intl)
           }
         }
-        reqSet.delete(intl)
-        if (reqSet.size === 0) {
-          typeMap.delete(req[0])
-          if (typeMap.size === 0) {
-            state.internals.delete(type)
+        intlSet.delete(intl)
+        if (intlSet.size === 0) {
+          catMap.delete(thread[0])
+          state.serialReg.delete(thread[0])
+          if (catMap.size === 0) {
+            state.catThreads.delete(cat)
           }
         }
       }
@@ -131,48 +141,48 @@ const verifyParams = (state, type, req) => {
 /**
  * Handles request queue and sends data to associated {@link API~Syncing~EventListener}s.
  *
- * @function API~Syncing~handleRequests
- * @param    {API~Syncing~State} state - Object containing runtime data.
- * @returns  {Promise}          Promise which resolves when there are no more requests to process and rejects when an error has been thrown.
- * @throws   Will throw any error which does not result directly from a call.
+ * @function API~Syncing~HandleRequests
+ * @param    {API~Syncing~State}       state - Object containing runtime data.
+ * @param    {API~RateLimits~Category} cat - Current rate-limit category.
+ * @returns  {Promise}                 Promise which resolves when there are no more requests to process and rejects upon any operational errors.
  */
-const handleRequests = async (state, type) => {
+const handleRequests = async (state, cat) => {
   while (
-    state.internals.has(type) &&
-    state.internals.get(type).size > 0
+    state.catThreads.has(cat) &&
+    state.catThreads.get(cat).size > 0
   ) {
     // loop continuously
-    for (let req of state.internals.get(type)) {
+    for (let thread of state.catThreads.get(cat)) {
       // handle all param sets
       const starttm = Date.now()
-      verifyParams(state, type, req)
-      if (
-        !state.internals.has(type) ||
-        !state.internals.get(type).has(req[0])
-      ) {
-        continue
-      }
-      const params = JSON.parse(req[0])
+
+      verifyInternals(state, cat, thread)
+      if (!state.catThreads.has(cat)) break
+      if (!state.catThreads.get(cat).has(thread[0])) continue
+
+      const params = state.serialReg.get(thread[0])
       let data
       try {
         data = await state.call(params.method, params.options)
-        for (let intl of req[1]) {
-          if (intl.state === 'init') intl.state = 'open'
-          intl.instance.state = 'open'
+        for (let intl of thread[1]) {
+          if (intl.status === 'init') intl.status = 'open'
+          intl.instance.status = 'open'
           Object.keys(intl.data).forEach(key => delete intl.data[key])
           Object.keys(data).forEach(key => (intl.data[key] = data[key]))
           intl.instance.time = Date.now()
           intl.listeners.forEach(cb => cb(null, data, intl.instance))
         }
       } catch (err) {
-        for (let intl of req[1]) {
-          if (intl.state === 'init') intl.state = 'open'
-          intl.instance.state = 'open'
+        for (let intl of thread[1]) {
+          if (intl.status === 'init') intl.status = 'open'
+          intl.instance.status = 'open'
           intl.listeners.forEach(cb => cb(err, null, intl.instance))
         }
       }
-      if (type === 'auth') {
-        await ms(calcAvgAuthWait(state, starttm))
+      if (cat === 'auth') {
+        await new Promise(
+          resolve => setTimeout(resolve, calcAvgAuthWait(state, starttm))
+        )
       }
     }
   }
@@ -181,29 +191,29 @@ const handleRequests = async (state, type) => {
 /**
  * Creates a sync instance creator by loading relevant information into a closure.
  *
- * @module  API/Syncing/loadSync
- * @param   {Settings~Config}      settings - Settings configuration.
- * @param   {API~Calls~Call}       call        - Stateful call function.
- * @returns {API~Syncing~Sync}     Function which creates sync instances.
+ * @module  API/Syncing/LoadSync
+ * @param   {Settings~Config}          settings - Settings configuration.
+ * @param   {API~RateLimits~Functions} limiter  - Limiter instance.
+ * @param   {API~Calls~Call}           call     - Stateful call function.
+ * @returns {API~Syncing~Sync}         Function which creates sync instances.
  */
 module.exports = (settings, limiter, call) => {
   /**
    * Contains runtime information to be passed around within sync operations.
    *
    * @typedef  {Object} API~Syncing~State
-   * @property {Kraken~Tier}          tier        - Kraken verification tier.
-   * @property {Settings~RateLimiter} rateLimiter - RateLimiter configuration.
-   * @property {API~Calls~Call}       call        - Stateful call function.
-   * @property {boolean}              requesting  - Whether or not a queue processing operation is in progress.
-   * @property {API~Syncing~OpenRequests}    open    - Set of all open requests.
-   * @property {API~Syncing~ClosingRequests} closing - Set of all requests which should be closed.
+   * @property {Settings~Config}          settings        - Settings configuration.
+   * @property {API~RateLimits~Functions} limiter - Limiter instance.
+   * @property {API~Calls~Call}           call        - Stateful call function.
+   * @property {API~Syncing~CatThreads}   catThreads - Map of category to map of serials to internals set.
+   * @property {API~Calls~SerialRegistry}       serialReg  - Maps serialized params to actual params.
    */
   const state = {
     settings,
     limiter,
     call,
-    internals: new Map(),
-    gates: new Set()
+    catThreads: new Map(),
+    serialReg: new Map()
   }
   /**
    * Stateful function which creates sync instances.
@@ -227,35 +237,33 @@ module.exports = (settings, limiter, call) => {
     /**
      * Sync instance used for behavior manipulation and data retrieval.
      *
-     * @typedef  {Object}                   API~Syncing~Instance
-     * @property {API~Syncing~InstanceData} data     - Defaults to Object that stores direct data from calls but may be reassigned within an {@link API~Syncing~EventListener} or otherwise.
-     * @property {number}                   time     - Time (in ms) since last successful {@link API~Syncing~InstanceData} update.
-     * @property {Kraken~Options}           options  - Current method-specific options.
-     * @property {API~Syncing~Error[]}      errors   - Array of errors encountered during sync execution.
-     * @property {API~Syncing~getState}     getState - Gets the current request state.
-     * @property {API~Syncing~getMethod}    getMethod - Gets the current {@link Kraken~Method}.
-     * @property {API~Syncing~setMethod}    setMethod - Sets a new {@link Kraken~Method}.
-     * @property {API~Syncing~open}         open       - Opens the instance if closed.
-     * @property {API~Syncing~close}        close      - Closes the instance if open.
-     * @property {API~Syncing~addListener}  addListener - Adds a new {@link API~Syncing~EventListener} to the request.
-     * @property {API~Syncing~removeListener} removeListener - Removes a {@link API~Syncing~EventListener} from the request.
-     * @property {API~Syncing~once}           once           - Adds a one-time {@link API~Syncing~EventListener} if provided; otherwise returns a promise which resolves/rejects on the next error/data event.
+     * @typedef  {Object} API~Syncing~Instance
+     * @property {('init'|'open'|'closed')} status - Current status of the instance. Set to 'init' until request attempt, 'open' when active, and 'closed' when not. Note: changing this value during runtime will not change instance behaviors; use the associated 'open' and 'close' methods instead.
+     * @property {Kraken~Method} method - Current method associated with the instance. Changes to this value during runtime will result in thread reassignment if valid; if invalid, will be reverted and will notify the event listeners with an 'Invalid method' error.
+     * @property {Kraken~Options} options - Current method-specific options. Changes to this value during runtime will result in map reassignment if valid; if invalid (not an object), will be reverted and will notify the event listeners with an 'Invalid options' error.
+     * @property {API~Syncing~InstanceData} data - Object containing data from the last successful response.
+     * @property {API~Syncing~Open} open - Opens the instance if closed.
+     * @property {API~Syncing~Close} close - Closes the instance if open.
+     * @property {API~Syncing~AddListener} addListener - Associates a new {@link API~Syncing~EventListener}.
+     * @property {API~Syncing~RemoveListener} removeListener - Disassociates a {@link API~Syncing~EventListener}.
+     * @property {API~Syncing~RemoveAllListeners} removeAllListeners - Removes all associated {@link API~Syncing~EventListener}s.
+     * @property {API~Syncing~Once} once - Adds a one-time {@link API~Syncing~EventListener} if provided; otherwise returns a promise which resolves/rejects on the next error/data event.
+     * @property {number} time - Time (in ms) of last successful {@link API~Syncing~InstanceData} update.
      */
-    const instance = { state: 'init', method, options }
+    const instance = { status: 'init', method, options }
 
     /**
      * Internal sync instance data.
      *
      * @typedef  {Object}               API~Syncing~Internal
-     * @property {API~Syncing~State}    state    - Current state of the request.
-     * @property {Kraken~Method}        method   - Current Kraken method.
-     * @property {Kraken~Options}       options  - Method-specific options.
+     * @property {API~Syncing~Status}   status   - Current status of the request.
+     * @property {API~Calls~Params}     params   - Object containing method and options.
      * @property {API~Syncing~Instance} instance - Instance being tracked.
      * @property {Set<API~Syncing~EventListener>} listeners - Set of all associated event listeners.
-     * @property {API~Syncing~Error[]}  errors   - Array of errors encountered during sync execution.
+     * @property {API~Syncing~InstanceData} data - Object containing data from the last successful response.
      */
     const internal = {
-      state: 'init',
+      status: 'init',
       params: {
         method,
         options
@@ -270,33 +278,34 @@ module.exports = (settings, limiter, call) => {
       /**
        * Opens the instance if closed.
        *
-       * @function API~Syncing~open
+       * @function API~Syncing~Open
        * @returns  {boolean}  True if opened or already open.
        */
       open: () => {
-        const type = limiter.getType(internal.params.method)
-        const serialParams = JSON.stringify(normalize(internal.params))
+        const cat = limiter.getCategory(internal.params.method)
+        const serial = JSON.stringify(alphabetizeNested(internal.params))
+        state.serialReg.set(serial, internal.params)
 
-        if (!state.internals.has(type)) {
-          state.internals.set(type, new Map())
+        let launch = false
+
+        if (!state.catThreads.has(cat)) {
+          state.catThreads.set(cat, new Map())
+          launch = true
         }
 
-        const loc = state.internals.get(type)
+        const thread = state.catThreads.get(cat)
 
-        if (!loc.has(serialParams)) {
-          loc.set(serialParams, new Set([internal]))
-        } else loc.get(serialParams).add(internal)
+        if (!thread.has(serial)) {
+          thread.set(serial, new Set([internal]))
+        } else thread.get(serial).add(internal)
 
-        internal.state = 'open'
+        internal.status = 'open'
 
-        if (!state.gates.has(type)) {
-          state.gates.add(type)
-          handleRequests(state, type).then(
-            () => state.gates.delete(type)
-          ).catch(
+        if (launch) {
+          handleRequests(state, cat).catch(
             err => {
-              if (state.internals.has(type)) {
-                state.internals.get(type).forEach(entry => {
+              if (state.catThreads.has(cat)) {
+                state.catThreads.get(cat).forEach(entry => {
                   entry[1].forEach(internal => {
                     internal.listeners.forEach(cb => {
                       cb(err, null, internal.instance)
@@ -313,44 +322,44 @@ module.exports = (settings, limiter, call) => {
       /**
        * Closes the instance if opened.
        *
-       * @function API~Syncing~close
-       * @returns  {boolean}  True if closed or already closed.
+       * @function API~Syncing~Close
+       * @returns  {boolean} True if closed or already closed.
        */
-      close: () => (internal.state = 'closed') && true,
+      close: () => (internal.status = 'closed') && true,
       /**
-       * Adds an {@link API~Syncing~EventListener} to the instance's request listeners.
+       * Associates a new {@link API~Syncing~EventListener} with the instance.
        *
-       * @function API~Syncing~addListener
+       * @function API~Syncing~AddListener
        * @param    {API~Syncing~EventListener} listener - Listener function to add.
-       * @returns  {boolean}  True if added successfully.
+       * @returns  {boolean} True if added successfully.
        */
       addListener: listener => internal.listeners.add(listener) && true,
       /**
-       * Removes an {@link API~Syncing~EventListener} from the instance's request listeners.
+       * Disassociates an {@link API~Syncing~EventListener} from the instance.
        *
-       * @function API~Syncing~removeListener
+       * @function API~Syncing~RemoveListener
        * @param    {API~Syncing~EventListener} listener - Listener function to remove.
-       * @returns  {boolean}  True if not in the listeners set.
+       * @returns  {boolean} True if not in the listeners set.
        */
       removeListener: listener => internal.listeners.delete(listener) && true,
       /**
-       * Removes all event listeners.
+       * Removes all {@link API~Syncing~EventListener}s from the instance.
        *
-       * @function API~Syncing~removeAllListeners
+       * @function API~Syncing~RemoveAllListeners
        * @returns  {boolean} True if all listeners have been deleted.
        */
       removeAllListeners: () => (
         internal.listeners.forEach(l => internal.listeners.delete(l)) && true
       ),
       /**
-       * Adds a one-time {@link API~Syncing~EventListener} to the instance's request listeners. If no listener is provided as a parameter, returns a promise which resolves with the next update's error or data.
+       * Adds a one-time {@link API~Syncing~EventListener} to the instance. If no listener is provided as a parameter, returns a promise which resolves with the next update's error or data.
        *
-       * @function API~Syncing~once
+       * @function API~Syncing~Once
        * @param    {API~Syncing~EventListener} [listener] - Once listener function to add.
        * @returns  {(boolean|Promise)}         Returns true if added successfully or a promise if a listener function is not provided.
        */
       once: onceListener => {
-        const opPromise = new Promise(
+        const op = new Promise(
           (resolve, reject) => {
             let selfDestructListener
             selfDestructListener = (err, data) => {
@@ -362,12 +371,12 @@ module.exports = (settings, limiter, call) => {
           }
         )
         if (onceListener instanceof Function) {
-          opPromise
+          op
             .then(data => onceListener(null, instance.data, instance))
             .catch(err => onceListener(err, null, instance))
           return true
         } else {
-          return opPromise
+          return op
         }
       },
       debug: { state }

@@ -5,50 +5,37 @@
  */
 
 /**
- * Types and methods specific to limiting call frequency according to the rate limit specifications listed in the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit}
+ * Types and methods specific to dynamically limiting call frequency in response to rate limit violations and according to the rate limit specifications listed in the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit}
  *
  * @namespace API~RateLimits
- * @property  {module:API/RateLimits/limiter} limiter - Prepares rate-limiting promises according to the {@link Kraken~Tier}, {@link Kraken~Method}, and {@link Settings~RateLimiter}.
+ * @property  {module:API/RateLimits/LoadLimiter} LoadLimiter - Prepares rate-limiting promises according to the {@link Kraken~Tier}, {@link Kraken~Method}, and {@link Settings~RateLimiter}.
  */
 
 /**
- * Holds rate-limit data for specific API keys.
+ * Separates calls into four categories that are known to have different server-side rate-limiting behavior.
  *
- * @typedef  {Object} API~RateLimits~KeyHashCounter
- * @property {Kraken~RateLimitCount} count - Current rate limiting count.
- * @property {number} time      - Last counter update time.
- * @property {number} triggerCt - Number of consecutive rate limit violations for private calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry. Note: this should never be more than zero.
+ * @typedef {('ohlc'|'trades'|'other'|'auth')} API~RateLimits~Category
  */
 
 /**
- * Holds rate-limit data for private calls.
+ * Contains rate information for all calls.
  *
- * @typedef  {Object} API~RateLimits~PrivateCounter
- * @property {API~RateLimits~KeyHashCounter} [*] - Key-specific counter data (key specified by SHA-256 hash).
+ * @typedef  {Object} API~RateLimits~CallInfo
+ * @property {number} freq - Current calculated safe frequency.
+ * @property {Array}  attmp - Array of call times for attempted calls.
+ * @property {Array}  compl - Array of call times for responses.
  */
 
 /**
- * Holds rate-limit data for public calls.
+ * Maps category names to associated rate info.
  *
- * @typedef  {Object} API~RateLimits~PublicCounter
- * @property {number} [tradesTriggers] - Number of consecutive rate limit violations for 'Trades' calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry.
- * @property {number} [ohlcTriggers]   - Number of consecutive rate limit violations for 'OHLC' calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry.
- * @property {number} [otherTriggers]  - Number of consecutive rate limit violations for any other public calls. Multiplier for {@link Settings~Config}.rateLimits.minViolationRetry.
+ * @typedef {Map<API~RateLimits~Category,API~RateLimits~CatInfo>}
  */
 
 /**
- * Counter Object that tracks call times and frequency by type in order to adhere to Kraken's rate limit specifications. Saved to the disk for cross-instance and inter-session tracking.
+ * Holds information for category-specific rates.
  *
- * @typedef  {Object} API~RateLimits~Counter
- * @property {API~RateLimits~PrivateCounter} [private] - Counter data for private calls.
- * @property {API~RateLimits~PublicCounter}  [public]  - Counter data for public calls.
- */
-
-/**
- * Contains information pertaining to counter logic.
- *
- * @typedef {Object} API~RateLimits~CounterInfo
- * @property {Kraken~CounterLimit}    limit  - Current counter limit
- * @property {Kraken~CounterInterval} intvl  - Current counter decrement interval.
- * @property {Kraken~IncrementAmount} incAmt - Counter increment interval based on current method.
+ * @typedef  {Object} API~RateLimits~CatInfo
+ * @property {number} freq - Current calculated safe frequency.
+ * @property {number} last - Time of last call attempt.
  */

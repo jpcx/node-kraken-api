@@ -6,7 +6,7 @@
 
 'use strict'
 
-const defaults = require('./settings/defaults.js')
+const defaults = require('./settings/defaults.json')
 const loadCall = require('./api/calls/loadCall.js')
 const loadSync = require('./api/syncing/loadSync.js')
 const loadLimiter = require('./api/rateLimits/loadLimiter.js')

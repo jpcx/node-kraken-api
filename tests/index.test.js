@@ -52,17 +52,18 @@ test('Syncs calls', () => new Promise(
   }
 ))
 
-test('Observes rate limits', async () => {
-  jest.setTimeout(640000)
-  const api = kraken()
-  for (let i = 0; i < 30; i++) {
-    try {
-      await api.call('Time')
-    } catch (e) {
-      expect(e.message.match(/rate limit/gi)).toBe(null)
+test('Observes rate limits', () => new Promise(
+  resolve => {
+    jest.setTimeout(640000)
+    const api = kraken()
+    let numCompleted = 0
+    for (let i = 0; i < 30; i++) {
+      api.call('OHLC', { pair: 'XXBTZUSD', i })
+        .then(() => { ++numCompleted >= 30 && resolve() })
+        .catch(err => expect(e.message.match(/rate limit/gi)).toBe(null))
     }
   }
-})
+))
 
 test(
   'Makes authenticated calls (if credentials are provided in ./auth.json)',
