@@ -72,7 +72,18 @@ const api = kraken(require('./config.json'))
 Or:
 
 ```js
-const api = kraken({ key: '****', secret: '****', tier: '****', otp: '****', parse: { dates: false } })
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   Note: In this example, OTP is set during instantiation. *
+ * This is advisable only if the two-factor password for     *
+ * this API key is static. Otherwise, use api.setOTP()       *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+const api = kraken({
+  key: '****',
+  secret: '****',
+  tier: '****',
+  otp: '****',
+  parse: { dates: false }
+})
 ```
 
 ### Usage
@@ -113,8 +124,17 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 },
 
 _Using a one-time password:_
 ```js
-// this may be done after calling the method as well
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   NOTE: due to call queueing functionality and rate limiting,   *
+ * OTP may need to be set again if the call has not been executed  *
+ * before the password decays. However, setOTP may be called after *
+ * a call has been sent to the queue.                              *
+ *                                                                 *
+ * This shouldn't be a problem unless there have been a very large *
+ * volume of calls sent to the call queue.                         *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 api.setOTP(158133)
+
 api.call('AddOrder', {
   pair: 'XXBTZUSD',
   type: 'buy',
