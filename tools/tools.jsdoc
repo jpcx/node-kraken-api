@@ -1,0 +1,19 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Contains methods and types for various client-side tools.
+ *
+ * @namespace Tools
+ * @property  {module:Tools/AlphabetizeNested} AlphabetizeNested - Alphabetizes a nested Object.
+ * @property  {module:Tools/ParseNested}       ParseNested       - Parses a nested Object, Array, Map, or Set according to the rules defined in {@link Settings~Parse}
+ */
+
+/**
+ * @typedef  {Object}  Tools~ParseNestedConfig
+ * @property {boolean} numbers - Parses string numbers via unary plus.
+ * @property {boolean} dates   - Converts date strings, seconds, and microseconds to milliseconds using the ranged-date module.
+ */

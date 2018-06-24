@@ -1,0 +1,30 @@
+{
+  "name": "node-kraken-api",
+  "version": "___{alias:node-kraken-api/tag}___",
+  "description": "___{alias:node-kraken-api/description}___",
+  "engines": {
+    "node": ">=___{alias:node-kraken-api/node}___"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose",
+    "prepare": "npm run-script build && npm test",
+    "build": "sh scripts/build.sh",
+    "build-jsdoc": "jsdoc . -c .jsdoc.conf.json --readme README.md -d docs/jsdoc"
+  },
+  "keywords": ___{alias:node-kraken-api/keywords___JSON}___,
+  "author": "Justin Collier",
+  "repository": "github:jpcx/node-kraken-api",
+  "bugs": {
+    "url": "https://github.com/jpcx/node-kraken-api/issues",
+    "email": "jpcxme@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": ___{alias:node-kraken-api/dependencies___JSON}___,
+  "devDependencies": ___{alias:node-kraken-api/devDependencies___JSON}___,
+  "standard": {
+    "ignore": [
+      "tests/**/*.test.js"
+    ]
+  }
+}

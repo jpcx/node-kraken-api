@@ -1,0 +1,9 @@
+{
+  "recurseDepth": 10,
+  "source": {
+    "excludePattern": "node_modules"
+  },
+  "opts": {
+    "recurse": true
+  }
+}

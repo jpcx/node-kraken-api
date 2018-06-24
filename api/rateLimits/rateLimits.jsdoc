@@ -1,0 +1,41 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Types and methods specific to dynamically limiting call frequency in response to rate limit violations and according to the rate limit specifications listed in the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit}
+ *
+ * @namespace API~RateLimits
+ * @property  {module:API/RateLimits/LoadLimiter} LoadLimiter - Prepares rate-limiting promises according to the {@link Kraken~Tier}, {@link Kraken~Method}, and {@link Settings~RateLimiter}.
+ */
+
+/**
+ * Separates calls into four categories that are known to have different server-side rate-limiting behavior.
+ *
+ * @typedef {('ohlc'|'trades'|'other'|'auth')} API~RateLimits~Category
+ */
+
+/**
+ * Contains rate information for all calls.
+ *
+ * @typedef  {Object}   API~RateLimits~CallInfo
+ * @property {number}   intvl - Current calculated safe interval.
+ * @property {number[]} attmp - Array of call times (in ms) for attempted calls.
+ * @property {number[]} compl - Array of call times (in ms) for responses.
+ */
+
+/**
+ * Maps category names to associated rate info.
+ *
+ * @typedef {Map<API~RateLimits~Category,API~RateLimits~CatInfo>}
+ */
+
+/**
+ * Holds information for category-specific frequencies.
+ *
+ * @typedef  {Object} API~RateLimits~CatInfo
+ * @property {number} intvl - Current calculated safe interval.
+ * @property {number} last  - Time (in ms) of last call attempt.
+ */

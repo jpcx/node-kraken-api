@@ -1,0 +1,138 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Contains types specific to the Kraken servers.
+ *
+ * @namespace Kraken
+ */
+
+/**
+ * API key from Kraken used for authenticated connections.
+ *
+ * @typedef {string} Kraken~Key
+ */
+
+/**
+ * API secret from Kraken used for authenticated connections.
+ *
+ * @typedef {string} Kraken~Secret
+ */
+
+/**
+ * Verification tier from Kraken used for determining rate limits.
+ *
+ * @typedef {number} Kraken~Tier
+ */
+
+/**
+ * Two factor password used for authenticated calls (if required).
+ *
+ * @typedef {(number|string)} Kraken~OTP
+ */
+
+/**
+ * Server-side API version. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
+ *
+ * @typedef {number} Kraken~Version
+ */
+
+/**
+ * Set of server-side API methods available to all users.
+ *
+ * @typedef {Array} Kraken~PublicMethods
+ */
+
+/**
+ * Set of server-side API methods available exclusively to authenticated users.
+ *
+ * @typedef {Array} Kraken~PrivateMethods
+ */
+
+/**
+ * Type of method being called on Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
+ *
+ * @typedef {string} Kraken~Method
+ */
+
+/**
+ * A single option to be sent to the Kraken servers; varies by method type.
+ *
+ * @typedef {(string|number)} Kraken~Option
+ */
+
+/**
+ * Method-specific options for calls to Kraken servers. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
+ *
+ * @typedef  {Object} Kraken~Options
+ * @property {Kraken~Option} * - An option to send to the servers.
+ */
+
+/**
+ * Unique ever-increasing integer used by Kraken servers to determine request validity. See the [Kraken API docs]{@link https://www.kraken.com/help/api#general-usage} for more info. As recommended by Kraken, nonce is the current time in microseconds.
+ *
+ * @typedef {number} Kraken~Nonce
+ */
+
+/**
+ * Hostname for the Kraken API endpoint. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
+ *
+ * @typedef {string} Kraken~Hostname
+ */
+
+/**
+ * Path to the Kraken API endpoint for a given method. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
+ *
+ * @typedef {string} Kraken~Path
+ */
+
+/**
+ * HTTPS request headers for calls to Kraken servers.
+ *
+ * @typedef  {Object}              Kraken~HTTPSRequestHeaders
+ * @property {Kraken~Key}          API-Key  - Kraken API key.
+ * @property {API~Calls~Signature} API-Sign - Cryptographic signature using API secret and other call parameters.
+ */
+
+/**
+ * HTTPS request options for calls to Kraken servers.
+ *
+ * @typedef  {Object}          Kraken~HTTPSRequestOptions
+ * @property {Kraken~Hostname} hostname - Kraken hostname.
+ * @property {Kraken~Path}     path     - Kraken method path.
+ * @property {string}          method   - 'POST' HTTPS request specification. NOTE: This is NOT the same as the {@link Kraken~Method} for the request.
+ * @property {Kraken~HTTPSRequestHeaders} headers - Kraken HTTPS request headers.
+ */
+
+/**
+ * HTTPS request POST data for calls to Kraken servers. Generated using 'qs' module.
+ *
+ * @typedef {string} Kraken~HTTPSRequestPOSTData
+ */
+
+/**
+ * Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
+ *
+ * @typedef {number} Kraken~RateLimitCount
+ */
+
+/**
+ * Positive integer counter limit used for determining private API rate limit adherence. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
+ *
+ * @typedef {Kraken~RateLimitCount} Kraken~CounterLimit
+ */
+
+/**
+ * Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the {@link Kraken~Method}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
+ *
+ * @typedef {Kraken~RateLimitCount} Kraken~IncrementAmount
+ */
+
+/**
+ * Number of seconds for the {@link Kraken~RateLimitCount} to decrement by one. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
+ *
+ * @typedef {number} Kraken~CounterInterval
+ */

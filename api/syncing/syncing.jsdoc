@@ -1,0 +1,74 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Types and methods specific to scheduling persistent {@link API~Calls~Call} operations.
+ *
+ * @namespace API~Syncing
+ * @property  {module:API/Syncing/LoadSync} LoadSync - Loads settings and loaded call function and returns stateful sync creation function.
+ */
+
+/**
+ * Contains parsed and assigned arguments from initial call of the sync operation.
+ *
+ * @typedef  {Object} API~Syncing~Arguments
+ * @property {Kraken~Options}       options  - Method-specific options.
+ * @property {API~Syncing~Interval} interval - Minimum sync update interval.
+ * @property {API~Syncing~EventListener} listener - Event listener for sync error and data events.
+ */
+
+/**
+ * Data value of the instance. Defaults to an object that is replaced with {@link API~Calls~CallData} upon every successful call, but may be customized within an {@link API~Syncing~EventListener} or otherwise.
+ *
+ * @typedef {(Object|*)} API~Syncing~InstanceData
+ */
+
+/**
+ * Current state of the instance's request. 'init' if first {@link API~Calls~CallData} has not been received; 'open' if queued; 'closed' if not queued.
+ *
+ * @typedef {('init'|'open'|'closed')} API~Syncing~Status
+ */
+
+/**
+ * Interval for sync updates. Triggers a removal of the instance from the update queue and spawns a timeout for re-integration.
+ *
+ * @typedef {number} API~Syncing~Interval
+ */
+
+/**
+ * Callback function that is executed upon sync errors or data events. Returning a truthy value from this function will instruct the sync operation to not assign the 'data' property of the {@link API~Syncing~Instance}. In other words, returning a truthy value will inform the sync process that data will either be reassigned from within this event listener manually or does not need to be set.
+ *
+ * @typedef {Function}             API~Syncing~EventListener
+ * @param   {API~Syncing~Error}    err  - Sync error.
+ * @param   {API~Calls~CallData}   data - Data received from call.
+ * @param   {API~Syncing~Instance} [instance] - Reference to the current instance, if necessary.
+ * @returns {(boolean|undefined)}  Returns truthy value if data does not need to be assigned by the sync operation internally; returns a falsy value if data does need to be assigned automatically.
+ */
+
+/**
+ * Timestamped {@link API~Calls~CallError} (or other execution error) which is added to the instance error array and sent to any available listeners.
+ *
+ * @typedef  {Error}  API~Syncing~Error
+ * @property {number} time - Time of the error.
+ */
+
+/**
+ * Holds maps of {@link API~Calls~Params} to internal instances by rate-limit category. Different categories are executed in parallel.
+ *
+ * @typedef {Map<API~RateLimits~Category,API~Syncing~Thread>} API~Syncing~CatThreads
+ */
+
+/**
+ * Maps serial params to internal instances.
+ *
+ * @typedef {Map<API~Calls~SerialParams,API~Syncing~InternalSet>} API~Syncing~Thread
+ */
+
+/**
+ * Set of all internal instances associated with a call.
+ *
+ * @typedef {Set<API~Syncing~Internal>} API~Syncing~InternalSet
+ */

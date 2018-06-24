@@ -1,0 +1,41 @@
+{
+  "key": "",
+  "secret": "",
+  "tier": 0,
+  "otp": null,
+  "timeout": 5000,
+  "retryCt": 3,
+  "hostname": "api.kraken.com",
+  "version": 0,
+  "pubMethods": [
+    "Time", "Assets", "AssetPairs", "Ticker",
+    "OHLC", "Depth", "Trades", "Spread"
+  ],
+  "privMethods": [
+    "Balance", "TradeBalance", "OpenOrders", "ClosedOrders",
+    "QueryOrders", "TradesHistory", "QueryTrades", "OpenPositions",
+    "Ledgers", "QueryLedgers", "TradeVolume", "AddOrder",
+    "CancelOrder", "DepositMethods", "DepositAddresses", "DepositStatus",
+    "WithdrawInfo", "Withdraw", "WithdrawStatus", "WithdrawCancel"
+  ],
+  "parse": {
+    "numbers": true,
+    "dates": true
+  },
+  "limiter": {
+    "baseIntvl": 500,
+    "minIntvl": 250,
+    "pileUpWindow": 60000,
+    "pileUpThreshold": 5,
+    "pileUpResetIntvl": 1000,
+    "pileUpMultiplier": 1.05,
+    "violationResetIntvl": 4500,
+    "violationMultiplier": 1.1,
+    "anyPassDecay": 0.95,
+    "specificPassDecay": 0.95
+  },
+  "syncIntervals": {
+    "OHLC": 60000,
+    "Trades": 600
+  }
+}

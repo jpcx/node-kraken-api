@@ -1,0 +1,117 @@
+/**
+ * @author Justin Collier <jpcxme@gmail.com>
+ * @license MIT
+ * @see {@link http://github.com/jpcx/node-kraken-api|GitHub}
+ */
+
+/**
+ * Types and methods specific to making direct API calls to Kraken.
+ *
+ * @namespace API~Calls
+ * @property  {module:API/Calls/LoadCall}       LoadCall       - Loads a stateful call function given the execution settings.
+ * @property  {module:API/Calls/GenRequestData} GenRequestData - Generates request data for a given request.
+ * @property  {module:API/Calls/SignRequest}    SignRequest    - Applies a cryptographic signature to a given request.
+ */
+
+/**
+ * Object of parsed arguments provided to the call function.
+ *
+ * @typedef  {Object}         API~Calls~Arguments
+ * @property {Kraken~Method}  method  - Call method.
+ * @property {Kraken~Options} options - Method-specific options.
+ * @property {API~Callback}   cb      - Callback for error or data.
+ */
+
+/**
+ * Timeout (in ms) for terminating HTTPS connections.
+ *
+ * @typedef {number} API~Calls~Timeout
+ */
+
+/**
+ * Request data prepared for use with the 'https' module.
+ *
+ * @typedef  {Object}                      API~Calls~RequestData
+ * @property {Kraken~HTTPSRequestOptions}  options - Options for HTTPS request to Kraken servers.
+ * @property {Kraken~HTTPSRequestPOSTData} post    - POST data for HTTPS request to Kraken servers.
+ */
+
+/**
+ * Cryptographic signature of a given call according to the specifications listed in the [Kraken API Docs]{@link https://www.kraken.com/help/api#general-usage}.
+ *
+ * @typedef {Object} API~Calls~Signature
+ */
+
+/**
+ * Response errors for a given call.
+ *
+ * @typedef {Error} API~Calls~CallError
+ */
+
+/**
+ * Response data for a given call after any parsing processes.
+ *
+ * @typedef {Object} API~Calls~CallData
+ */
+
+/**
+ * Holds data for Kraken call method and options.
+ *
+ * @typedef  {Object}         API~Calls~Params
+ * @property {Kraken~Method}  method  - Method being called.
+ * @property {Kraken~Options} options - Method-specific options.
+ */
+
+/**
+ * Alphabetized and serialized {@link API~Calls~Params} used for identifying multiple copies of the same call parameters.
+ *
+ * @typedef {string} API~Calls~SerialParams
+ */
+
+/**
+ * Map of serialized params to actual param objects.
+ *
+ * @typedef {Map<API~Calls~SerialParams,API~Calls~Params>} API~Calls~SerialRegistry
+ */
+
+/**
+ * Number of times that a call has been retried in response to an error. Includes retries due to rate limit violations.
+ *
+ * @typedef {number} API~Calls~RetryCount
+ */
+
+/**
+ * Listener created upon first execution of call function which resolves the operational promise or rejects it.
+ *
+ * @typedef {Function}           API~Calls~OpListener
+ * @callback
+ * @param   {Error}              err - Any operational errors or {@link API~Calls~CallError}
+ * @param   {API~Calls~CallData} data - Data received from call.
+ */
+
+/**
+ * Listener created during call queueing; data is forwarded to {@link API~Calls~OpListener}; errors trigger a retry attempt if possible- if not, they are forwarded to the {@link API~Calls~OpListener}.
+ *
+ * @typedef {Function}           API~Calls~RetryListener
+ * @callback
+ * @param   {Error}              err - Any operational errors or {@link API~Calls~CallError}
+ * @param   {API~Calls~CallData} data - Data received from call.
+ */
+
+/**
+ * Holds maps of {@link API~Calls~Params} to internal instances by rate-limit category. Different categories are executed in parallel.
+ *
+ * @typedef {Map<API~RateLimits~Category,API~Calls~Thread>} API~Calls~CatThreads
+ */
+
+/**
+ * Set of all lower listeners associated with a call.
+ *
+ * @typedef {Set<API~Calls~RetryListener>} API~Calls~ListenerSet
+ */
+
+/**
+ * Maps serial params to sets of associated listeners.
+ *
+ * @typedef {Map<API~Calls~SerialParams,API~Calls~ListenerSet>} API~Calls~Thread
+ */
