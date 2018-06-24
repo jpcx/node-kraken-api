@@ -185,7 +185,20 @@ const handleRequests = async (state, cat) => {
           Object.keys(intl.data).forEach(key => delete intl.data[key])
           Object.keys(data).forEach(key => (intl.data[key] = data[key]))
           intl.instance.time = Date.now()
-          intl.listeners.forEach(cb => cb(null, data, intl.instance))
+          const listenerErrors = []
+          intl.listeners.forEach(cb => {
+            try {
+              cb(null, data, intl.instance)
+            } catch (err) {
+              err.message = 'Error in attached event listener! ' + err.message
+              listenerErrors.push(err)
+            }
+          })
+          if (listenerErrors.length > 0) {
+            intl.listeners.forEach(cb => {
+              listenerErrors.forEach(err => cb(err, null, intl.instance))
+            })
+          }
           if (intl.interval > intl.instance.time - starttm) {
             intl.paused = true
             setTimeout(

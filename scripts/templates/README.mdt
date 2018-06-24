@@ -139,6 +139,7 @@ setTimeout(() => console.log(timeSync.data), 5000)
 
 _Creating a sync object with a custom update interval:_
 ```js
+// updates every second
 const timeSync = api.sync('Time', 1000)
 
 // logs {}
@@ -277,7 +278,7 @@ const tradesHistory = api.sync(
   { pair: 'XXBTZUSD' },
   (err, data, instance) => {
     if (data) {
-      if (instance.time === -1) {
+      if (!instance.hist) {
         instance.hist = []
       }
       if (data.last !== instance.options.since) {

@@ -14,7 +14,7 @@ Creates a sync instance creator by loading relevant information into a closure.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 287](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L287)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 300](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L300)
 
 ##### Returns:
 

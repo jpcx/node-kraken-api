@@ -29,7 +29,7 @@ Associates a new [API\~Syncing~EventListener](https://github.com/jpcx/node-krake
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 452](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L452)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 465](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L465)
 
 ##### Returns:
 
@@ -70,7 +70,7 @@ Closes the instance if opened.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 425](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L425)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 438](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L438)
 
 ##### Returns:
 
@@ -119,7 +119,7 @@ Adds a one-time [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 477](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L477)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 490](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L490)
 
 ##### Returns:
 
@@ -136,7 +136,7 @@ Opens the instance if closed.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 381](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L381)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 394](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L394)
 
 ##### Returns:
 
@@ -164,7 +164,7 @@ Parses inputted arguments and reassigns them based on their type. Arguments will
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 216](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L216)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 229](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L229)
 
 ##### Throws:
 
@@ -189,7 +189,7 @@ Removes all [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 468](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L468)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 481](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L481)
 
 ##### Returns:
 
@@ -213,7 +213,7 @@ Disassociates an [API\~Syncing~EventListener](https://github.com/jpcx/node-krake
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 460](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L460)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 473](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L473)
 
 ##### Returns:
 
@@ -240,7 +240,7 @@ Stateful function which creates sync instances. Any argument (except method) may
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 314](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L314)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 327](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L327)
 
 ##### Throws:
 
@@ -389,7 +389,7 @@ Sync instance used for behavior manipulation and data retrieval.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 335](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L335)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 348](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L348)
 
 <a name="~InstanceData"></a>
 #### InstanceData
@@ -428,7 +428,7 @@ Internal sync instance data.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 354](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L354)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 367](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L367)
 
 <a name="~InternalSet"></a>
 #### InternalSet
@@ -478,7 +478,7 @@ Contains runtime information to be passed around within sync operations.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 297](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L297)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 310](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L310)
 
 <a name="~Status"></a>
 #### Status

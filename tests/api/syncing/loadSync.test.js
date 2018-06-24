@@ -71,9 +71,11 @@ test('Returns instance', () => new Promise(
     let timeSync
     timeSync = sync('Time', (err, data, instance) => {
       if (err) reject(err)
-      expect(instance).toBe(timeSync)
-      timeSync.close()
-      resolve()
+      else {
+        expect(instance).toBe(timeSync)
+        timeSync.close()
+        resolve()
+      }
     })
   }
 ))
@@ -89,14 +91,16 @@ test('Stops when closed', () => new Promise(
     let closed = false
     sync('Time', (err, data, instance) => {
       if (err) reject(err)
-      numCompleted++
-      if (numCompleted >= 3) {
-        instance.close()
-        closed = true
-        setTimeout(resolve, 20000)
+      else {
+        numCompleted++
+        if (numCompleted >= 3) {
+          instance.close()
+          closed = true
+          setTimeout(resolve, 20000)
+        }
+        if (closed === true) numCompletedAfterClose++
+        expect(numCompletedAfterClose).toBeLessThanOrEqual(1)
       }
-      if (closed === true) numCompletedAfterClose++
-      expect(numCompletedAfterClose).toBeLessThanOrEqual(1)
     })
   }
 ))
@@ -113,7 +117,7 @@ test('Resumes operation after close', () => new Promise(
     let timeSync
     timeSync = sync('Time', (err, data) => {
       if (err) reject(err)
-      if (++numCompleted > 3 && !closed) {
+      else if (++numCompleted > 3 && !closed) {
         timeSync.close()
         closed = true
         setTimeout(() => {
@@ -139,14 +143,16 @@ test('Custom intervals work', () => new Promise(
     let lastTime
     sync('Time', 10000, (err, data, instance) => {
       if (err) reject(err)
-      if (lastTime) {
-        expect(data.unixtime - lastTime).toBeGreaterThanOrEqual(9000)
-        expect(data.unixtime - lastTime).toBeLessThanOrEqual(11000)
-      }
-      lastTime = data.unixtime
-      if (++numCompleted >= 4) {
-        instance.close()
-        resolve()
+      else {
+        if (lastTime) {
+          expect(data.unixtime - lastTime).toBeGreaterThanOrEqual(9000)
+          expect(data.unixtime - lastTime).toBeLessThanOrEqual(11000)
+        }
+        lastTime = data.unixtime
+        if (++numCompleted >= 4) {
+          instance.close()
+          resolve()
+        }
       }
     })
   }
@@ -176,7 +182,7 @@ test('Custom interaction with instance works', () => new Promise(
     sync('Time',
       (err, data, instance) => {
         if (err) reject(err)
-        if (!(instance.dateHist instanceof Array)) {
+        else if (!(instance.dateHist instanceof Array)) {
           instance.dateHist = []
           instance.dateHist.push(new Date(data))
         } else {
