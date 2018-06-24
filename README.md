@@ -426,7 +426,7 @@ Please raise an issue if you find any. Pull requests are welcome!
 
   + **Justin Collier** - [jpcx](https://github.com/jpcx)
   
-Inspired by [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)).
+Created using [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)) for reference.
 
 ___BTC donation address:___
 
