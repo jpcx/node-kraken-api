@@ -13,7 +13,7 @@ Loads settings and limiter instance and generates a stateful call function.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 199](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L199)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 235](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L235)
 
 ##### Returns:
 

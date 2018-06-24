@@ -14,6 +14,40 @@ Source:
 
 [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
 
+### Methods
+
+<a name="~SetOTP"></a>
+#### (inner) SetOTP(otp) → \{boolean}
+
+Sets a new two-factor password to the execution settings
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `otp` | [Kraken~OTP](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~OTP) | New two-factor password. |
+
+
+Source:
+
+*   [node-kraken-api/index.js](https://github.com/jpcx/node-kraken-api/blob/develop/index.js), [line 27](https://github.com/jpcx/node-kraken-api/blob/develop/index.js#L27)
+
+##### Throws:
+
+Throws an error if otp is a not string or a number.
+
+Type
+
+TypeError
+
+##### Returns:
+
+True if successful.
+
+Type
+
+boolean
+
 ### Type Definitions
 
 <a name="~Callback"></a>
@@ -48,6 +82,7 @@ Provides functions which can be used to interact with the API.
 | --- | --- | --- |
 | `call` | [API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Call) | Call a single method. |
 | `sync` | [API\~Syncing~Sync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Sync) | Create a sync instance. |
+| `setOTP` | [API~SetOTP](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API.md#~SetOTP) | Sets a new two-factor password. |
 
 
 Source:

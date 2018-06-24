@@ -20,9 +20,10 @@ const defaults = require('./defaults.json')
  * @throws   {(TypeError|RangeError)} Throws an error if a setting is not of an acceptable type or range.
  */
 module.exports = settings => {
-  const strings = ['key', 'secret', 'hostname']
-  const booleans = ['parse.numbers', 'parse.dates']
-  const arraysOfStrings = ['pubMethods', 'privMethods']
+  const strings = [ 'key', 'secret', 'hostname' ]
+  const booleans = [ 'parse.numbers', 'parse.dates' ]
+  const stringsOrNumbers = ['otp']
+  const arraysOfStrings = [ 'pubMethods', 'privMethods' ]
   const greaterThanOrEqualToZero = [
     'tier', 'timeout', 'retryCt', 'version', 'limiter.baseIntvl',
     'limiter.minIntvl', 'limiter.pileUpWindow', 'limiter.pileUpResetIntvl',
@@ -78,6 +79,13 @@ module.exports = settings => {
           throw TypeError(`Invalid setting ${path}. Must be string.`)
         } else if (booleans.includes(path) && typeof cust !== 'boolean') {
           throw TypeError(`Invalid setting ${path}. Must be boolean.`)
+        } else if (
+          stringsOrNumbers.includes(path) &&
+          !(typeof cust === 'string' || !isNaN(cust))
+        ) {
+          throw TypeError(
+            `Invalid setting ${path}. Must be a string or a number.`
+          )
         } else if (arraysOfStrings.includes(path)) {
           if (
             !(cust instanceof Array) ||

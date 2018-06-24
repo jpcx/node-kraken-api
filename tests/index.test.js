@@ -13,7 +13,7 @@ test('Is function', () => expect(kraken.constructor).toBe(Function))
 test('Returns correct object', () => {
   const api = kraken()
   expect(api.constructor).toBe(Object)
-  expect(Object.keys(api)).toEqual([ 'call', 'sync' ])
+  expect(Object.keys(api)).toEqual([ 'call', 'sync', 'setOTP' ])
 })
 
 test('Retrieves parsed time from Kraken servers', () => new Promise(

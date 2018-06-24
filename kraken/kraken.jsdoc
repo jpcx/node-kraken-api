@@ -29,6 +29,12 @@
  */
 
 /**
+ * Two factor password used for authenticated calls (if required).
+ *
+ * @typedef {(number|string)} Kraken~OTP
+ */
+
+/**
  * Server-side API version. See the [Kraken API docs]{@link https://www.kraken.com/help/api#public-market-data} for more info.
  *
  * @typedef {number} Kraken~Version

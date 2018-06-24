@@ -61,12 +61,6 @@ const api = kraken()
 
 __Private client instantiation (with authenticated [configuration](#configuration)):__
 ```js
-const api = kraken(require('./auth.json'))
-```
-
-Or:
-
-```js
 const api = kraken({ key: '****', secret: '****', tier: '****' })
 ```
 
@@ -78,13 +72,7 @@ const api = kraken(require('./config.json'))
 Or:
 
 ```js
-const api = kraken(require('./config.js'))
-```
-
-Or:
-
-```js
-const api = kraken({ key: '****', secret: '****', tier: '****', parse: { dates: false } })
+const api = kraken({ key: '****', secret: '****', tier: '****', otp: '****', parse: { dates: false } })
 ```
 
 ### Usage
@@ -121,6 +109,18 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 },
     else console.log(data)
   }
 )
+```
+
+_Using a one-time password:_
+```js
+// this may be done after calling the method as well
+api.setOTP(158133)
+api.call('AddOrder', {
+  pair: 'XXBTZUSD',
+  type: 'buy',
+  price: 5000,
+  volume: 1
+}).then(console.log).catch(console.log)
 ```
 
 <a name='syncing'></a>

@@ -18,6 +18,7 @@
  * @property {Kraken~Key}            [key='']       - API key.
  * @property {Kraken~Secret}         [secret='']    - API secret.
  * @property {Kraken~Tier}           [tier=0]       - Verification tier.
+ * @property {Kraken~OTP}            [otp=null]     - Two factor password.
  * @property {API~Calls~Timeout}     [timeout=5000] - Response timeout in ms.
  * @property {API~Calls~RetryCount}  [retryct=3]    - Maximum number of times to automatically retry a call after an error.
  * @property {Kraken~Hostname}       [hostname='api.kraken.com'] - Hostname of the Kraken API endpoint.

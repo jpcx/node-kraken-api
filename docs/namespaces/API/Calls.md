@@ -33,7 +33,7 @@ Makes a call to the Kraken server-side API.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 224](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L224)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 260](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L260)
 
 ##### Throws:
 
@@ -102,9 +102,9 @@ Type
 Promise
 
 <a name="~ParseArgs"></a>
-#### (inner) ParseArgs(settings, method, options, cb) → \{[API\~Calls~Arguments](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Arguments)}
+#### (inner) ParseArgs(settings, method, options, otp, cb) → \{[API\~Calls~Arguments](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Arguments)}
 
-Parses arguments supplied to [API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Call). Reassigns callback if no options provided. Ensures valid method is supplied.
+Parses inputted arguments and reassigns them based on their type. Arguments will be successfully recognized regardless of omissions.
 
 ##### Parameters:
 
@@ -113,7 +113,8 @@ Parses arguments supplied to [API\~Calls~Call](https://github.com/jpcx/node-krak
 | `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Current settings configuration. |
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
 | `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | Method-specific options. |
-| `cb` | [API~Callback](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API.md#~Callback) | Handles call error or data. |
+| `otp` | [Kraken~OTP](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~OTP) | Two-factor password. |
+| `cb` | [API~Callback](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API.md#~Callback) | Listener for errors and data. |
 
 
 Source:
@@ -122,7 +123,7 @@ Source:
 
 ##### Throws:
 
-Throws 'Invalid method' if method is not found in [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config).
+Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
 
 Type
 
@@ -405,7 +406,7 @@ Holds information essential to call operations during state.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 208](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L208)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js), [line 244](https://github.com/jpcx/node-kraken-api/blob/develop/api/calls/loadCall.js#L244)
 
 <a name="~Thread"></a>
 #### Thread

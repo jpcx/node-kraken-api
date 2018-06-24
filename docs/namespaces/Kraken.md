@@ -19,7 +19,7 @@ Number of seconds for the [Kraken~RateLimitCount](https://github.com/jpcx/node-k
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 128](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L128)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 134](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L134)
 
 <a name="~CounterLimit"></a>
 #### CounterLimit
@@ -32,7 +32,7 @@ Positive integer counter limit used for determining private API rate limit adher
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 116](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L116)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 122](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L122)
 
 <a name="~Hostname"></a>
 #### Hostname
@@ -45,7 +45,7 @@ Hostname for the Kraken API endpoint. See the [Kraken API docs](https://www.krak
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 74](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L74)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 80](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L80)
 
 <a name="~HTTPSRequestHeaders"></a>
 #### HTTPSRequestHeaders
@@ -66,7 +66,7 @@ HTTPS request headers for calls to Kraken servers.
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 86](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L86)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 92](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L92)
 
 <a name="~HTTPSRequestOptions"></a>
 #### HTTPSRequestOptions
@@ -89,7 +89,7 @@ HTTPS request options for calls to Kraken servers.
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 94](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L94)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 100](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L100)
 
 <a name="~HTTPSRequestPOSTData"></a>
 #### HTTPSRequestPOSTData
@@ -102,7 +102,7 @@ HTTPS request POST data for calls to Kraken servers. Generated using 'qs' module
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 104](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L104)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 110](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L110)
 
 <a name="~IncrementAmount"></a>
 #### IncrementAmount
@@ -115,7 +115,7 @@ Positive integer counter increment amount used for determining private API rate 
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 122](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L122)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 128](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L128)
 
 <a name="~Key"></a>
 #### Key
@@ -141,7 +141,7 @@ Type of method being called on Kraken servers. See the [Kraken API docs](https:/
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 49](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L49)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 55](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L55)
 
 <a name="~Nonce"></a>
 #### Nonce
@@ -154,7 +154,7 @@ Unique ever-increasing integer used by Kraken servers to determine request valid
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 68](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L68)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 74](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L74)
 
 <a name="~Option"></a>
 #### Option
@@ -167,7 +167,7 @@ A single option to be sent to the Kraken servers; varies by method type.
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 55](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L55)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 61](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L61)
 
 <a name="~Options"></a>
 #### Options
@@ -187,7 +187,20 @@ Method-specific options for calls to Kraken servers. See the [Kraken API docs](h
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 61](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L61)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 67](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L67)
+
+<a name="~OTP"></a>
+#### OTP
+
+Two factor password used for authenticated calls (if required).
+
+##### Type:
+
+*   number | string
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 31](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L31)
 
 <a name="~Path"></a>
 #### Path
@@ -200,7 +213,7 @@ Path to the Kraken API endpoint for a given method. See the [Kraken API docs](ht
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 80](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L80)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 86](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L86)
 
 <a name="~PrivateMethods"></a>
 #### PrivateMethods
@@ -213,7 +226,7 @@ Set of server-side API methods available exclusively to authenticated users.
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 43](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L43)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 49](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L49)
 
 <a name="~PublicMethods"></a>
 #### PublicMethods
@@ -226,7 +239,7 @@ Set of server-side API methods available to all users.
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 37](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L37)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 43](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L43)
 
 <a name="~RateLimitCount"></a>
 #### RateLimitCount
@@ -239,7 +252,7 @@ Counts within the the authenticated rate-limit counter. Kraken limits authentica
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 110](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L110)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 116](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L116)
 
 <a name="~Secret"></a>
 #### Secret
@@ -278,7 +291,7 @@ Server-side API version. See the [Kraken API docs](https://www.kraken.com/help/a
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 31](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L31)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc), [line 37](https://github.com/jpcx/node-kraken-api/blob/develop/kraken/kraken.jsdoc#L37)
 
 <hr>
 

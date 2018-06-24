@@ -21,9 +21,23 @@ const loadLimiter = require('./api/rateLimits/loadLimiter.js')
  */
 module.exports = (settings = {}) => {
   settings = parseSettings(settings)
-  Object.freeze(settings)
   const limiter = loadLimiter(settings)
   const call = loadCall(settings, limiter)
   const sync = loadSync(settings, limiter, call)
-  return { call, sync }
+  /**
+   * Sets a new two-factor password to the execution settings
+   *
+   * @function API~SetOTP
+   * @param   {Kraken~OTP} otp - New two-factor password.
+   * @returns {boolean}    True if successful.
+   * @throws  {TypeError}  Throws an error if otp is a not string or a number.
+   */
+  const setOTP = otp => {
+    if (!isNaN(otp) || typeof otp === 'string') {
+      settings.otp = otp
+    } else {
+      throw TypeError('OTP must be either string or number.')
+    }
+  }
+  return { call, sync, setOTP }
 }

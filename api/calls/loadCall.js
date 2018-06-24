@@ -175,25 +175,61 @@ const queueCall = (settings, state, args, opListener, retryCt = 0) => {
 }
 
 /**
- * Parses arguments supplied to {@link API~Calls~Call}. Reassigns callback if no options provided. Ensures valid method is supplied.
+ * Parses inputted arguments and reassigns them based on their type. Arguments will be successfully recognized regardless of omissions.
  *
  * @function API~Calls~ParseArgs
- * @param    {Settings~Config}     settings - Current settings configuration.
- * @param    {Kraken~Method}       method   - Method being called.
- * @param    {Kraken~Options}      options  - Method-specific options.
- * @param    {API~Callback}        cb       - Handles call error or data.
- * @returns  {API~Calls~Arguments} Parsed arguments.
- * @throws   {Error}               Throws 'Invalid method' if method is not found in {@link Settings~Config}.
+ * @param   {Settings~Config}     settings - Current settings configuration.
+ * @param   {Kraken~Method}       method   - Method being called.
+ * @param   {Kraken~Options}      options  - Method-specific options.
+ * @param   {Kraken~OTP}          otp      - Two-factor password.
+ * @param   {API~Callback}        cb       - Listener for errors and data.
+ * @returns {API~Calls~Arguments} Parsed arguments.
+ * @throws  {Error}               Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
  */
 const parseArgs = (settings, method, options, cb) => {
-  const isPub = method => settings.pubMethods.includes(method)
-  const isPriv = method => settings.privMethods.includes(method)
+  if (
+    !settings.pubMethods.includes(method) &&
+    !settings.privMethods.includes(method)
+  ) {
+    throw Error(`Bad method: ${method}. See documentation and check settings.`)
+  }
 
-  if (!isPub(method) && !isPriv(method)) throw Error('Invalid method')
-  if (options instanceof Function) cb = options
-  if (!options || options.constructor !== Object) options = {}
+  const argArr = []
+  if (options !== undefined) argArr.push(options)
+  if (cb !== undefined) argArr.push(cb)
 
-  return { method, options, cb }
+  const parseOp = argArr.reduce(
+    (op, arg) => {
+      if (!op.invalid) {
+        if (arg.constructor === Object) {
+          if (
+            op.args.has('options') ||
+            op.args.has('cb')
+          ) {
+            op.invalid = true
+          } else {
+            op.args.set('options', arg)
+          }
+        } else if (arg instanceof Function) {
+          if (op.args.has('cb')) {
+            op.invalid = true
+          } else {
+            op.args.set('cb', arg)
+          }
+        } else {
+          op.invalid = true
+        }
+      }
+      return op
+    }, { args: new Map(), invalid: false }
+  )
+
+  if (parseOp.invalid) throw Error('Bad arguments. See documentation.')
+
+  return {
+    options: parseOp.args.get('options') || {},
+    cb: parseOp.args.get('cb')
+  }
 }
 
 /**
@@ -233,6 +269,7 @@ module.exports = (settings, limiter) => {
    */
   return (method, options, cb) => {
     const args = parseArgs(settings, method, options, cb)
+    args.method = method
 
     const op = new Promise(
       (resolve, reject) => {
@@ -241,9 +278,9 @@ module.exports = (settings, limiter) => {
       }
     )
 
-    if (!(cb instanceof Function)) return op
+    if (!(args.cb instanceof Function)) return op
     else {
-      op.then(data => cb(null, data)).catch(err => cb(err, null))
+      op.then(data => args.cb(null, data)).catch(err => args.cb(err, null))
       return true
     }
   }

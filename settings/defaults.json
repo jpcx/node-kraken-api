@@ -2,6 +2,7 @@
   "key": "",
   "secret": "",
   "tier": 0,
+  "otp": null,
   "timeout": 5000,
   "retryCt": 3,
   "hostname": "api.kraken.com",

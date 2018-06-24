@@ -19,7 +19,9 @@ const signRequest = require('./signRequest.js')
  */
 module.exports = (settings, params) => {
   const nonce = Date.now() * 1000
-  const post = qs.stringify({ ...params.options, nonce })
+  const prePost = { ...params.options, nonce }
+  if (settings.otp) prePost.otp = settings.otp
+  const post = qs.stringify(prePost)
   const isPriv = settings.privMethods.includes(params.method)
   const type = isPriv ? 'private' : 'public'
   const path = '/' + settings.version + '/' + type + '/' + params.method

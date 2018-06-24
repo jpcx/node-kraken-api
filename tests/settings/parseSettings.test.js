@@ -11,6 +11,7 @@ test('Fills with custom settings', () => {
     key: 'foo',
     secret: 'bar',
     tier: 1,
+    otp: 328553,
     timeout: 5500,
     retryCt: 8,
     hostname: 'api.test.com',
@@ -40,6 +41,11 @@ test('Throws errors correctly', () => {
   const booleanErrors = [
     { parse: { numbers: 'not a boolean' } }, { parse: { dates: 'also not'} }
   ]
+  const stringOrNumberErrors = [ { otp: Date } ]
+  const arrayOfStringErrors = [
+    { pubMethods: 3 }, { pubMethods: [3] },
+    { privMethods: 3 }, { privMethods: [3] }
+  ]
   const zeroErrors = [
     { tier: -1 }, { timeout: -1 }, { retryCt: -1 }, { version: -1 },
     { limiter: { baseIntvl: -1 } }, { limiter: { minIntvl: -1 } },
@@ -53,10 +59,6 @@ test('Throws errors correctly', () => {
   ]
   const betweenZeroOneErrors = [
     { limiter: { anyPassDecay: 0 } }, { limiter: { specificPassDecay: 0 } }
-  ]
-  const arrayOfStringErrors = [
-    { pubMethods: 3 }, { pubMethods: [3] },
-    { privMethods: 3 }, { privMethods: [3] }
   ]
   stringErrors.forEach(
     x => {
@@ -75,6 +77,26 @@ test('Throws errors correctly', () => {
       } catch (err) {
         expect(err.constructor).toBe(TypeError)
         expect(err.message).toMatch(/must be boolean/gi)
+      }
+    }
+  )
+  stringOrNumberErrors.forEach(
+    x => {
+      try {
+        expect(parseSettings(x)).toBeUndefined()
+      } catch (err) {
+        expect(err.constructor).toBe(TypeError)
+        expect(err.message).toMatch(/must be a string or a number/gi)
+      }
+    }
+  )
+  arrayOfStringErrors.forEach(
+    x => {
+      try {
+        expect(parseSettings(x)).toBeUndefined()
+      } catch (err) {
+        expect(err.constructor).toBe(TypeError)
+        expect(err.message).toMatch(/must be an array of strings/gi)
       }
     }
   )
@@ -105,16 +127,6 @@ test('Throws errors correctly', () => {
       } catch (err) {
         expect(err.constructor).toBe(RangeError)
         expect(err.message).toMatch(/must be between 0 and 1/gi)
-      }
-    }
-  )
-  arrayOfStringErrors.forEach(
-    x => {
-      try {
-        expect(parseSettings(x)).toBeUndefined()
-      } catch (err) {
-        expect(err.constructor).toBe(TypeError)
-        expect(err.message).toMatch(/must be an array of strings/gi)
       }
     }
   )

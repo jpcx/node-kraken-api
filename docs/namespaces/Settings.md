@@ -31,6 +31,7 @@ Contains execution settings configuration for API operations.
 | `key` | [Kraken~Key](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Key) | \<optional> | '' | API key. |
 | `secret` | [Kraken~Secret](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Secret) | \<optional> | '' | API secret. |
 | `tier` | [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Tier) | \<optional> | 0 | Verification tier. |
+| `otp` | [Kraken~OTP](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~OTP) | \<optional> | null | Two factor password. |
 | `timeout` | [API\~Calls~Timeout](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Timeout) | \<optional> | 5000 | Response timeout in ms. |
 | `retryct` | [API\~Calls~RetryCount](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~RetryCount) | \<optional> | 3 | Maximum number of times to automatically retry a call after an error. |
 | `hostname` | [Kraken~Hostname](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Hostname) | \<optional> | 'api.kraken.com' | Hostname of the Kraken API endpoint. |
@@ -73,7 +74,7 @@ Limits calls frequency. Frequencies are split into two main categories: all call
 
 Source:
 
-*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 32](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L32)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 33](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L33)
 
 <a name="~SyncIntervals"></a>
 #### SyncIntervals
@@ -93,7 +94,7 @@ Defines default method intervals for sync updates. Intervals may be set here or 
 
 Source:
 
-*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 48](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L48)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 49](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L49)
 
 <hr>
 
