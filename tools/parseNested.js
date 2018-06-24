@@ -6,8 +6,8 @@
 
 'use strict'
 
-const extract = require('deep-props.extract')
-const set = require('deep-props.set')
+const extract = require('deep-props').extract
+const set = require('deep-props').set
 const rangedDate = require('ranged-date')
 
 /**

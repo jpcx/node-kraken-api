@@ -1,26 +1,34 @@
-Module: Tools/AlphabetizeNested
-===============================
+Module: Settings/ParseSettings
+==============================
 
-Alphabetizes a nested object.
+Parses settings input, checks for bad values, and combines with defaults.
 
 ##### Parameters:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `object` | Object | Object to alphabetize. |
+| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Current supplied custom settings configuration. |
 
 
 Source:
 
-*   [node-kraken-api/tools/alphabetizeNested.js](https://github.com/jpcx/node-kraken-api/blob/develop/tools/alphabetizeNested.js), [line 4](https://github.com/jpcx/node-kraken-api/blob/develop/tools/alphabetizeNested.js#L4)
+*   [node-kraken-api/settings/parseSettings.js](https://github.com/jpcx/node-kraken-api/blob/develop/settings/parseSettings.js), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/settings/parseSettings.js#L14)
 
-##### Returns:
+##### Throws:
 
-Alphabetized object.
+Throws an error if a setting is not of an acceptable type or range.
 
 Type
 
-Object
+TypeError | RangeError
+
+##### Returns:
+
+Parsed settings.
+
+Type
+
+[Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config)
 
 <hr>
 

@@ -26,9 +26,9 @@ npm i node-kraken-api
 
 The following command will test the package for errors (using the jest library). Testing may take a few minutes to complete.
 
-___Note:___ In order for authenticated testing to occur, a valid auth.json file must be available in the root directory of the package. Please see the [configuration](#configuration) instructions below. An empty auth.json file has been provided; please fill the 'key', 'secret', and 'tier' properties accordingly.
+___Note:___ In order for authenticated testing to occur, a valid auth.json file must be available in the root directory of the package. Please see the [configuration](#configuration) instructions below.
 
-__Modifying the provided auth.json for authenticated testing:__
+__Creating an auth.json file for authenticated testing:__
 
 _NOTE: replace 'nano' with your preferred editor_
 _NOTE: use a read-only key to be safe_
@@ -374,6 +374,7 @@ You may learn more about the types of options and response data by probing the A
     + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
       + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/LoadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
+    + [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/ParseSettings.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)
     + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md)
     + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md)

@@ -141,12 +141,12 @@ test('Custom intervals work', () => new Promise(
     const sync = loadSync(defaults, limiter, call)
     let numCompleted = 0
     let lastTime
-    sync('Time', 10000, (err, data, instance) => {
+    sync('Time', 20000, (err, data, instance) => {
       if (err) reject(err)
       else {
         if (lastTime) {
-          expect(data.unixtime - lastTime).toBeGreaterThanOrEqual(9000)
-          expect(data.unixtime - lastTime).toBeLessThanOrEqual(11000)
+          expect(data.unixtime - lastTime).toBeGreaterThanOrEqual(18000)
+          expect(data.unixtime - lastTime).toBeLessThanOrEqual(22000)
         }
         lastTime = data.unixtime
         if (++numCompleted >= 4) {

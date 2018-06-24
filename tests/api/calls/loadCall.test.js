@@ -34,3 +34,33 @@ test('Returns parsed time data from Kraken', async () => {
   expect(time.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
   expect(time.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
 })
+
+test('Retrieves unparsed time when settings.parse.dates is false', async() => {
+  jest.setTimeout(60000)
+  const settings = {
+    ...defaults, ...{ parse: { numbers: true, dates: false } }
+  }
+  const time = await loadCall(settings, loadLimiter(settings))('Time')
+  expect(typeof time.unixtime).toBe('number')
+  expect(typeof time.rfc1123).toBe('string')
+  expect(time.unixtime * 1000).toBeLessThanOrEqual(Date.now() + 60000)
+  expect(time.unixtime * 1000).toBeGreaterThanOrEqual(Date.now() - 60000)
+  expect(Date.parse(time.rfc1123)).toBeLessThanOrEqual(Date.now() + 60000)
+  expect(Date.parse(time.rfc1123)).toBeGreaterThanOrEqual(
+    Date.now() - 60000
+  )
+})
+
+test('Retrieves parsed time when settings.parse.numbers is false', async () => {
+  jest.setTimeout(60000)
+  const settings = {
+    ...defaults, ...{ parse: { numbers: false, dates: true } }
+  }
+  const time = await loadCall(settings, loadLimiter(settings))('Time')
+  expect(typeof time.unixtime).toBe('number')
+  expect(typeof time.rfc1123).toBe('number')
+  expect(time.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
+  expect(time.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
+  expect(time.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
+  expect(time.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
+})

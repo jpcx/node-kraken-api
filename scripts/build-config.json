@@ -72,6 +72,14 @@
           }
         },
         {
+          "origin": "module-Settings_ParseSettings.html",
+          "destination": {
+            "local": "",
+            "path": "docs/modules/Settings",
+            "file": "ParseSettings.md"
+          }
+        },
+        {
           "origin": "module-Tools_AlphabetizeNested.html",
           "destination": {
             "local": "",
@@ -140,9 +148,8 @@
       ],
       "dependencies": {
         "crypto": "^1.0.1",
-        "deep-props.extract": "^0.1.4",
-        "deep-props.set": "^0.1.2",
         "qs": "^6.5.2",
+        "deep-props": "^0.3.3",
         "ranged-date": "^1.1.3"
       },
       "devDependencies": {

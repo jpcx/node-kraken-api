@@ -6,7 +6,7 @@
 
 'use strict'
 
-const defaults = require('./settings/defaults.json')
+const parseSettings = require('./settings/parseSettings.js')
 const loadCall = require('./api/calls/loadCall.js')
 const loadSync = require('./api/syncing/loadSync.js')
 const loadLimiter = require('./api/rateLimits/loadLimiter.js')
@@ -17,9 +17,10 @@ const loadLimiter = require('./api/rateLimits/loadLimiter.js')
  * @module  node-kraken-api
  * @param   {Settings~Config} settings - User-defined settings.
  * @returns {API~Functions}   Object with methods for interacting with the API.
+ * @throws  {(TypeError|RangeError)} Throws an error if a setting is not of an acceptable type or range.
  */
 module.exports = (settings = {}) => {
-  settings = { ...defaults, ...settings }
+  settings = parseSettings(settings)
   Object.freeze(settings)
   const limiter = loadLimiter(settings)
   const call = loadCall(settings, limiter)

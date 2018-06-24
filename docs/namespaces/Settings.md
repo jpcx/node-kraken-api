@@ -2,6 +2,13 @@
 
 Contains types specific to execution settings.
 
+##### Properties:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `ParseSettings` | [module:Settings/ParseSettings](module-Settings_Parsehttps://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md) | Parses user-provided settings, throws errors if necessary, and combines with defaults. |
+
+
 Source:
 
 *   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L7)
@@ -37,7 +44,7 @@ Contains execution settings configuration for API operations.
 
 Source:
 
-*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 13](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L13)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L14)
 
 <a name="~RateLimiter"></a>
 #### RateLimiter
@@ -66,7 +73,7 @@ Limits calls frequency. Frequencies are split into two main categories: all call
 
 Source:
 
-*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 31](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L31)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 32](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L32)
 
 <a name="~SyncIntervals"></a>
 #### SyncIntervals
@@ -86,7 +93,7 @@ Defines default method intervals for sync updates. Intervals may be set here or 
 
 Source:
 
-*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 47](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L47)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 48](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L48)
 
 <hr>
 
@@ -102,6 +109,7 @@ Source:
     + [Syncing](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md)
       + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/API/Syncing/LoadSync.md)
   + [Settings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md)
+    + [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Settings/ParseSettings.md)
   + [Tools](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md)
     + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/AlphabetizeNested.md)
     + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/develop/docs/modules/Tools/ParseNested.md)

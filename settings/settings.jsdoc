@@ -8,6 +8,7 @@
  * Contains types specific to execution settings.
  *
  * @namespace Settings
+ * @property  {module:Settings/ParseSettings} ParseSettings - Parses user-provided settings, throws errors if necessary, and combines with defaults.
  */
 
 /**
