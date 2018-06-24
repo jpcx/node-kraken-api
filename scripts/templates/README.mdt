@@ -127,11 +127,14 @@ _Using a one-time password:_
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   NOTE: due to call queueing functionality and rate limiting,   *
  * OTP may need to be set again if the call has not been executed  *
- * before the password decays. However, setOTP may be called after *
- * a call has been sent to the queue.                              *
+ * before the password decays. This shouldn't be a problem unless  *
+ * there have been a very large volume of calls sent to the queue. *
  *                                                                 *
- * This shouldn't be a problem unless there have been a very large *
- * volume of calls sent to the call queue.                         *
+ * Additionally, depending on settings.retryCt, calls with errors  *
+ * will be re-queued.                                              *
+ *                                                                 *
+ * As such, it is best to continuously call setOTP with each new   *
+ * password until an error or response has been received.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 api.setOTP(158133)
 
