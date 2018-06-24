@@ -20,10 +20,10 @@
 /**
  * Contains rate information for all calls.
  *
- * @typedef  {Object} API~RateLimits~CallInfo
- * @property {number} intvl - Current calculated safe interval.
- * @property {Array}  attmp - Array of call times for attempted calls.
- * @property {Array}  compl - Array of call times for responses.
+ * @typedef  {Object}   API~RateLimits~CallInfo
+ * @property {number}   intvl - Current calculated safe interval.
+ * @property {number[]} attmp - Array of call times (in ms) for attempted calls.
+ * @property {number[]} compl - Array of call times (in ms) for responses.
  */
 
 /**
@@ -37,5 +37,5 @@
  *
  * @typedef  {Object} API~RateLimits~CatInfo
  * @property {number} intvl - Current calculated safe interval.
- * @property {number} last  - Time of last call attempt.
+ * @property {number} last  - Time (in ms) of last call attempt.
  */
