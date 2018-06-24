@@ -12,6 +12,15 @@
  */
 
 /**
+ * Contains parsed and assigned arguments from initial call of the sync operation.
+ *
+ * @typedef  {Object} API~Syncing~Arguments
+ * @property {Kraken~Options}       options  - Method-specific options.
+ * @property {API~Syncing~Interval} interval - Minimum sync update interval.
+ * @property {API~Syncing~EventListener} listener - Event listener for sync error and data events.
+ */
+
+/**
  * Data value of the instance. Defaults to an object that is replaced with {@link API~Calls~CallData} upon every successful call, but may be customized within an {@link API~Syncing~EventListener} or otherwise.
  *
  * @typedef {(Object|*)} API~Syncing~InstanceData
@@ -21,6 +30,12 @@
  * Current state of the instance's request. 'init' if first {@link API~Calls~CallData} has not been received; 'open' if queued; 'closed' if not queued.
  *
  * @typedef {('init'|'open'|'closed')} API~Syncing~Status
+ */
+
+/**
+ * Interval for sync updates. Triggers a removal of the instance from the update queue and spawns a timeout for re-integration.
+ *
+ * @typedef {number} API~Syncing~Interval
  */
 
 /**

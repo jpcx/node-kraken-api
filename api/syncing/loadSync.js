@@ -49,12 +49,13 @@ const verifyInternals = (state, cat, serial, internals) => {
       options: intl.instance.options
     })
 
+    if (!state.catThreads.has(cat)) continue
     const catMap = state.catThreads.get(cat)
+    if (!catMap.has(serial)) continue
     const intlSet = catMap.get(serial)
 
-    if (intl.status === 'closed') {
-      // instance has been closed with the close() function
-      intl.instance.status = 'closed'
+    if (intl.paused) {
+      // instance has been paused as a result of the defined interval
       intlSet.delete(intl)
       if (intlSet.size === 0) {
         catMap.delete(serial)
@@ -65,7 +66,7 @@ const verifyInternals = (state, cat, serial, internals) => {
       }
     } else if (JSON.stringify(params) !== serial) {
       // method and/or options have been changed via the instance
-      let changed = true
+      let paramChange = true
       if (params.method !== intl.params.method) {
         // method has been changed
         if (
@@ -85,7 +86,7 @@ const verifyInternals = (state, cat, serial, internals) => {
           intl.instance.method = params.method
           params = alphabetizeNested(params)
           // check for further changes
-          if (JSON.stringify(params) === serial) changed = false
+          if (JSON.stringify(params) === serial) paramChange = false
         }
       } else if (params.options.constructor !== Object) {
         // options have changed and are invalid
@@ -98,10 +99,10 @@ const verifyInternals = (state, cat, serial, internals) => {
         intl.params.options = params.options
         intl.instance.options = params.options
         params = alphabetizeNested(params)
-        changed = false
+        paramChange = false
       }
 
-      if (changed) {
+      if (paramChange) {
         // re-assign internal
         const newSerial = JSON.stringify(params)
         state.serialReg.set(newSerial, params)
@@ -135,6 +136,19 @@ const verifyInternals = (state, cat, serial, internals) => {
           }
         }
       }
+    } else if (intl.instance.interval !== intl.interval) {
+      if (!isNaN(intl.instance.interval)) {
+        if (typeof intl.instance.interval === 'number') {
+          intl.interval = intl.instance.interval
+        } else {
+          intl.interval = +intl.instance.interval
+        }
+      } else {
+        intl.listeners.forEach(cb => cb(Error(
+          `Invalid interval ${intl.instance.interval}. Must be number. Reverting.`
+        ), null, intl.instance))
+        intl.instance.interval = intl.interval
+      }
     }
   }
 }
@@ -157,7 +171,6 @@ const handleRequests = async (state, cat) => {
       const internals = state.catThreads.get(cat).get(serial)
       // handle all param sets
       const starttm = Date.now()
-
       verifyInternals(state, cat, serial, internals)
       if (!state.catThreads.has(cat)) break
       if (!state.catThreads.get(cat).has(serial)) continue
@@ -173,6 +186,16 @@ const handleRequests = async (state, cat) => {
           Object.keys(data).forEach(key => (intl.data[key] = data[key]))
           intl.instance.time = Date.now()
           intl.listeners.forEach(cb => cb(null, data, intl.instance))
+          if (intl.interval > intl.instance.time - starttm) {
+            intl.paused = true
+            setTimeout(
+              () => {
+                intl.paused = false
+                if (intl.status !== 'closed') intl.instance.open()
+              },
+              intl.interval - (intl.instance.time - starttm)
+            )
+          }
         }
       } catch (err) {
         for (let intl of internals) {
@@ -187,6 +210,77 @@ const handleRequests = async (state, cat) => {
         )
       }
     }
+  }
+}
+
+/**
+ * Parses inputted arguments and reassigns them based on their type. Arguments will be successfully recognized regardless of omissions.
+ *
+ * @function API~Syncing~ParseArgs
+ * @param   {Settings~Config}           settings - Current settings configuration.
+ * @param   {Kraken~Method}             method   - Method being called.
+ * @param   {Kraken~Options}            options  - Method-specific options.
+ * @param   {API~Syncing~Interval}      interval - Minimum sync update interval.
+ * @param   {API~Syncing~EventListener} listener - Listener for errors and data.
+ * @returns {API~Syncing~Arguments}     Parsed sync arguments.
+ * @throws  {Error}                     Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
+ */
+const parseArgs = (settings, method, options, interval, listener) => {
+  if (
+    !settings.pubMethods.includes(method) &&
+    !settings.privMethods.includes(method)
+  ) {
+    throw Error(`Bad method: ${method}. See documentation and check settings.`)
+  }
+
+  const argArr = []
+  if (options !== undefined) argArr.push(options)
+  if (interval !== undefined) argArr.push(interval)
+  if (listener !== undefined) argArr.push(listener)
+
+  const parseOp = argArr.reduce(
+    (op, arg) => {
+      if (!op.invalid) {
+        if (arg.constructor === Object) {
+          if (
+            op.args.has('options') ||
+            op.args.has('interval') ||
+            op.args.has('listener')
+          ) {
+            op.invalid = true
+          } else {
+            op.args.set('options', arg)
+          }
+        } else if (!isNaN(arg)) {
+          if (
+            op.args.has('interval') ||
+            op.args.has('listener')
+          ) {
+            op.invalid = true
+          } else {
+            op.args.set('interval', arg)
+          }
+        } else if (arg instanceof Function) {
+          if (op.args.has('listener')) {
+            op.invalid = true
+          } else {
+            op.args.set('listener', arg)
+          }
+        } else {
+          op.invalid = true
+        }
+      }
+      return op
+    }, { args: new Map(), invalid: false }
+  )
+
+  if (parseOp.invalid) throw Error('Bad arguments. See documentation.')
+
+  const defaultInterval = settings.syncIntervals[method] || 0
+  return {
+    options: parseOp.args.get('options') || {},
+    interval: parseOp.args.get('interval') || defaultInterval,
+    listener: parseOp.args.get('listener')
   }
 }
 
@@ -218,19 +312,21 @@ module.exports = (settings, limiter, call) => {
     serialReg: new Map()
   }
   /**
-   * Stateful function which creates sync instances.
+   * Stateful function which creates sync instances. Any argument (except method) may be omitted and replaced with another, as long as the order [options, interval, listener] is preserved.
    *
    * @function API~Syncing~Sync
-   * @param    {Kraken~Method}             method       - Method being called.
-   * @param    {Kraken~Options}            [options={}] - Method-specific options.
-   * @param    {API~Syncing~EventListener} [listener]   - Listener for error and data events.
+   * @param    {Kraken~Method}             method     - Method being called.
+   * @param    {Kraken~Options}            [options]  - Method-specific options.
+   * @param    {API~Syncing~Interval}      [interval] - Minimum update interval for sync operation.
+   * @param    {API~Syncing~EventListener} [listener] - Listener for error and data events.
    * @returns  {API~Syncing~Instance} Instance of sync operation.
+   * @throws   {Error}                Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
    */
-  return (method, options = {}, listener) => {
-    if (options instanceof Function) {
-      listener = options
-      options = {}
-    }
+  return (method, options, interval, listener) => {
+    const args = parseArgs(settings, method, options, interval, listener)
+    options = args.options
+    interval = args.interval
+    listener = args.listener
 
     const listeners = new Set()
 
@@ -240,7 +336,8 @@ module.exports = (settings, limiter, call) => {
      * Sync instance used for behavior manipulation and data retrieval.
      *
      * @typedef  {Object} API~Syncing~Instance
-     * @property {('init'|'open'|'closed')} status - Current status of the instance. Set to 'init' until request attempt, 'open' when active, and 'closed' when not. Note: changing this value during runtime will not change instance behaviors; use the associated 'open' and 'close' methods instead.
+     * @property {API~Syncing~Status} status - Current status of the instance. Set to 'init' until request attempt, 'open' when active, and 'closed' when not. Note: changing this value during runtime will not change instance behaviors; use the associated 'open' and 'close' methods instead.
+     * @property {API~Syncing~Interval} interval - Minimum sync update time.
      * @property {Kraken~Method} method - Current method associated with the instance. Changes to this value during runtime will result in thread reassignment if valid; if invalid, will be reverted and will notify the event listeners with an 'Invalid method' error.
      * @property {Kraken~Options} options - Current method-specific options. Changes to this value during runtime will result in map reassignment if valid; if invalid (not an object), will be reverted and will notify the event listeners with an 'Invalid options' error.
      * @property {API~Syncing~InstanceData} data - Object containing data from the last successful response.
@@ -252,13 +349,15 @@ module.exports = (settings, limiter, call) => {
      * @property {API~Syncing~Once} once - Adds a one-time {@link API~Syncing~EventListener} if provided; otherwise returns a promise which resolves/rejects on the next error/data event.
      * @property {number} time - Time (in ms) of last successful {@link API~Syncing~InstanceData} update.
      */
-    const instance = { status: 'init', method, options }
+    const instance = { status: 'init', interval, method, options }
 
     /**
      * Internal sync instance data.
      *
      * @typedef  {Object}               API~Syncing~Internal
      * @property {API~Syncing~Status}   status   - Current status of the request.
+     * @property {boolean}              paused   - Whether or not sync updates are paused due to interval.
+     * @property {API~Syncing~Interval} interval - Minimum sync update interval.
      * @property {API~Calls~Params}     params   - Object containing method and options.
      * @property {API~Syncing~Instance} instance - Instance being tracked.
      * @property {Set<API~Syncing~EventListener>} listeners - Set of all associated event listeners.
@@ -266,6 +365,8 @@ module.exports = (settings, limiter, call) => {
      */
     const internal = {
       status: 'init',
+      paused: false,
+      interval,
       params: {
         method,
         options
@@ -327,7 +428,27 @@ module.exports = (settings, limiter, call) => {
        * @function API~Syncing~Close
        * @returns  {boolean} True if closed or already closed.
        */
-      close: () => (internal.status = 'closed') && true,
+      close: () => {
+        const cat = limiter.getCategory(internal.params.method)
+        const serial = JSON.stringify(alphabetizeNested(internal.params))
+        if (state.catThreads.has(cat)) {
+          const catMap = state.catThreads.get(cat)
+          if (catMap.has(serial)) {
+            const intlSet = catMap.get(serial)
+            intlSet.delete(internal)
+            if (intlSet.size === 0) {
+              catMap.delete(serial)
+              state.serialReg.delete(serial)
+              if (catMap.size === 0) {
+                state.catThreads.delete(cat)
+              }
+            }
+          }
+        }
+        internal.status = 'closed'
+        instance.status = 'closed'
+        return true
+      },
       /**
        * Associates a new {@link API~Syncing~EventListener} with the instance.
        *
@@ -351,7 +472,7 @@ module.exports = (settings, limiter, call) => {
        * @returns  {boolean} True if all listeners have been deleted.
        */
       removeAllListeners: () => (
-        internal.listeners.forEach(l => internal.listeners.delete(l)) && true
+        internal.listeners.forEach(cb => internal.listeners.delete(cb)) && true
       ),
       /**
        * Adds a one-time {@link API~Syncing~EventListener} to the instance. If no listener is provided as a parameter, returns a promise which resolves with the next update's error or data.

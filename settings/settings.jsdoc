@@ -25,6 +25,7 @@
  * @property {Kraken~PrivateMethods} [privMethods=[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' ]] - API methods available for authenticated users.
  * @property {Tools~ParseNestedConfig}        [parse={ numbers: true, dates: true }] - Response parser settings.
  * @property {Settings~RateLimiter}  [limiter={ baseIntvl: 500, minIntvl: 250, pileUpWindow: 60000, pileUpThreshold: 5, pileUpResetIntvl: 1000, pileUpMultiplier: 1.05, violationResetIntvl: 4500, violationMultiplier: 1.1, anyPassDecay: 0.95, specificPassDecay: 0.95 }] - Settings for call interval limitations.
+ * @property {Settings~SyncIntervals} [syncIntervals={ OHLC: 60000, Trades: 600 }]
  */
 
 /**
@@ -41,4 +42,11 @@
  * @property {number} violationMultiplier - Multiplies call type interval in response to rate limit violations (if greater than violationResetIntvl).
  * @property {number} anyPassDecay - Amount to multiply all calls interval in response to a successful call.
  * @property {number} specificPassDecay - Amount to multiply call type interval in response to a successful call.
+ */
+
+/**
+ * Defines default method intervals for sync updates. Intervals may be set here or via each sync instance individually.
+ *
+ * @typedef  {Object} Settings~SyncIntervals
+ * @property {number} * - Name of {@link Kraken~Method} and default interval (in ms).
  */

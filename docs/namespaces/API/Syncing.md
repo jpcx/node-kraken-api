@@ -29,7 +29,7 @@ Associates a new [API\~Syncing~EventListener](https://github.com/jpcx/node-krake
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 331](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L331)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 452](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L452)
 
 ##### Returns:
 
@@ -70,7 +70,7 @@ Closes the instance if opened.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 324](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L324)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 425](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L425)
 
 ##### Returns:
 
@@ -95,7 +95,7 @@ Handles request queue and sends data to associated [API\~Syncing~EventListener](
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 142](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L142)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 156](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L156)
 
 ##### Returns:
 
@@ -119,7 +119,7 @@ Adds a one-time [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 356](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L356)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 477](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L477)
 
 ##### Returns:
 
@@ -136,7 +136,7 @@ Opens the instance if closed.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 280](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L280)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 381](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L381)
 
 ##### Returns:
 
@@ -146,6 +146,42 @@ Type
 
 boolean
 
+<a name="~ParseArgs"></a>
+#### (inner) ParseArgs(settings, method, options, interval, listener) → \{[API\~Syncing~Arguments](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Arguments)}
+
+Parses inputted arguments and reassigns them based on their type. Arguments will be successfully recognized regardless of omissions.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `settings` | [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config) | Current settings configuration. |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Method being called. |
+| `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | Method-specific options. |
+| `interval` | [API\~Syncing~Interval](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Interval) | Minimum sync update interval. |
+| `listener` | [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener) | Listener for errors and data. |
+
+
+Source:
+
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 216](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L216)
+
+##### Throws:
+
+Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
+
+Type
+
+Error
+
+##### Returns:
+
+Parsed sync arguments.
+
+Type
+
+[API\~Syncing~Arguments](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Arguments)
+
 <a name="~RemoveAllListeners"></a>
 #### (inner) RemoveAllListeners() → \{boolean}
 
@@ -153,7 +189,7 @@ Removes all [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 347](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L347)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 468](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L468)
 
 ##### Returns:
 
@@ -177,7 +213,7 @@ Disassociates an [API\~Syncing~EventListener](https://github.com/jpcx/node-krake
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 339](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L339)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 460](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L460)
 
 ##### Returns:
 
@@ -188,22 +224,31 @@ Type
 boolean
 
 <a name="~Sync"></a>
-#### (inner) Sync(method, optionsopt, listeneropt) → \{[API\~Syncing~Instance](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Instance)}
+#### (inner) Sync(method, optionsopt, intervalopt, listeneropt) → \{[API\~Syncing~Instance](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Instance)}
 
-Stateful function which creates sync instances.
+Stateful function which creates sync instances. Any argument (except method) may be omitted and replaced with another, as long as the order \[options, interval, listener\] is preserved.
 
 ##### Parameters:
 
-| Name | Type | Attributes | Default | Description |
-| --- | --- | --- | --- | --- |
-| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) |  |  | Method being called. |
-| `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | \<optional> | {} | Method-specific options. |
-| `listener` | [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener) | \<optional> |  | Listener for error and data events. |
+| Name | Type | Attributes | Description |
+| --- | --- | --- | --- |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) |  | Method being called. |
+| `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | \<optional> | Method-specific options. |
+| `interval` | [API\~Syncing~Interval](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Interval) | \<optional> | Minimum update interval for sync operation. |
+| `listener` | [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener) | \<optional> | Listener for error and data events. |
 
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 220](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L220)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 314](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L314)
+
+##### Throws:
+
+Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
+
+Type
+
+Error
 
 ##### Returns:
 
@@ -234,6 +279,28 @@ Source:
 
 ### Type Definitions
 
+<a name="~Arguments"></a>
+#### Arguments
+
+Contains parsed and assigned arguments from initial call of the sync operation.
+
+##### Type:
+
+*   Object
+
+##### Properties:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | Method-specific options. |
+| `interval` | [API\~Syncing~Interval](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Interval) | Minimum sync update interval. |
+| `listener` | [API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener) | Event listener for sync error and data events. |
+
+
+Source:
+
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L14)
+
 <a name="~CatThreads"></a>
 #### CatThreads
 
@@ -245,7 +312,7 @@ Holds maps of [API\~Calls~Params](https://github.com/jpcx/node-kraken-api/blob/d
 
 Source:
 
-*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 43](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L43)
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 58](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L58)
 
 <a name="~Error"></a>
 #### Error
@@ -265,7 +332,7 @@ Timestamped [API\~Calls~CallError](https://github.com/jpcx/node-kraken-api/blob/
 
 Source:
 
-*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 36](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L36)
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 51](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L51)
 
 <a name="~EventListener"></a>
 #### EventListener(err, data, instanceopt) → \{boolean|undefined}
@@ -283,7 +350,7 @@ Callback function that is executed upon sync errors or data events. Returning a 
 
 Source:
 
-*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 26](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L26)
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 41](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L41)
 
 ##### Returns:
 
@@ -306,7 +373,8 @@ Sync instance used for behavior manipulation and data retrieval.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `status` | 'init' \| 'open' \| 'closed' | Current status of the instance. Set to 'init' until request attempt, 'open' when active, and 'closed' when not. Note: changing this value during runtime will not change instance behaviors; use the associated 'open' and 'close' methods instead. |
+| `status` | [API\~Syncing~Status](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Status) | Current status of the instance. Set to 'init' until request attempt, 'open' when active, and 'closed' when not. Note: changing this value during runtime will not change instance behaviors; use the associated 'open' and 'close' methods instead. |
+| `interval` | [API\~Syncing~Interval](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Interval) | Minimum sync update time. |
 | `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) | Current method associated with the instance. Changes to this value during runtime will result in thread reassignment if valid; if invalid, will be reverted and will notify the event listeners with an 'Invalid method' error. |
 | `options` | [Kraken~Options](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Options) | Current method-specific options. Changes to this value during runtime will result in map reassignment if valid; if invalid (not an object), will be reverted and will notify the event listeners with an 'Invalid options' error. |
 | `data` | [API\~Syncing~InstanceData](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~InstanceData) | Object containing data from the last successful response. |
@@ -321,7 +389,7 @@ Sync instance used for behavior manipulation and data retrieval.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 239](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L239)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 335](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L335)
 
 <a name="~InstanceData"></a>
 #### InstanceData
@@ -334,7 +402,7 @@ Data value of the instance. Defaults to an object that is replaced with [API\~Ca
 
 Source:
 
-*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 14](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L14)
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 23](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L23)
 
 <a name="~Internal"></a>
 #### Internal
@@ -350,6 +418,8 @@ Internal sync instance data.
 | Name | Type | Description |
 | --- | --- | --- |
 | `status` | [API\~Syncing~Status](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Status) | Current status of the request. |
+| `paused` | boolean | Whether or not sync updates are paused due to interval. |
+| `interval` | [API\~Syncing~Interval](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Interval) | Minimum sync update interval. |
 | `params` | [API\~Calls~Params](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Calls.md#~Params) | Object containing method and options. |
 | `instance` | [API\~Syncing~Instance](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~Instance) | Instance being tracked. |
 | `listeners` | Set.<[API\~Syncing~EventListener](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/API/Syncing.md#~EventListener)> | Set of all associated event listeners. |
@@ -358,7 +428,7 @@ Internal sync instance data.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 257](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L257)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 354](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L354)
 
 <a name="~InternalSet"></a>
 #### InternalSet
@@ -371,7 +441,20 @@ Set of all internal instances associated with a call.
 
 Source:
 
-*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 55](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L55)
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 70](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L70)
+
+<a name="~Interval"></a>
+#### Interval
+
+Interval for sync updates. Triggers a removal of the instance from the update queue and spawns a timeout for re-integration.
+
+##### Type:
+
+*   number
+
+Source:
+
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 35](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L35)
 
 <a name="~State"></a>
 #### State
@@ -395,7 +478,7 @@ Contains runtime information to be passed around within sync operations.
 
 Source:
 
-*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 203](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L203)
+*   [node-kraken-api/api/syncing/loadSync.js](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js), [line 297](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/loadSync.js#L297)
 
 <a name="~Status"></a>
 #### Status
@@ -408,7 +491,7 @@ Current state of the instance's request. 'init' if first [API\~Calls~CallData](h
 
 Source:
 
-*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 20](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L20)
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 29](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L29)
 
 <a name="~Thread"></a>
 #### Thread
@@ -421,7 +504,7 @@ Maps serial params to internal instances.
 
 Source:
 
-*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 49](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L49)
+*   [node-kraken-api/api/syncing/syncing.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc), [line 64](https://github.com/jpcx/node-kraken-api/blob/develop/api/syncing/syncing.jsdoc#L64)
 
 <hr>
 

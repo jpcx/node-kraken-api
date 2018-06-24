@@ -32,6 +32,7 @@ Contains execution settings configuration for API operations.
 | `privMethods` | [Kraken~PrivateMethods](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~PrivateMethods) | \<optional> | \[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' \] | API methods available for authenticated users. |
 | `parse` | [Tools~ParseNestedConfig](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Tools.md#~ParseNestedConfig) | \<optional> | { numbers: true, dates: true } | Response parser settings. |
 | `limiter` | [Settings~RateLimiter](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~RateLimiter) | \<optional> | { baseIntvl: 500, minIntvl: 250, pileUpWindow: 60000, pileUpThreshold: 5, pileUpResetIntvl: 1000, pileUpMultiplier: 1.05, violationResetIntvl: 4500, violationMultiplier: 1.1, anyPassDecay: 0.95, specificPassDecay: 0.95 } | Settings for call interval limitations. |
+| `syncIntervals` | [Settings~SyncIntervals](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~SyncIntervals) | \<optional> | { OHLC: 60000, Trades: 600 } |  |
 
 
 Source:
@@ -65,7 +66,27 @@ Limits calls frequency. Frequencies are split into two main categories: all call
 
 Source:
 
-*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 30](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L30)
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 31](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L31)
+
+<a name="~SyncIntervals"></a>
+#### SyncIntervals
+
+Defines default method intervals for sync updates. Intervals may be set here or via each sync instance individually.
+
+##### Type:
+
+*   Object
+
+##### Properties:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `*` | number | Name of [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Kraken.md#~Method) and default interval (in ms). |
+
+
+Source:
+
+*   [node-kraken-api/settings/settings.jsdoc](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc), [line 47](https://github.com/jpcx/node-kraken-api/blob/develop/settings/settings.jsdoc#L47)
 
 <hr>
 

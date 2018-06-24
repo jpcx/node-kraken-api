@@ -4,7 +4,7 @@
 
 Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.
 
-Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required. For public calls, data is repeatedly requested upon receipt of data; rate is limited automatically. For private calls, rate is managed according to the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) such that calls may be performed continuously without triggering any rate limit violations.
+Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required. For public calls, data is repeatedly requested upon receipt of data; rate is limited automatically. For private calls, rate is managed (according to the rate limit specificiations listed in the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit)) such that calls may be performed continuously without triggering any rate limit violations.
 
 Syncing is also useful for querying new updates only by modifying the call options upon each response. This can be done within a listener callback provided to the module. Some methods provide a 'since' parameter that can be used for querying only new data. [See below](#syncUpdates) for an example.
 
@@ -24,13 +24,14 @@ npm i node-kraken-api
 
 ### Testing
 
-The following command will test the package for errors using the jest library. Testing may take a few minutes to complete.
+The following command will test the package for errors (using the jest library). Testing may take a few minutes to complete.
 
 ___Note:___ In order for authenticated testing to occur, a valid auth.json file must be available in the root directory of the package. Please see the [configuration](#configuration) instructions below. An empty auth.json file has been provided; please fill the 'key', 'secret', and 'tier' properties accordingly.
 
-__Modifying the provided auth.json for authenticated testing (use a read-only key to be safe!):__
+__Modifying the provided auth.json for authenticated testing:__
 
-_NOTE: replace 'nano' with your preferred editor._
+_NOTE: replace 'nano' with your preferred editor_
+_NOTE: use a read-only key to be safe_
 ```console
 nano /path/to/node_modules/node-kraken-api/auth.json
 ```
@@ -128,6 +129,17 @@ __Working with data syncing:__
 _Creating a sync object:_
 ```js
 const timeSync = api.sync('Time')
+
+// logs {}
+console.log(timeSync.data)
+
+// logs { unixtime: 1528607559000, rfc1123: 1528607559000 }
+setTimeout(() => console.log(timeSync.data), 5000)
+```
+
+_Creating a sync object with a custom update interval:_
+```js
+const timeSync = api.sync('Time', 1000)
 
 // logs {}
 console.log(timeSync.data)
@@ -284,6 +296,9 @@ tradesHistory.once()
 ```
 
 _Creating a realtime simple moving average (with safe float operations):_
+
+___NOTE:___ _OHLC calls are set to a 60s sync interval by default. This may be changed either in the settings configuration, during instance creation, or by changing the instance's <code>interval</code> property._
+
 ```js
 const twentyPeriodSMA = api.sync(
   'OHLC',
@@ -312,9 +327,6 @@ const twentyPeriodSMA = api.sync(
         0
       ) / instance.bars.length / 100
     }
-    // closing and re-opening the instance every 60 seconds as calls are only necessary every minute
-    instance.close()
-    setTimeout(instance.open, 60000)
   }
 )
 
@@ -326,7 +338,7 @@ twentyPeriodSMA.once()
 <a name='configuration'></a>
 ## Configuration
 
-During creation of the API instance, a configuration object may be provided for authenticated calls and other options. This may be provided by using <code>require('./config.js')</code> or <code>require('./config.json')</code> if this file has been prepared already, or by simply providing an object programmatically.
+During creation of the API instance, a configuration object may be provided for authenticated calls and other options. This may be provided by using <code>require('./config.json')</code> if this file has been prepared already, or by simply providing an object programmatically.
 
 Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/develop/docs/namespaces/Settings.md#~Config)
 

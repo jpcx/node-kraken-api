@@ -129,6 +129,29 @@ test('Resumes operation after close', () => new Promise(
   })
 )
 
+test('Custom intervals work', () => new Promise(
+  (resolve, reject) => {
+    jest.setTimeout(120000)
+    const limiter = loadLimiter(defaults)
+    const call = loadCall(defaults, limiter)
+    const sync = loadSync(defaults, limiter, call)
+    let numCompleted = 0
+    let lastTime
+    sync('Time', 10000, (err, data, instance) => {
+      if (err) reject(err)
+      if (lastTime) {
+        expect(data.unixtime - lastTime).toBeGreaterThanOrEqual(9000)
+        expect(data.unixtime - lastTime).toBeLessThanOrEqual(11000)
+      }
+      lastTime = data.unixtime
+      if (++numCompleted >= 4) {
+        instance.close()
+        resolve()
+      }
+    })
+  }
+))
+
 test('Once method works', async () => {
   jest.setTimeout(240000)
   const limiter = loadLimiter(defaults)

@@ -32,5 +32,9 @@
     "violationMultiplier": 1.1,
     "anyPassDecay": 0.95,
     "specificPassDecay": 0.95
+  },
+  "syncIntervals": {
+    "OHLC": 60000,
+    "Trades": 600
   }
 }
