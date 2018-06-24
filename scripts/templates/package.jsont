@@ -1,6 +1,6 @@
 {
   "name": "node-kraken-api",
-  "version": "0.1.0",
+  "version": "___{alias:node-kraken-api/tag}___",
   "description": "___{alias:node-kraken-api/description}___",
   "engines": {
     "node": ">=___{alias:node-kraken-api/node}___"
