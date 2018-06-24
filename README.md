@@ -64,12 +64,7 @@ __Private client instantiation (with authenticated [configuration](#configuratio
 const api = kraken({ key: '****', secret: '****', tier: '****' })
 ```
 
-__Instantiation with any number of configuration settings (see [configuration](#configuration)):__
-```js
-const api = kraken(require('./config.json'))
-```
-
-Or:
+Or (if OTP is enabled):
 
 ```js
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -81,7 +76,22 @@ const api = kraken({
   key: '****',
   secret: '****',
   tier: '****',
-  otp: '****',
+  otp: '****'
+})
+```
+
+__Instantiation with any number of configuration settings (see [configuration](#configuration)):__
+```js
+const api = kraken(require('./config.json'))
+```
+
+Or:
+
+```js
+const api = kraken({
+  key: '****',
+  secret: '****',
+  tier: '****',
   parse: { dates: false }
 })
 ```
@@ -122,7 +132,7 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 },
 )
 ```
 
-_Using a one-time password:_
+_Using a one-time password (if enabled):_
 ```js
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   NOTE: due to call queueing functionality and rate limiting,   *
