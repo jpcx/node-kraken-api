@@ -64,7 +64,7 @@ __Private client instantiation (with authenticated [configuration](#configuratio
 const api = kraken({ key: '****', secret: '****', tier: '****' })
 ```
 
-Or (if OTP is enabled):
+Or:
 
 ```js
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
