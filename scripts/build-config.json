@@ -4,7 +4,7 @@
   "packages": {
     "node-kraken-api": {
       "repo": "https://github.com/jpcx/node-kraken-api",
-      "tag": "0.1.2",
+      "tag": "0.1.3",
       "node": "8.7.0",
       "jsdoc": [
         {

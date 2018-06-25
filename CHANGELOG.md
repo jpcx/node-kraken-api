@@ -1,3 +1,17 @@
+<a name="0.1.3"></a>
+## [0.1.3](https://github.com/jpcx/node-kraken-api/tree/0.1.3) (2018-06-24)
+
+| __[Changes since 0.1.2](https://github.com/jpcx/node-kraken-api/compare/0.1.2...0.1.3)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/0.1.3) | [README](https://github.com/jpcx/node-kraken-api/tree/0.1.3/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/0.1.3.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/0.1.3.tar.gz) |
+| --- | --- |
+
+#### Bugfixes
+  + __Settings:__ Changed default sync interval settings to 2000ms.
+  + __Settings:__ Improved settings and defaults combination logic.
+  + __Sync:__     Improved authenticated call interval logic.
+
 <a name="0.1.2"></a>
 ## [0.1.2](https://github.com/jpcx/node-kraken-api/tree/0.1.2) (2018-06-24)
 
