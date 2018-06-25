@@ -8,7 +8,6 @@
 
 const extract = require('deep-props').extract
 const set = require('deep-props').set
-const get = require('deep-props').get
 const defaults = require('./defaults.json')
 
 /**
@@ -27,7 +26,9 @@ module.exports = settings => {
   const greaterThanOrEqualToZero = [
     'tier', 'timeout', 'retryCt', 'version', 'limiter.baseIntvl',
     'limiter.minIntvl', 'limiter.pileUpWindow', 'limiter.pileUpResetIntvl',
-    'limiter.violationResetIntvl', 'syncIntervals.OHLC', 'syncIntervals.Trades'
+    'limiter.violationResetIntvl', 'syncIntervals.Time', 'syncIntervals.Assets',
+    'syncIntervals.AssetPairs', 'syncIntervals.Ticker', 'syncIntervals.OHLC',
+    'syncIntervals.Depth', 'syncIntervals.Trades', 'syncIntervals.Spread'
   ]
   const greaterThanOne = [
     'limiter.pileUpThreshold',
@@ -37,7 +38,8 @@ module.exports = settings => {
   const betweenZeroOne = [
     'limiter.anyPassDecay', 'limiter.specificPassDecay'
   ]
-  return extract(defaults).reduce(
+  const combined = defaults
+  extract(settings).reduce(
     (consolidated, v) => {
       if (isNaN(v.path[v.path.length - 1])) {
         consolidated.push(v)
@@ -65,48 +67,45 @@ module.exports = settings => {
       return consolidated
     }, []
   ).reduce(
-    (newSettings, val) => {
-      let cust = get(settings, val.path)
-      if (cust !== undefined) {
-        const path = val.path.reduce((str, v) => {
-          if (str === '') {
-            return v
-          } else {
-            return str + '.' + v
-          }
-        }, '')
-        if (strings.includes(path) && typeof cust !== 'string') {
-          throw TypeError(`Invalid setting ${path}. Must be string.`)
-        } else if (booleans.includes(path) && typeof cust !== 'boolean') {
-          throw TypeError(`Invalid setting ${path}. Must be boolean.`)
-        } else if (
-          stringsOrNumbers.includes(path) &&
+    (parsed, val) => {
+      let cust = val.value
+      const path = val.path.reduce((str, v) => {
+        if (str === '') {
+          return v
+        } else {
+          return str + '.' + v
+        }
+      }, '')
+      if (strings.includes(path) && typeof cust !== 'string') {
+        throw TypeError(`Invalid setting ${path}. Must be string.`)
+      } else if (booleans.includes(path) && typeof cust !== 'boolean') {
+        throw TypeError(`Invalid setting ${path}. Must be boolean.`)
+      } else if (
+        stringsOrNumbers.includes(path) &&
           !(typeof cust === 'string' || !isNaN(cust))
+      ) {
+        throw TypeError(
+          `Invalid setting ${path}. Must be a string or a number.`
+        )
+      } else if (arraysOfStrings.includes(path)) {
+        if (
+          !(cust instanceof Array) ||
+            cust.reduce((b, v) => typeof v !== 'string', false)
         ) {
           throw TypeError(
-            `Invalid setting ${path}. Must be a string or a number.`
+            `Invalid setting ${path}. Must be an array of strings.`
           )
-        } else if (arraysOfStrings.includes(path)) {
-          if (
-            !(cust instanceof Array) ||
-            cust.reduce((b, v) => typeof v !== 'string', false)
-          ) {
-            throw TypeError(
-              `Invalid setting ${path}. Must be an array of strings.`
-            )
-          }
-        } else if (greaterThanOrEqualToZero.includes(path) && cust < 0) {
-          throw RangeError(`Invalid setting ${path}. Must be >= 0.`)
-        } else if (greaterThanOne.includes(path) && cust <= 1) {
-          throw RangeError(`Invalid setting ${path}. Must be > 1.`)
-        } else if (betweenZeroOne.includes(path) && (cust <= 0 || cust >= 1)) {
-          throw RangeError(`Invalid setting ${path}. Must be between 0 and 1.`)
         }
-        set(newSettings, val.path, cust)
-      } else {
-        set(newSettings, val.path, val.value)
+      } else if (greaterThanOrEqualToZero.includes(path) && cust < 0) {
+        throw RangeError(`Invalid setting ${path}. Must be >= 0.`)
+      } else if (greaterThanOne.includes(path) && cust <= 1) {
+        throw RangeError(`Invalid setting ${path}. Must be > 1.`)
+      } else if (betweenZeroOne.includes(path) && (cust <= 0 || cust >= 1)) {
+        throw RangeError(`Invalid setting ${path}. Must be between 0 and 1.`)
       }
-      return newSettings
-    }, {}
-  )
+      parsed.push(val)
+      return parsed
+    }, []
+  ).forEach(v => set(combined, v.path, v.value))
+  return combined
 }

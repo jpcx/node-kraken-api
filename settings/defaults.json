@@ -35,7 +35,13 @@
     "specificPassDecay": 0.95
   },
   "syncIntervals": {
+    "Time": 2000,
+    "Assets": 2000,
+    "AssetPairs": 2000,
+    "Ticker": 2000,
     "OHLC": 60000,
-    "Trades": 600
+    "Depth": 2000,
+    "Trades": 2000,
+    "Spread": 2000
   }
 }

@@ -168,14 +168,14 @@ setTimeout(() => console.log(timeSync.data), 5000)
 
 ___Creating a sync object with a custom update interval:___
 ```js
-// updates every second
-const timeSync = api.sync('Time', 1000)
+// updates every 5 seconds
+const timeSync = api.sync('Time', 5000)
 
 // logs {}
 console.log(timeSync.data)
 
 // logs { unixtime: 1528607559000, rfc1123: 1528607559000 }
-setTimeout(() => console.log(timeSync.data), 5000)
+setTimeout(() => console.log(timeSync.data), 10000)
 ```
 
 ___Using syncing promises:___

@@ -31,7 +31,7 @@ test('Fills with custom settings', () => {
       anyPassDecay: 0.999,
       specificPassDecay: 0.999
     },
-    syncIntervals: { OHLC: 12, Trades: 42 }
+    syncIntervals: { Time: 32, Assets: 2023500, AssetPairs: 3, Ticker: 31, OHLC: 555, Depth: 333, Trades: 135, Spread: 531 }
   }
   expect(parseSettings(customSettings)).toEqual(customSettings)
 })
@@ -50,8 +50,11 @@ test('Throws errors correctly', () => {
     { tier: -1 }, { timeout: -1 }, { retryCt: -1 }, { version: -1 },
     { limiter: { baseIntvl: -1 } }, { limiter: { minIntvl: -1 } },
     { limiter: { pileUpWindow: -1 } }, { limiter: { pileUpResetIntvl: -1 } },
-    { limiter: { violationResetIntvl: -1 } }, { syncIntervals: { OHLC: -1 } },
-    { syncIntervals: { Trades: -1 } }
+    { limiter: { violationResetIntvl: -1 } }, { syncIntervals: { Time: -1 } },
+    { syncIntervals: { Assets: -1 } }, { syncIntervals: { AssetPairs: -1 } },
+    { syncIntervals: { Ticker: -1 } }, { syncIntervals: { OHLC: -1 } },
+    { syncIntervals: { Depth: -1 } }, { syncIntervals: { Trades: -1 } },
+    { syncIntervals: { Spread: -1 } }
   ]
   const greaterOneErrors = [
     { limiter: { pileUpThreshold: 1 } }, { limiter: { pileUpMultiplier: 1 } },
