@@ -168,14 +168,14 @@ setTimeout(() => console.log(timeSync.data), 5000)
 
 ___Creating a sync object with a custom update interval:___
 ```js
-// updates every second
-const timeSync = api.sync('Time', 1000)
+// updates every 5 seconds
+const timeSync = api.sync('Time', 5000)
 
 // logs {}
 console.log(timeSync.data)
 
 // logs { unixtime: 1528607559000, rfc1123: 1528607559000 }
-setTimeout(() => console.log(timeSync.data), 5000)
+setTimeout(() => console.log(timeSync.data), 10000)
 ```
 
 ___Using syncing promises:___
@@ -372,7 +372,7 @@ twentyPeriodSMA.once()
 
 During creation of the API instance, a configuration object may be provided for authenticated calls and other options. This may be provided by using <code>require('./config.json')</code> if this file has been prepared already, or by simply providing an object programmatically.
 
-Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/Settings.md#~Config)
+Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Settings.md#~Config)
 
 ## Documentation
 
@@ -380,7 +380,7 @@ Please browse the [Kraken API docs](https://www.kraken.com/help/api#public-marke
 
 Method names are found within the 'URL' subtitle in the Kraken API docs. For example: under 'Get server time', the text 'URL: https://api.kraken.com/0/public/Time' shows that the method name is 'Time'.
 
-Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
+Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
 
 Method options are found under the 'Input:' section. For example, 'Get order book' lists the following:
 
@@ -394,27 +394,27 @@ This translates to an object such as <code>{ pair: 'XXBTZUSD', count: 10 }</code
 You may learn more about the types of options and response data by probing the API. Use the methods 'Assets' and 'AssetPairs' to discover the naming scheme for the assets tradable via Kraken.
 
 ### Internal:
-  + [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/node-kraken-api.md)
-  + [API](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/API.md)
-    + [Calls](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/API/Calls.md)
-      + [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/API/Calls/GenRequestData.md)
-      + [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/API/Calls/LoadCall.md)
-      + [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/API/Calls/SignRequest.md)
-    + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/API/RateLimits.md)
-      + [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/API/RateLimits/LoadLimiter.md)
-    + [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/API/Syncing.md)
-      + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/API/Syncing/LoadSync.md)
-  + [Settings](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/Settings.md)
-    + [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/Settings/ParseSettings.md)
-  + [Tools](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/Tools.md)
-    + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/Tools/AlphabetizeNested.md)
-    + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/modules/Tools/ParseNested.md)
-  + [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.1.2/docs/namespaces/Kraken.md)
+  + [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/node-kraken-api.md)
+  + [API](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API.md)
+    + [Calls](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API/Calls.md)
+      + [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Calls/GenRequestData.md)
+      + [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Calls/LoadCall.md)
+      + [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Calls/SignRequest.md)
+    + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API/RateLimits.md)
+      + [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/RateLimits/LoadLimiter.md)
+    + [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API/Syncing.md)
+      + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Syncing/LoadSync.md)
+  + [Settings](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Settings.md)
+    + [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/Settings/ParseSettings.md)
+  + [Tools](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Tools.md)
+    + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/Tools/AlphabetizeNested.md)
+    + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/Tools/ParseNested.md)
+  + [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Kraken.md)
 
 
 ## Versioning
 
-Versioned using [SemVer](http://semver.org/). For available versions, see the [Changelog](https://github.com/jpcx/node-kraken-api/blob/0.1.2/CHANGELOG.md).
+Versioned using [SemVer](http://semver.org/). For available versions, see the [Changelog](https://github.com/jpcx/node-kraken-api/blob/0.1.3/CHANGELOG.md).
 
 ## Contribution
 
@@ -434,4 +434,4 @@ bc1qla9wynkvmnmcnygls5snqeu3rj5dxr7tunwzp6
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/0.1.2/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/0.1.3/LICENSE) file for details

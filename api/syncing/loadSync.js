@@ -9,30 +9,6 @@
 const alphabetizeNested = require('../../tools/alphabetizeNested.js')
 
 /**
- * Calculates average wait time (for sustainable authenticated calling) based on the current open sync requests. Uses {@link Kraken~CounterLimit}, {@link Kraken~IncrementAmount}, and {@link Kraken~CounterInterval} to determine the minimum sustainable wait time. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
- *
- * @function API~Syncing~CalcAvgAuthWait
- * @param    {API~Syncing~State} state - Object containing runtime data.
- * @returns  {number}            Average wait time.
- */
-const calcAvgAuthWait = (state, starttm) => {
-  let sum = 0
-  let count = 0
-  if (state.catThreads.has('auth')) {
-    for (let threadNT of state.catThreads.get('auth')) {
-      const params = JSON.parse(threadNT[0])
-      sum += state.limiter.getAuthRegenIntvl(params.method, state.tier)
-      count++
-    }
-    let wait = (sum / count) - (Date.now() - starttm)
-    if (wait < 0) wait = 0
-    return wait
-  } else {
-    return 0
-  }
-}
-
-/**
  * Responds to changes to changes within the instances associated with the current thread. Pushes out errors if the params are invalid and reverts changes.
  *
  * @function API~Syncing~VerifyInternals
@@ -199,14 +175,24 @@ const handleRequests = async (state, cat) => {
               listenerErrors.forEach(err => cb(err, null, intl.instance))
             })
           }
-          if (intl.interval > intl.instance.time - starttm) {
+          let interval = intl.interval
+          if (cat === 'auth') {
+            const regenIntvl = state.limiter.getAuthRegenIntvl(
+              params.method, state.tier
+            )
+            if (interval < regenIntvl) {
+              interval = regenIntvl
+            }
+          }
+          const duration = Date.now() - starttm
+          if (interval > duration) {
             intl.paused = true
             setTimeout(
               () => {
                 intl.paused = false
                 if (intl.status !== 'closed') intl.instance.open()
               },
-              intl.interval - (intl.instance.time - starttm)
+              interval - duration
             )
           }
         }
@@ -216,11 +202,6 @@ const handleRequests = async (state, cat) => {
           intl.instance.status = 'open'
           intl.listeners.forEach(cb => cb(err, null, intl.instance))
         }
-      }
-      if (cat === 'auth') {
-        await new Promise(
-          resolve => setTimeout(resolve, calcAvgAuthWait(state, starttm))
-        )
       }
     }
   }

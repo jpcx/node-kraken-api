@@ -27,7 +27,7 @@
  * @property {Kraken~PrivateMethods} [privMethods=[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' ]] - API methods available for authenticated users.
  * @property {Tools~ParseNestedConfig}        [parse={ numbers: true, dates: true }] - Response parser settings.
  * @property {Settings~RateLimiter}  [limiter={ baseIntvl: 500, minIntvl: 250, pileUpWindow: 60000, pileUpThreshold: 5, pileUpResetIntvl: 1000, pileUpMultiplier: 1.05, violationResetIntvl: 4500, violationMultiplier: 1.1, anyPassDecay: 0.95, specificPassDecay: 0.95 }] - Settings for call interval limitations.
- * @property {Settings~SyncIntervals} [syncIntervals={ OHLC: 60000, Trades: 600 }]
+ * @property {Settings~SyncIntervals} [syncIntervals={ Time: 2000, Assets: 2000, AssetPairs: 2000, Ticker: 2000, OHLC: 60000, Depth: 2000, Trades: 2000, Spread: 2000 }]
  */
 
 /**
