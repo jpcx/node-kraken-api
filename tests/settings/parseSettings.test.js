@@ -20,50 +20,36 @@ test('Fills with custom settings', () => {
     privMethods: ['food', 'bar'],
     parse: { numbers: false, dates: false },
     limiter: {
-      baseIntvl: 0,
-      minIntvl: 0,
-      pileUpWindow: 0,
-      pileUpThreshold: 2,
-      pileUpResetIntvl: 0,
-      pileUpMultiplier: 1.01,
-      violationResetIntvl: 0,
-      violationMultiplier: 1.01,
-      anyPassDecay: 0.999,
-      specificPassDecay: 0.999
+      baseIntvl: 3000,
+      minIntvl: 2000
     },
-    syncIntervals: { Time: 32, Assets: 2023500, AssetPairs: 3, Ticker: 31, OHLC: 555, Depth: 333, Trades: 135, Spread: 531 }
+    syncIntervals: { Time: 32, Assets: 2023500, AssetPairs: 3, Ticker: 31, OHLC: 555, Depth: 333, Trades: 135, Spread: 531 },
+    dataFormatter: Array
   }
   expect(parseSettings(customSettings)).toEqual(customSettings)
 })
 
 test('Throws errors correctly', () => {
-  const stringErrors = [{ key: 42 }, { secret: 42 }, { hostname: 42 }]
-  const booleanErrors = [
+  const stringE = [{ key: 42 }, { secret: 42 }, { hostname: 42 }]
+  const booleanE = [
     { parse: { numbers: 'not a boolean' } }, { parse: { dates: 'also not'} }
   ]
-  const stringOrNumberErrors = [ { otp: Date } ]
-  const arrayOfStringErrors = [
+  const nullOrStringOrNumberE = [{ otp: Date }]
+  const arrayOfStringE = [
     { pubMethods: 3 }, { pubMethods: [3] },
     { privMethods: 3 }, { privMethods: [3] }
   ]
-  const zeroErrors = [
-    { tier: -1 }, { timeout: -1 }, { retryCt: -1 }, { version: -1 },
+  const nullOrFunctionE = [{ dataFormatter: 'yay' }]
+  const greaterZeroE = [{ timeout: 0 }]
+  const zeroE = [
+    { tier: -1 }, { retryCt: -1 }, { version: -1 },
     { limiter: { baseIntvl: -1 } }, { limiter: { minIntvl: -1 } },
-    { limiter: { pileUpWindow: -1 } }, { limiter: { pileUpResetIntvl: -1 } },
-    { limiter: { violationResetIntvl: -1 } }, { syncIntervals: { Time: -1 } },
-    { syncIntervals: { Assets: -1 } }, { syncIntervals: { AssetPairs: -1 } },
-    { syncIntervals: { Ticker: -1 } }, { syncIntervals: { OHLC: -1 } },
-    { syncIntervals: { Depth: -1 } }, { syncIntervals: { Trades: -1 } },
-    { syncIntervals: { Spread: -1 } }
+    { syncIntervals: { Time: -1 } }, { syncIntervals: { Assets: -1 } },
+    { syncIntervals: { AssetPairs: -1 } }, { syncIntervals: { Ticker: -1 } },
+    { syncIntervals: { OHLC: -1 } }, { syncIntervals: { Depth: -1 } },
+    { syncIntervals: { Trades: -1 } }, { syncIntervals: { Spread: -1 } }
   ]
-  const greaterOneErrors = [
-    { limiter: { pileUpThreshold: 1 } }, { limiter: { pileUpMultiplier: 1 } },
-    { limiter: { violationMultiplier: 1 } }
-  ]
-  const betweenZeroOneErrors = [
-    { limiter: { anyPassDecay: 0 } }, { limiter: { specificPassDecay: 0 } }
-  ]
-  stringErrors.forEach(
+  stringE.forEach(
     x => {
       try {
         expect(parseSettings(x)).toBeUndefined()
@@ -73,7 +59,7 @@ test('Throws errors correctly', () => {
       }
     }
   )
-  booleanErrors.forEach(
+  booleanE.forEach(
     x => {
       try {
         expect(parseSettings(x)).toBeUndefined()
@@ -83,17 +69,17 @@ test('Throws errors correctly', () => {
       }
     }
   )
-  stringOrNumberErrors.forEach(
+  nullOrStringOrNumberE.forEach(
     x => {
       try {
         expect(parseSettings(x)).toBeUndefined()
       } catch (err) {
         expect(err.constructor).toBe(TypeError)
-        expect(err.message).toMatch(/must be a string or a number/gi)
+        expect(err.message).toMatch(/must be null, a string, or a number/gi)
       }
     }
   )
-  arrayOfStringErrors.forEach(
+  arrayOfStringE.forEach(
     x => {
       try {
         expect(parseSettings(x)).toBeUndefined()
@@ -103,33 +89,33 @@ test('Throws errors correctly', () => {
       }
     }
   )
-  zeroErrors.forEach(
+  nullOrFunctionE.forEach(
+    x => {
+      try {
+        expect(parseSettings(x)).toBeUndefined()
+      } catch (err) {
+        expect(err.constructor).toBe(TypeError)
+        expect(err.message).toMatch(/must be a function or null/gi)
+      }
+    }
+  )
+  greaterZeroE.forEach(
+    x => {
+      try {
+        expect(parseSettings(x)).toBeUndefined()
+      } catch (err) {
+        expect(err.constructor).toBe(RangeError)
+        expect(err.message).toMatch(/must be > 0/gi)
+      }
+    }
+  )
+  zeroE.forEach(
     x => {
       try {
         expect(parseSettings(x)).toBeUndefined()
       } catch (err) {
         expect(err.constructor).toBe(RangeError)
         expect(err.message).toMatch(/must be >= 0/gi)
-      }
-    }
-  )
-  greaterOneErrors.forEach(
-    x => {
-      try {
-        expect(parseSettings(x)).toBeUndefined()
-      } catch (err) {
-        expect(err.constructor).toBe(RangeError)
-        expect(err.message).toMatch(/must be > 1/gi)
-      }
-    }
-  )
-  betweenZeroOneErrors.forEach(
-    x => {
-      try {
-        expect(parseSettings(x)).toBeUndefined()
-      } catch (err) {
-        expect(err.constructor).toBe(RangeError)
-        expect(err.message).toMatch(/must be between 0 and 1/gi)
       }
     }
   )

@@ -64,3 +64,21 @@ test('Retrieves parsed time when settings.parse.numbers is false', async () => {
   expect(time.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
   expect(time.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
 })
+
+test('Retrieves custom-parsed data', async () => {
+  jest.setTimeout(30000)
+  const dataFormatter = (method, options, data) => {
+    if (method === 'Time') {
+      return data.unixtime
+    } else {
+      return data
+    }
+  }
+  const settings = {
+    ...defaults, ...{ dataFormatter }
+  }
+  const time = await loadCall(settings, loadLimiter(settings))('Time')
+  expect(typeof time).toBe('number')
+  expect(time).toBeLessThanOrEqual(Date.now() + 60000)
+  expect(time).toBeGreaterThanOrEqual(Date.now() - 60000)
+})

@@ -24,15 +24,7 @@
   },
   "limiter": {
     "baseIntvl": 500,
-    "minIntvl": 250,
-    "pileUpWindow": 60000,
-    "pileUpThreshold": 5,
-    "pileUpResetIntvl": 1000,
-    "pileUpMultiplier": 1.05,
-    "violationResetIntvl": 4500,
-    "violationMultiplier": 1.1,
-    "anyPassDecay": 0.95,
-    "specificPassDecay": 0.95
+    "minIntvl": 250
   },
   "syncIntervals": {
     "Time": 2000,
@@ -43,5 +35,6 @@
     "Depth": 2000,
     "Trades": 2000,
     "Spread": 2000
-  }
+  },
+  "dataFormatter": null
 }

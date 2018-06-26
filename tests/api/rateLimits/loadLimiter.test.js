@@ -60,17 +60,17 @@ test('Limits pile-up calls correctly', async () => {
   expect(Date.now() - starttm).toBeGreaterThan(defaults.limiter.baseIntvl - 100)
   expect(Date.now() - starttm).toBeLessThan(defaults.limiter.baseIntvl + 100)
   limiter.addPass('other')
-  let expectedIntvl = defaults.limiter.baseIntvl * defaults.limiter.anyPassDecay
+  let expectedIntvl = defaults.limiter.baseIntvl * 0.95
   for (let i = 0; i < 10; i++) {
     limiter.attempt('other')
     if (i > 4) {
-      if (expectedIntvl < defaults.limiter.pileUpResetIntvl) {
-        expectedIntvl = defaults.limiter.pileUpResetIntvl
+      if (expectedIntvl < 1000) {
+        expectedIntvl = 1000
       }
-      expectedIntvl *= defaults.limiter.pileUpMultiplier
+      expectedIntvl *= 1.05
     }
   }
-  expectedIntvl *= defaults.limiter.pileUpMultiplier
+  expectedIntvl *= 1.05
   starttm = Date.now()
   await limiter.attempt('other')
   expect(Date.now() - starttm).toBeGreaterThan(expectedIntvl - 100)
@@ -84,10 +84,10 @@ test('Limits categories correctly', async () => {
   for (let i = 0; i < 10; i++) {
     limiter.attempt('other')
     limiter.addFail('other')
-    if (expectedIntvl < defaults.limiter.violationResetIntvl) {
-      expectedIntvl = defaults.limiter.violationResetIntvl
+    if (expectedIntvl < 4500) {
+      expectedIntvl = 4500
     }
-    expectedIntvl *= defaults.limiter.violationMultiplier
+    expectedIntvl *= 1.1
   }
   let starttm = Date.now()
   await limiter.attempt('other')

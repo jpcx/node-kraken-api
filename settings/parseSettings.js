@@ -19,24 +19,17 @@ const defaults = require('./defaults.json')
  * @throws   {(TypeError|RangeError)} Throws an error if a setting is not of an acceptable type or range.
  */
 module.exports = settings => {
-  const strings = [ 'key', 'secret', 'hostname' ]
-  const booleans = [ 'parse.numbers', 'parse.dates' ]
-  const stringsOrNumbers = ['otp']
-  const arraysOfStrings = [ 'pubMethods', 'privMethods' ]
+  const strings = ['key', 'secret', 'hostname']
+  const booleans = ['parse.numbers', 'parse.dates']
+  const nullOrStringsOrNumbers = ['otp']
+  const arraysOfStrings = ['pubMethods', 'privMethods']
+  const nullOrFunctions = ['dataFormatter']
+  const greaterThanZero = ['timeout']
   const greaterThanOrEqualToZero = [
-    'tier', 'timeout', 'retryCt', 'version', 'limiter.baseIntvl',
-    'limiter.minIntvl', 'limiter.pileUpWindow', 'limiter.pileUpResetIntvl',
-    'limiter.violationResetIntvl', 'syncIntervals.Time', 'syncIntervals.Assets',
+    'tier', 'retryCt', 'version', 'limiter.baseIntvl',
+    'limiter.minIntvl', 'syncIntervals.Time', 'syncIntervals.Assets',
     'syncIntervals.AssetPairs', 'syncIntervals.Ticker', 'syncIntervals.OHLC',
     'syncIntervals.Depth', 'syncIntervals.Trades', 'syncIntervals.Spread'
-  ]
-  const greaterThanOne = [
-    'limiter.pileUpThreshold',
-    'limiter.pileUpMultiplier',
-    'limiter.violationMultiplier'
-  ]
-  const betweenZeroOne = [
-    'limiter.anyPassDecay', 'limiter.specificPassDecay'
   ]
   const combined = defaults
   extract(settings).reduce(
@@ -81,11 +74,11 @@ module.exports = settings => {
       } else if (booleans.includes(path) && typeof cust !== 'boolean') {
         throw TypeError(`Invalid setting ${path}. Must be boolean.`)
       } else if (
-        stringsOrNumbers.includes(path) &&
-          !(typeof cust === 'string' || !isNaN(cust))
+        nullOrStringsOrNumbers.includes(path) &&
+          !(cust === null || typeof cust === 'string' || !isNaN(cust))
       ) {
         throw TypeError(
-          `Invalid setting ${path}. Must be a string or a number.`
+          `Invalid setting ${path}. Must be null, a string, or a number.`
         )
       } else if (arraysOfStrings.includes(path)) {
         if (
@@ -96,12 +89,15 @@ module.exports = settings => {
             `Invalid setting ${path}. Must be an array of strings.`
           )
         }
+      } else if (
+        nullOrFunctions.includes(path) &&
+        !(cust === null || typeof cust === 'function')
+      ) {
+        throw TypeError(`Invalid setting ${path}. Must be a function or null.`)
+      } else if (greaterThanZero.includes(path) && cust <= 0) {
+        throw RangeError(`Invalid setting ${path}. Must be > 0.`)
       } else if (greaterThanOrEqualToZero.includes(path) && cust < 0) {
         throw RangeError(`Invalid setting ${path}. Must be >= 0.`)
-      } else if (greaterThanOne.includes(path) && cust <= 1) {
-        throw RangeError(`Invalid setting ${path}. Must be > 1.`)
-      } else if (betweenZeroOne.includes(path) && (cust <= 0 || cust >= 1)) {
-        throw RangeError(`Invalid setting ${path}. Must be between 0 and 1.`)
       }
       parsed.push(val)
       return parsed
