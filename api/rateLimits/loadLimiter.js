@@ -10,8 +10,8 @@
  * Checks for more calls being made than responses received and adjusts call frequency accordingly.
  *
  * @function API~RateLimits~CheckPileUp
- * @param    {Settings~RateLimiter}    limitConfig - Current rate-limiter settings configuration.
- * @param    {API~RateLimits~CallInfo} any         - Rate information for all calls.
+ * @param    {API~RateLimits~LimitConfig} limitConfig - Rate-limiter settings configuration.
+ * @param    {API~RateLimits~CallInfo}    any         - Rate information for all calls.
  */
 const checkPileUp = (limitConfig, any) => {
   if (any.attmp.length - any.compl.length > limitConfig.pileUpThreshold) {
@@ -26,10 +26,10 @@ const checkPileUp = (limitConfig, any) => {
  * Checks the response context for {@link API~RateLimits~Update} and adjusts call frequency accordingly.
  *
  * @function API~RateLimits~CheckContext
- * @param    {('pass'|'fail'|undefined)} context     - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
- * @param    {Settings~RateLimiter}      limitConfig - Rate-limiter settings configuration.
- * @param    {API~RateLimits~CallInfo}   any         - Rate information for all calls.
- * @param    {API~RateLimits~CatInfo}    spec        - Rate information for specific {@link API~RateLimits~Category}.
+ * @param    {('pass'|'fail'|undefined)}  context     - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
+ * @param    {API~RateLimits~LimitConfig} limitConfig - Rate-limiter settings configuration.
+ * @param    {API~RateLimits~CallInfo}    any         - Rate information for all calls.
+ * @param    {API~RateLimits~CatInfo}     spec        - Rate information for specific {@link API~RateLimits~Category}.
  */
 const checkContext = (context, limitConfig, any, spec) => {
   if (context === 'fail') {
@@ -52,7 +52,7 @@ const checkContext = (context, limitConfig, any, spec) => {
  * @param    {('pass'|'fail')}         [context] - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
  */
 const update = (state, category, context) => {
-  const limitConfig = state.settings.limiter
+  const limitConfig = state.limitConfig
   const now = Date.now()
   const any = state.calls
   if (!state.catInfo.has(category)) {
@@ -86,12 +86,25 @@ module.exports = settings => {
    * Holds data relevant to current execution state.
    *
    * @typedef  API~RateLimits~State
-   * @property {Settings~Config}         settings - Current settings configuration.
-   * @property {API~RateLimits~CallInfo} calls    - Rate info for all calls.
-   * @property {API~RateLimits~CatInfo}  catInfo  - Map of category to object containing category-specific rate information.
+   * @property {Settings~Config}            settings    - Current settings configuration.
+   * @property {API~RateLimits~LimitConfig} limitConfig - Rate limter behavior configuration.
+   * @property {API~RateLimits~CallInfo}    calls   - Rate info for all calls.
+   * @property {API~RateLimits~CatInfo}     catInfo - Map of category to object containing category-specific rate information.
    */
   const state = {
     settings,
+    limitConfig: {
+      baseIntvl: settings.limiter.baseIntvl,
+      minIntvl: settings.limiter.minIntvl,
+      pileUpWindow: 60000,
+      pileUpThreshold: 5,
+      pileUpResetIntvl: 1000,
+      pileUpMultiplier: 1.05,
+      violationResetIntvl: 4500,
+      violationMultiplier: 1.1,
+      anyPassDecay: 0.95,
+      specificPassDecay: 0.95
+    },
     calls: {
       intvl: settings.limiter.baseIntvl,
       attmp: [],

@@ -31,15 +31,17 @@ test('Returns time continuously', () => new Promise(
     let numCompleted = 0
     sync('Time', (err, data, instance) => {
       if (err) reject(err)
-      expect(data.constructor).toBe(Object)
-      expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
-      expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
-      expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
-      expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
-      numCompleted++
-      if (numCompleted >= 10) {
-        instance.close()
-        resolve()
+      else {
+        expect(data.constructor).toBe(Object)
+        expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
+        expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
+        expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
+        expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
+        numCompleted++
+        if (numCompleted >= 10) {
+          instance.close()
+          resolve()
+        }
       }
     })
   }
@@ -54,9 +56,11 @@ test('Callback agrees with object', () => new Promise(
     let timeSync
     timeSync = sync('Time', (err, data) => {
       if (err) reject(err)
-      expect(timeSync.data).toEqual(data)
-      timeSync.close()
-      resolve()
+      else {
+        expect(timeSync.data).toEqual(data)
+        timeSync.close()
+        resolve()
+      }
     })
   }
 ))
@@ -145,8 +149,8 @@ test('Custom intervals work', () => new Promise(
       if (err) reject(err)
       else {
         if (lastTime) {
-          expect(data.unixtime - lastTime).toBeGreaterThanOrEqual(18000)
-          expect(data.unixtime - lastTime).toBeLessThanOrEqual(22000)
+          expect(data.unixtime - lastTime).toBeGreaterThanOrEqual(15000)
+          expect(data.unixtime - lastTime).toBeLessThanOrEqual(25000)
         }
         lastTime = data.unixtime
         if (++numCompleted >= 4) {
@@ -190,6 +194,49 @@ test('Custom interaction with instance works', () => new Promise(
           expect(instance.dateHist[0].constructor).toBe(Date)
           instance.close()
           resolve()
+        }
+      }
+    )
+  }
+))
+
+test('Custom data formatting works', () => new Promise(
+  (resolve, reject) => {
+    jest.setTimeout(60000)
+    const dataFormatter = (method, options, data) => {
+      if (method === 'Time') {
+        return data.unixtime
+      } else {
+        return data
+      }
+    }
+    const settings = {
+      ...defaults, ...{ dataFormatter }
+    }
+    const limiter = loadLimiter(settings)
+    const call = loadCall(settings, limiter)
+    const sync = loadSync(settings, limiter, call)
+    sync('Time',
+      (err, data, instance) => {
+        if (err) reject(err)
+        else {
+          expect(typeof data).toBe('number')
+          expect(data).toBeLessThanOrEqual(Date.now() + 60000)
+          expect(data).toBeGreaterThanOrEqual(Date.now() - 60000)
+          instance.once().then(t => {
+            expect(typeof t).toBe('number')
+            expect(t).toBeLessThanOrEqual(Date.now() + 60000)
+            expect(t).toBeGreaterThanOrEqual(Date.now() - 60000)
+            instance.once((err, data, instance) => {
+              if (err) reject(err)
+              else {
+                expect(typeof data).toBe('number')
+                expect(data).toBeLessThanOrEqual(Date.now() + 60000)
+                expect(data).toBeGreaterThanOrEqual(Date.now() - 60000)
+                resolve()
+              }
+            })
+          })
         }
       }
     )

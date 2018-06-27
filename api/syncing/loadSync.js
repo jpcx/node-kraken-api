@@ -158,8 +158,7 @@ const handleRequests = async (state, cat) => {
         for (let intl of internals) {
           if (intl.status === 'init') intl.status = 'open'
           intl.instance.status = 'open'
-          Object.keys(intl.data).forEach(key => delete intl.data[key])
-          Object.keys(data).forEach(key => (intl.data[key] = data[key]))
+          intl.instance.data = data
           intl.instance.time = Date.now()
           const listenerErrors = []
           intl.listeners.forEach(cb => {
@@ -254,7 +253,7 @@ const parseArgs = (settings, method, options, interval, listener) => {
           } else {
             op.args.set('interval', arg)
           }
-        } else if (arg instanceof Function) {
+        } else if (typeof arg === 'function') {
           if (op.args.has('listener')) {
             op.invalid = true
           } else {
@@ -324,7 +323,7 @@ module.exports = (settings, limiter, call) => {
 
     const listeners = new Set()
 
-    if (listener instanceof Function) listeners.add(listener)
+    if (typeof listener === 'function') listeners.add(listener)
 
     /**
      * Sync instance used for behavior manipulation and data retrieval.
@@ -335,15 +334,16 @@ module.exports = (settings, limiter, call) => {
      * @property {Kraken~Method} method - Current method associated with the instance. Changes to this value during runtime will result in thread reassignment if valid; if invalid, will be reverted and will notify the event listeners with an 'Invalid method' error.
      * @property {Kraken~Options} options - Current method-specific options. Changes to this value during runtime will result in map reassignment if valid; if invalid (not an object), will be reverted and will notify the event listeners with an 'Invalid options' error.
      * @property {API~Syncing~InstanceData} data - Object containing data from the last successful response.
+     * @property {number} time - Time (in ms) of last successful {@link API~Syncing~InstanceData} update.
      * @property {API~Syncing~Open} open - Opens the instance if closed.
      * @property {API~Syncing~Close} close - Closes the instance if open.
      * @property {API~Syncing~AddListener} addListener - Associates a new {@link API~Syncing~EventListener}.
      * @property {API~Syncing~RemoveListener} removeListener - Disassociates a {@link API~Syncing~EventListener}.
-     * @property {API~Syncing~RemoveAllListeners} removeAllListeners - Removes all associated {@link API~Syncing~EventListener}s.
      * @property {API~Syncing~Once} once - Adds a one-time {@link API~Syncing~EventListener} if provided; otherwise returns a promise which resolves/rejects on the next error/data event.
-     * @property {number} time - Time (in ms) of last successful {@link API~Syncing~InstanceData} update.
      */
-    const instance = { status: 'init', interval, method, options }
+    const instance = {
+      status: 'init', interval, method, options, data: {}, time: -1
+    }
 
     /**
      * Internal sync instance data.
@@ -355,7 +355,6 @@ module.exports = (settings, limiter, call) => {
      * @property {API~Calls~Params}     params   - Object containing method and options.
      * @property {API~Syncing~Instance} instance - Instance being tracked.
      * @property {Set<API~Syncing~EventListener>} listeners - Set of all associated event listeners.
-     * @property {API~Syncing~InstanceData} data - Object containing data from the last successful response.
      */
     const internal = {
       status: 'init',
@@ -366,12 +365,10 @@ module.exports = (settings, limiter, call) => {
         options
       },
       instance,
-      listeners,
-      data: {}
+      listeners
     }
 
     const instancePermTemplate = {
-      data: internal.data,
       /**
        * Opens the instance if closed.
        *
@@ -460,15 +457,6 @@ module.exports = (settings, limiter, call) => {
        */
       removeListener: listener => internal.listeners.delete(listener) && true,
       /**
-       * Removes all {@link API~Syncing~EventListener}s from the instance.
-       *
-       * @function API~Syncing~RemoveAllListeners
-       * @returns  {boolean} True if all listeners have been deleted.
-       */
-      removeAllListeners: () => (
-        internal.listeners.forEach(cb => internal.listeners.delete(cb)) && true
-      ),
-      /**
        * Adds a one-time {@link API~Syncing~EventListener} to the instance. If no listener is provided as a parameter, returns a promise which resolves with the next update's error or data.
        *
        * @function API~Syncing~Once
@@ -487,7 +475,7 @@ module.exports = (settings, limiter, call) => {
             internal.listeners.add(selfDestructListener)
           }
         )
-        if (onceListener instanceof Function) {
+        if (typeof onceListener === 'function') {
           op
             .then(data => onceListener(null, instance.data, instance))
             .catch(err => onceListener(err, null, instance))

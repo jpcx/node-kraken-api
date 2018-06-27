@@ -110,6 +110,9 @@ const processCalls = async (settings, cat, thread, serialReg, limiter) => {
       makeRequest(settings, params).then(
         data => {
           limiter.addPass(cat)
+          if (typeof settings.dataFormatter === 'function') {
+            data = settings.dataFormatter(params.method, params.options, data)
+          }
           listenersCopy.forEach(listener => listener(null, data))
         }
       ).catch(
@@ -210,7 +213,7 @@ const parseArgs = (settings, method, options, cb) => {
           } else {
             op.args.set('options', arg)
           }
-        } else if (arg instanceof Function) {
+        } else if (typeof arg === 'function') {
           if (op.args.has('cb')) {
             op.invalid = true
           } else {
@@ -278,7 +281,7 @@ module.exports = (settings, limiter) => {
       }
     )
 
-    if (!(args.cb instanceof Function)) return op
+    if (typeof args.cb !== 'function') return op
     else {
       op.then(data => args.cb(null, data)).catch(err => args.cb(err, null))
       return true

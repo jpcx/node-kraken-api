@@ -15,35 +15,28 @@
  * Contains execution settings configuration for API operations.
  *
  * @typedef  {Object} Settings~Config
- * @property {Kraken~Key}            [key='']       - API key.
- * @property {Kraken~Secret}         [secret='']    - API secret.
- * @property {Kraken~Tier}           [tier=0]       - Verification tier.
- * @property {Kraken~OTP}            [otp=null]     - Two factor password.
- * @property {API~Calls~Timeout}     [timeout=5000] - Response timeout in ms.
- * @property {API~Calls~RetryCount}  [retryct=3]    - Maximum number of times to automatically retry a call after an error.
- * @property {Kraken~Hostname}       [hostname='api.kraken.com'] - Hostname of the Kraken API endpoint.
- * @property {Kraken~Version}        [version=0]    - Kraken API version.
- * @property {Kraken~PublicMethods}  [pubMethods=[ 'Time', 'Assets','AssetPairs', 'Ticker','OHLC', 'Depth', 'Trades', 'Spread' ]] - API methods available for public users.
- * @property {Kraken~PrivateMethods} [privMethods=[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' ]] - API methods available for authenticated users.
+ * @property {Kraken~Key}             [key='']       - API key.
+ * @property {Kraken~Secret}          [secret='']    - API secret.
+ * @property {Kraken~Tier}            [tier=0]       - Verification tier.
+ * @property {Kraken~OTP}             [otp=null]     - Two factor password.
+ * @property {API~Calls~Timeout}      [timeout=5000] - Response timeout in ms.
+ * @property {API~Calls~RetryCount}   [retryct=3]    - Maximum number of times to automatically retry a call after an error.
+ * @property {Kraken~Hostname}        [hostname='api.kraken.com'] - Hostname of the Kraken API endpoint.
+ * @property {Kraken~Version}         [version=0]    - Kraken API version.
+ * @property {Kraken~PublicMethods}   [pubMethods=[ 'Time', 'Assets','AssetPairs', 'Ticker','OHLC', 'Depth', 'Trades', 'Spread' ]] - API methods available for public users.
+ * @property {Kraken~PrivateMethods}  [privMethods=[ 'Balance', 'TradeBalance', 'OpenOrders', 'ClosedOrders', 'QueryOrders', 'TradesHistory', 'QueryTrades', 'OpenPositions', 'Ledgers', 'QueryLedgers', 'TradeVolume', 'AddOrder', 'CancelOrder', 'DepositMethods', 'DepositAddresses', 'DepositStatus', 'WithdrawInfo', 'Withdraw', 'WithdrawStatus', 'WithdrawCancel' ]] - API methods available for authenticated users.
  * @property {Tools~ParseNestedConfig}        [parse={ numbers: true, dates: true }] - Response parser settings.
- * @property {Settings~RateLimiter}  [limiter={ baseIntvl: 500, minIntvl: 250, pileUpWindow: 60000, pileUpThreshold: 5, pileUpResetIntvl: 1000, pileUpMultiplier: 1.05, violationResetIntvl: 4500, violationMultiplier: 1.1, anyPassDecay: 0.95, specificPassDecay: 0.95 }] - Settings for call interval limitations.
+ * @property {Settings~RateLimiter}   [limiter={ baseIntvl: 500, minIntvl: 250 }] - Settings for call interval limitations.
  * @property {Settings~SyncIntervals} [syncIntervals={ Time: 2000, Assets: 2000, AssetPairs: 2000, Ticker: 2000, OHLC: 60000, Depth: 2000, Trades: 2000, Spread: 2000 }]
+ * @property {Settings~DataFormatter} [dataFormatter=null] - Function for response data formatting (post-parsing, if enabled).
  */
 
 /**
- * Limits calls frequency. Frequencies are split into two main categories: all calls and specific calls. All calls frequency determines the request rate for any kind of call. Specific call frequencies are split into several categories of distinct server-side rate-limiting behavior.
+ * Limits calls frequency. Call frequency begins at base and is gradually reduced to minimum if no violations are triggered.
  *
  * @typedef  {Object} Settings~RateLimiter
  * @property {number} baseIntvl - Default call interval.
  * @property {number} minIntvl  - Minimum call interval.
- * @property {number} pileUpWindow - Moving window of call logs to determine whether or not more calls are being made than received.
- * @property {number} pileUpThreshold - Number of unanswered calls necessary to trigger frequency decrease.
- * @property {number} pileUpResetIntvl - Interval to reset all calls to in response to more calls made than received.
- * @property {number} pileUpMultiplier - Amount to multiply by call interval in response to excessive calling.
- * @property {number} violationResetIntvl - Interval to reset a call type to in response to a rate limit violation
- * @property {number} violationMultiplier - Multiplies call type interval in response to rate limit violations (if greater than violationResetIntvl).
- * @property {number} anyPassDecay - Amount to multiply all calls interval in response to a successful call.
- * @property {number} specificPassDecay - Amount to multiply call type interval in response to a successful call.
  */
 
 /**
@@ -51,4 +44,14 @@
  *
  * @typedef  {Object} Settings~SyncIntervals
  * @property {number} * - Name of {@link Kraken~Method} and default interval (in ms).
+ */
+
+/**
+ * Formats response data (post-parsing, if enabled). Anything returned from this function is returned as the call response; returning nothing will result in the call to respond with <code>undefined</code>.
+ *
+ * @typedef {Function}           Settings~DataFormatter
+ * @param   {Kraken~Method}      method  - Method being called.
+ * @param   {Kraken~Options}     options - Method-specific options.
+ * @param   {API~Calls~CallData} data    - Data received from call (post-parsing, if enabled).
+ * @returns {*}                  Formatted data.
  */

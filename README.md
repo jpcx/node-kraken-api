@@ -4,6 +4,8 @@
 
 Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.
 
+Response data may be formatted in any way based on method and options by supplying a [DataFormatter](#dataFormatter) function.
+
 Use of the [syncing feature](#syncing) is advisable when concurrent realtime data is required. For public calls, data is repeatedly requested upon receipt of data; rate is limited automatically. For private calls, rate is managed (according to the rate limit specificiations listed in the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit)) such that calls may be performed continuously without triggering any rate limit violations.
 
 Syncing is also useful for querying new updates only by modifying the call options upon each response. This can be done within a listener callback provided to the module. Some methods provide a 'since' parameter that can be used for querying only new data. [See below](#syncUpdates) for an example.
@@ -30,8 +32,9 @@ ___Note:___ In order for authenticated testing to occur, a valid auth.json file 
 
 ___Creating an auth.json file for authenticated testing:___
 
-___NOTE:___ replace 'nano' with your preferred editor
-___NOTE:___ use a read-only key to be safe
+___NOTE:___ Replace 'nano' with your preferred editor.
+
+___NOTE:___ Use a read-only key to be safe.
 ```console
 nano /path/to/node_modules/node-kraken-api/auth.json
 ```
@@ -70,7 +73,7 @@ const api = kraken({
 
 Or:
 
-___NOTE:___ In this example, OTP is set during instantiation. This is advisable only if the two-factor password for this API key is static. Otherwise, use [api.setOTP().](#setOTP)
+___NOTE:___ In this example, OTP is set during instantiation. This is advisable only if the two-factor password for this API key is static. Otherwise, use [api.setOTP()](#setOTP).
 
 ```js
 const api = kraken({
@@ -136,7 +139,7 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 },
 ___Using a one-time password (if enabled):___
 
 <a name='setOTP'></a>
-___NOTE:___ due to call queueing functionality and rate limiting, OTP may need to be set again if the call has not been executed before the password decays. This shouldn't be a problem unless there have been a very large volume of calls sent to the queue.
+___NOTE:___ Due to call queueing functionality and rate limiting, OTP may need to be set again if the call has not been executed before the password decays. This shouldn't be a problem unless there have been a very large volume of calls sent to the queue.
 
 Additionally, depending on settings.retryCt, calls with errors will be re-queued.
 
@@ -150,6 +153,33 @@ api.call('AddOrder', {
   price: 5000,
   volume: 1
 }).then(console.log).catch(console.log)
+```
+
+<a name='dataFormatter'></a>
+#### Custom formatting of response data:
+Response data may be formatted in any way based on method and options by setting a [DataFormatter](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Settings.md#~DataFormatter) function during instantiation.
+
+___NOTE:___ Any data returned from this function will be treated as the new data, and call responses will be undefined if it does not return anything.
+
+___NOTE:___ Data formatter is applied to data post-parsing (strings to numbers, strings to dates, etc.), if enabled.
+
+___Adding a time formatting rule:___
+```js
+const dataFormatter = (method, options, data) => {
+  if (method === 'Time') {
+    return data.unixtime
+  } else {
+    return data
+  }
+}
+
+// instantiating with dataFormatter property in settings
+const api = require('node-kraken-api')({ dataFormatter })
+
+// logs 1529980568000
+api.call('Time').then(
+  x => console.log(x)
+)
 ```
 
 <a name='syncing'></a>
@@ -314,7 +344,9 @@ const tradesHistory = api.sync(
       }
       if (data.last !== instance.options.since) {
         if (data.XXBTZUSD.forEach) {
-          data.XXBTZUSD.forEach(trade => instance.hist.push(trade))
+          data.XXBTZUSD.forEach(
+            trade => instance.hist.push(trade)
+          )
         }
         instance.options.since = data.last
       }
@@ -340,7 +372,9 @@ const twentyPeriodSMA = api.sync(
       if (!instance.bars) instance.bars = []
       if (data.last !== instance.options.since) {
         if (data.XXBTZUSD.forEach) {
-          data.XXBTZUSD.forEach(bar => instance.bars.push(bar))
+          data.XXBTZUSD.forEach(
+            bar => instance.bars.push(bar)
+          )
         }
         instance.options.since = data.last
       }
@@ -370,9 +404,25 @@ twentyPeriodSMA.once()
 <a name='configuration'></a>
 ## Configuration
 
-During creation of the API instance, a configuration object may be provided for authenticated calls and other options. This may be provided by using <code>require('./config.json')</code> if this file has been prepared already, or by simply providing an object programmatically.
+During creation of the API instance, a configuration object may be provided for authenticated calls and other options.
 
-Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Settings.md#~Config)
+Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Settings.md#~Config)
+
+Additionally, various settings may be modified during runtime by using the following functions:
+
+```js
+api.setOTP('new2fa')
+// or
+api.setOTP(232385)
+
+api.setTimeout(10000)
+
+api.setRetryCt(6)
+
+api.setLimiter({ baseIntvl: 1000, minIntvl: 800 })
+// or
+api.setLimiter({ minIntvl: 500 })
+```
 
 ## Documentation
 
@@ -380,7 +430,7 @@ Please browse the [Kraken API docs](https://www.kraken.com/help/api#public-marke
 
 Method names are found within the 'URL' subtitle in the Kraken API docs. For example: under 'Get server time', the text 'URL: https://api.kraken.com/0/public/Time' shows that the method name is 'Time'.
 
-Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
+Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
 
 Method options are found under the 'Input:' section. For example, 'Get order book' lists the following:
 
@@ -394,27 +444,27 @@ This translates to an object such as <code>{ pair: 'XXBTZUSD', count: 10 }</code
 You may learn more about the types of options and response data by probing the API. Use the methods 'Assets' and 'AssetPairs' to discover the naming scheme for the assets tradable via Kraken.
 
 ### Internal:
-  + [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/node-kraken-api.md)
-  + [API](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API.md)
-    + [Calls](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API/Calls.md)
-      + [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Calls/GenRequestData.md)
-      + [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Calls/LoadCall.md)
-      + [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Calls/SignRequest.md)
-    + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API/RateLimits.md)
-      + [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/RateLimits/LoadLimiter.md)
-    + [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/API/Syncing.md)
-      + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/API/Syncing/LoadSync.md)
-  + [Settings](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Settings.md)
-    + [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/Settings/ParseSettings.md)
-  + [Tools](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Tools.md)
-    + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/Tools/AlphabetizeNested.md)
-    + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/modules/Tools/ParseNested.md)
-  + [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.1.3/docs/namespaces/Kraken.md)
+  + [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/node-kraken-api.md)
+  + [API](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API.md)
+    + [Calls](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/Calls.md)
+      + [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/API/Calls/GenRequestData.md)
+      + [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/API/Calls/LoadCall.md)
+      + [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/API/Calls/SignRequest.md)
+    + [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md)
+      + [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/API/RateLimits/LoadLimiter.md)
+    + [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/Syncing.md)
+      + [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/API/Syncing/LoadSync.md)
+  + [Settings](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Settings.md)
+    + [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/Settings/ParseSettings.md)
+  + [Tools](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Tools.md)
+    + [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/Tools/AlphabetizeNested.md)
+    + [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/modules/Tools/ParseNested.md)
+  + [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md)
 
 
 ## Versioning
 
-Versioned using [SemVer](http://semver.org/). For available versions, see the [Changelog](https://github.com/jpcx/node-kraken-api/blob/0.1.3/CHANGELOG.md).
+Versioned using [SemVer](http://semver.org/). For available versions, see the [Changelog](https://github.com/jpcx/node-kraken-api/blob/0.2.0/CHANGELOG.md).
 
 ## Contribution
 
@@ -434,4 +484,4 @@ bc1qla9wynkvmnmcnygls5snqeu3rj5dxr7tunwzp6
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/0.1.3/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/0.2.0/LICENSE) file for details

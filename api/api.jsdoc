@@ -18,12 +18,3 @@
  * @param    {API~Calls~CallError} err  - Request errors.
  * @param    {API~Calls~CallData}  data - Response data.
  */
-
-/**
- * Provides functions which can be used to interact with the API.
- *
- * @typedef  {Object}           API~Functions
- * @property {API~Calls~Call}   call   - Call a single method.
- * @property {API~Syncing~Sync} sync   - Create a sync instance.
- * @property {API~SetOTP}       setOTP - Sets a new two-factor password.
- */

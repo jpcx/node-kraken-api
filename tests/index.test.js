@@ -13,7 +13,9 @@ test('Is function', () => expect(kraken.constructor).toBe(Function))
 test('Returns correct object', () => {
   const api = kraken()
   expect(api.constructor).toBe(Object)
-  expect(Object.keys(api)).toEqual([ 'call', 'sync', 'setOTP' ])
+  expect(Object.keys(api)).toEqual([
+    'call', 'sync', 'setOTP', 'setTimeout', 'setRetryCt', 'setLimiter'
+  ])
 })
 
 test('Retrieves parsed time from Kraken servers', () => new Promise(
@@ -41,13 +43,15 @@ test('Syncs calls', () => new Promise(
     let numCompleted = 0
     api.sync('Time', (err, data) => {
       if (err) reject(err)
-      expect(data.constructor).toBe(Object)
-      expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
-      expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
-      expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
-      expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
-      numCompleted++
-      if (numCompleted >= 10) resolve()
+      else {
+        expect(data.constructor).toBe(Object)
+        expect(data.unixtime).toBeGreaterThanOrEqual(Date.now() - 60000)
+        expect(data.unixtime).toBeLessThanOrEqual(Date.now() + 60000)
+        expect(data.rfc1123).toBeGreaterThanOrEqual(Date.now() - 60000)
+        expect(data.rfc1123).toBeLessThanOrEqual(Date.now() + 60000)
+        numCompleted++
+        if (numCompleted >= 10) resolve()
+      }
     })
   }
 ))
@@ -62,6 +66,24 @@ test('Observes rate limits', () => new Promise(
         .then(() => { ++numCompleted >= 20 && resolve() })
         .catch(err => expect(err.message.match(/rate limit/gi)).toBe(null))
     }
+  }
+))
+
+test('Realtime settings work', () => new Promise(
+  resolve => {
+    jest.setTimeout(60000)
+    const api = kraken()
+    expect(api.setOTP('foobar')).toBe(true)
+    api.setOTP(null)
+    expect(api.setTimeout(1)).toBe(true)
+    expect(api.setRetryCt(0)).toBe(true)
+    expect(api.setLimiter({ baseIntvl: 1000, minIntvl: 1000 })).toBe(true)
+    api.call('Time')
+      .then(x => expect(x).toBeUndefined())
+      .catch(err => {
+        expect(err.message).toMatch(/ETIMEDOUT/gi)
+        resolve()
+      })
   }
 ))
 

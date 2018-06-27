@@ -39,13 +39,12 @@
  */
 
 /**
- * Callback function that is executed upon sync errors or data events. Returning a truthy value from this function will instruct the sync operation to not assign the 'data' property of the {@link API~Syncing~Instance}. In other words, returning a truthy value will inform the sync process that data will either be reassigned from within this event listener manually or does not need to be set.
+ * Callback function that is executed upon sync errors or data events.
  *
  * @typedef {Function}             API~Syncing~EventListener
  * @param   {API~Syncing~Error}    err  - Sync error.
  * @param   {API~Calls~CallData}   data - Data received from call.
  * @param   {API~Syncing~Instance} [instance] - Reference to the current instance, if necessary.
- * @returns {(boolean|undefined)}  Returns truthy value if data does not need to be assigned by the sync operation internally; returns a falsy value if data does need to be assigned automatically.
  */
 
 /**
