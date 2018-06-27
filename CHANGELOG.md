@@ -18,7 +18,7 @@
 
 #### Bugfixes
   + __node-kraken-api:__ SetOTP now returns true.
-  + __Docs:__            API~Syncing~EventListener documentation has been updated to reflect new behavior.
+  + __Docs:__            API\~Syncing\~EventListener documentation has been updated to reflect new behavior.
 
 <a name="0.1.3"></a>
 ## [0.1.3](https://github.com/jpcx/node-kraken-api/tree/0.1.3) (2018-06-24)
