@@ -109,6 +109,18 @@ const fixAsterixBullets = string => string.replace(
 )
 
 /**
+ * Adds an escaped asterix '*' return types.
+ *
+ * @private
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
+const fixAsterixTypes = string => string.replace(
+  /^Type\n\n\*\n\n/gm,
+  'Type\n\n*   \\*\n\n'
+)
+
+/**
  * Removes unnecessary namespace title and formats next title as main title.
  *
  * @private
@@ -475,6 +487,7 @@ const postProcess = (markdown, mappings) => Object.keys(
     proc[key] = fixOptionalTags(proc[key])
     proc[key] = fixTableLineBreaks(proc[key])
     proc[key] = fixAsterixBullets(proc[key])
+    proc[key] = fixAsterixTypes(proc[key])
     proc[key] = removeTopNamespace(proc[key])
     proc[key] = formatHomeFooter(proc[key], key, mappings)
     proc[key] = formatSourceCodeURLs(proc[key])

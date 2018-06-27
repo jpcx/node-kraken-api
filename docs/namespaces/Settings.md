@@ -72,7 +72,7 @@ Formatted data.
 
 Type
 
-*
+*   \*
 
 <a name="~RateLimiter"></a>
 #### RateLimiter

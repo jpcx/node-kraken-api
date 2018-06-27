@@ -74,6 +74,7 @@ test('Realtime settings work', () => new Promise(
     jest.setTimeout(60000)
     const api = kraken()
     expect(api.setOTP('foobar')).toBe(true)
+    api.setOTP(null)
     expect(api.setTimeout(1)).toBe(true)
     expect(api.setRetryCt(0)).toBe(true)
     expect(api.setLimiter({ baseIntvl: 1000, minIntvl: 1000 })).toBe(true)
