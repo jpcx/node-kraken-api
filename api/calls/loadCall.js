@@ -101,15 +101,15 @@ const processCalls = async (settings, cat, thread, serialReg, limiter) => {
   while (thread.size > 0) {
     for (let serial of thread.keys()) {
       const params = { ...serialReg.get(serial) }
-      await limiter.attempt(cat)
+      await limiter.attempt(params.method)
       if (!thread.has(serial) || thread.get(serial).size === 0) {
-        limiter.addPass(cat)
+        limiter.addPass(params.method)
         continue
       }
       const listenersCopy = new Set([...thread.get(serial)])
       makeRequest(settings, params).then(
         data => {
-          limiter.addPass(cat)
+          limiter.addPass(params.method)
           if (typeof settings.dataFormatter === 'function') {
             data = settings.dataFormatter(params.method, params.options, data)
           }
@@ -118,8 +118,8 @@ const processCalls = async (settings, cat, thread, serialReg, limiter) => {
       ).catch(
         err => {
           if (err.message.match(/rate limit/gi)) {
-            limiter.addFail(cat)
-          } else limiter.addPass(cat)
+            limiter.addFail(params.method)
+          } else limiter.addPass(params.method)
 
           listenersCopy.forEach(listener => listener(err, null))
         }

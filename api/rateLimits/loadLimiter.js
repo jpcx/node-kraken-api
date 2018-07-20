@@ -6,6 +6,23 @@
 
 'use strict'
 
+const getAuthIncrementAmt = method =>
+  method === 'Ledgers' || method === 'TradesHistory'
+    ? 2
+    : method === 'AddOrder' || method === 'CancelOrder' ? 0 : 1
+
+const getAuthDecrementTime = tier =>
+  tier === 4 ? 1000 : tier === 3 ? 2000 : 3000
+
+const getAuthMaxCount = tier => (tier >= 3 ? 20 : 15)
+
+const getRLCategory = (privMethods, method) =>
+  method === 'OHLC'
+    ? 'ohlc'
+    : method === 'Trades'
+      ? 'trades'
+      : privMethods.includes(method) ? 'auth' : 'other'
+
 /**
  * Checks for more calls being made than responses received and adjusts call frequency accordingly.
  *
@@ -51,18 +68,19 @@ const checkContext = (context, limitConfig, any, spec) => {
  * @param    {API~RateLimits~Category} category  - Type of category based on rate-limiting behavior.
  * @param    {('pass'|'fail')}         [context] - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
  */
-const update = (state, category, context) => {
+const update = (state, method, context) => {
+  const cat = getRLCategory(state.settings.privMethods, method)
   const limitConfig = state.limitConfig
   const now = Date.now()
   const any = state.calls
-  if (!state.catInfo.has(category)) {
-    state.catInfo.set(category, { intvl: limitConfig.baseIntvl, last: 0 })
+  if (!state.catInfo.has(cat)) {
+    state.catInfo.set(cat, { intvl: limitConfig.baseIntvl, last: 0 })
   }
   if (context === 'pass' || context === 'fail') {
     any.compl.push(now)
   } else any.attmp.push(now)
 
-  const spec = state.catInfo.get(category)
+  const spec = state.catInfo.get(cat)
 
   any.attmp = any.attmp.filter(t => t > now - limitConfig.pileUpWindow)
   any.compl = any.compl.filter(t => t > now - limitConfig.pileUpWindow)
@@ -72,6 +90,17 @@ const update = (state, category, context) => {
 
   if (any.intvl < limitConfig.minIntvl) any.intvl = limitConfig.minIntvl
   if (spec.intvl < limitConfig.minIntvl) spec.intvl = limitConfig.minIntvl
+
+  if (cat === 'auth') {
+    const now = Date.now()
+    let newCount =
+      state.authCounter.count -
+      (now - state.authCounter.time) / getAuthDecrementTime(state.settings.tier)
+    if (newCount < 0) newCount = 0
+    newCount += getAuthIncrementAmt(method)
+    state.authCounter.count = newCount
+    state.authCounter.time = now
+  }
 }
 
 /**
@@ -110,7 +139,11 @@ module.exports = settings => {
       attmp: [],
       compl: []
     },
-    catInfo: new Map()
+    catInfo: new Map(),
+    authCounter: {
+      count: 0,
+      time: Date.now()
+    }
   }
   /**
    * Contains functions for working with rate-limits.
@@ -130,36 +163,53 @@ module.exports = settings => {
      * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
      * @returns  {Promise}                 Resolves when an adequate wait period has been completed.
      */
-    attempt: category => new Promise(resolve => {
-      const now = Date.now()
-      const any = state.calls
-      update(state, category)
-      const spec = state.catInfo.get(category)
-      const elapsedAny = now - any.attmp.slice(-2)[0]
-      const elapsedSpec = now - spec.last
-      spec.last = now
+    attempt: method =>
+      new Promise(resolve => {
+        const now = Date.now()
+        const any = state.calls
+        update(state, method)
+        const cat = getRLCategory(state.settings.privMethods, method)
+        const spec = state.catInfo.get(cat)
+        const elapsedAny = now - any.attmp.slice(-2)[0]
+        const elapsedSpec = now - spec.last
+        spec.last = now
 
-      let wait
+        let wait
 
-      if (elapsedAny > any.intvl) {
-        if (elapsedSpec > spec.intvl) {
-          wait = 0
-        } else {
-          wait = spec.intvl - elapsedSpec
-        }
-      } else {
-        if (elapsedSpec > spec.intvl) {
-          wait = any.intvl - elapsedAny
-        } else {
-          if (spec.intvl - elapsedSpec > any.intvl - elapsedAny) {
-            wait = spec.intvl - elapsedSpec
+        if (elapsedAny > any.intvl) {
+          if (elapsedSpec > spec.intvl) {
+            wait = 0
           } else {
+            wait = spec.intvl - elapsedSpec
+          }
+        } else {
+          if (elapsedSpec > spec.intvl) {
             wait = any.intvl - elapsedAny
+          } else {
+            if (spec.intvl - elapsedSpec > any.intvl - elapsedAny) {
+              wait = spec.intvl - elapsedSpec
+            } else {
+              wait = any.intvl - elapsedAny
+            }
           }
         }
-      }
-      setTimeout(resolve, wait)
-    }),
+
+        if (cat === 'auth') {
+          const countDiff =
+            state.authCounter.count - getAuthMaxCount(state.settings.tier)
+          if (countDiff > 0) {
+            const authWait =
+              countDiff * getAuthDecrementTime(state.settings.tier) -
+              (Date.now() - state.authCounter.time)
+            if (authWait > wait) wait = authWait
+            // ANCHOR: DEBUG
+            // ! Double checking auth wait generation
+            console.log(`authWait: ${authWait}`)
+          }
+        }
+
+        setTimeout(resolve, wait)
+      }),
     /**
      * Registers any response that is not a rate-limit violation and updates frequencies accordingly.
      *
@@ -167,8 +217,8 @@ module.exports = settings => {
      * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
      * @returns  {boolean}                 True if successfully updated.
      */
-    addPass: category => {
-      update(state, category, 'pass')
+    addPass: method => {
+      update(state, method, 'pass')
       return true
     },
     /**
@@ -178,8 +228,8 @@ module.exports = settings => {
      * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
      * @returns  {boolean}                 True if successfully updated.
      */
-    addFail: category => {
-      update(state, category, 'fail')
+    addFail: method => {
+      update(state, method, 'fail')
       return true
     },
     /**
@@ -189,15 +239,7 @@ module.exports = settings => {
      * @param    {Kraken~Method}           method - Method being called.
      * @returns  {API~RateLimits~Category} Type of rate-limiter category.
      */
-    getCategory: method => (
-      method === 'OHLC'
-        ? 'ohlc'
-        : method === 'Trades'
-          ? 'trades'
-          : settings.privMethods.includes(method)
-            ? 'auth'
-            : 'other'
-    ),
+    getCategory: method => getRLCategory(state.settings.privMethods, method),
     /**
      * Gets the frequency required for sustainable execution of a private method.
      *
@@ -207,12 +249,8 @@ module.exports = settings => {
      * @returns  {number}        Optimal interval.
      */
     getAuthRegenIntvl: (method, tier) => {
-      const increment = method === 'Ledgers' || method === 'TradesHistory'
-        ? 2
-        : method === 'AddOrder' || method === 'CancelOrder'
-          ? 0
-          : 1
-      const decIntvl = tier === 4 ? 1000 : tier === 3 ? 2000 : 3000
+      const increment = getAuthIncrementAmt(method)
+      const decIntvl = getAuthDecrementTime(method, tier)
       return increment * decIntvl
     }
   }
