@@ -8,10 +8,23 @@ Source:
 
 ### Type Definitions
 
-<a name="~CounterInterval"></a>
-#### CounterInterval
+<a name="~AuthCounterLimit"></a>
+#### AuthCounterLimit
 
-Number of seconds for the [Kraken~RateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~RateLimitCount) to decrement by one. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+Positive integer counter limit used for determining private API rate limit adherence. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+
+##### Type:
+
+*   [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthRateLimitCount)
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 122](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L122)
+
+<a name="~AuthDecrementInterval"></a>
+#### AuthDecrementInterval
+
+Number of seconds for the [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthRateLimitCount) to decrement by one. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
 
 ##### Type:
 
@@ -21,18 +34,31 @@ Source:
 
 *   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 134](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L134)
 
-<a name="~CounterLimit"></a>
-#### CounterLimit
+<a name="~AuthIncrementAmount"></a>
+#### AuthIncrementAmount
 
-Positive integer counter limit used for determining private API rate limit adherence. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
 
 ##### Type:
 
-*   [Kraken~RateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~RateLimitCount)
+*   [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthRateLimitCount)
 
 Source:
 
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 122](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L122)
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 128](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L128)
+
+<a name="~AuthRateLimitCount"></a>
+#### AuthRateLimitCount
+
+Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+
+##### Type:
+
+*   number
+
+Source:
+
+*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 116](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L116)
 
 <a name="~Hostname"></a>
 #### Hostname
@@ -103,19 +129,6 @@ HTTPS request POST data for calls to Kraken servers. Generated using 'qs' module
 Source:
 
 *   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 110](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L110)
-
-<a name="~IncrementAmount"></a>
-#### IncrementAmount
-
-Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
-
-##### Type:
-
-*   [Kraken~RateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~RateLimitCount)
-
-Source:
-
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 128](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L128)
 
 <a name="~Key"></a>
 #### Key
@@ -240,19 +253,6 @@ Set of server-side API methods available to all users.
 Source:
 
 *   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 43](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L43)
-
-<a name="~RateLimitCount"></a>
-#### RateLimitCount
-
-Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
-
-##### Type:
-
-*   number
-
-Source:
-
-*   [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc), [line 116](https://github.com/jpcx/node-kraken-api/blob/0.2.0/kraken/kraken.jsdoc#L116)
 
 <a name="~Secret"></a>
 #### Secret

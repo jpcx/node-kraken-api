@@ -116,23 +116,23 @@
 /**
  * Counts within the the authenticated rate-limit counter. Kraken limits authenticated requests using a counter system. Counts go up when a call is made, and decay after a certain amount of time. Counter behavior is dependent on verification tier. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
- * @typedef {number} Kraken~RateLimitCount
+ * @typedef {number} Kraken~AuthRateLimitCount
  */
 
 /**
  * Positive integer counter limit used for determining private API rate limit adherence. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
- * @typedef {Kraken~RateLimitCount} Kraken~CounterLimit
+ * @typedef {Kraken~AuthRateLimitCount} Kraken~AuthCounterLimit
  */
 
 /**
  * Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the {@link Kraken~Method}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
- * @typedef {Kraken~RateLimitCount} Kraken~IncrementAmount
+ * @typedef {Kraken~AuthRateLimitCount} Kraken~AuthIncrementAmount
  */
 
 /**
- * Number of seconds for the {@link Kraken~RateLimitCount} to decrement by one. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
+ * Number of seconds for the {@link Kraken~AuthRateLimitCount} to decrement by one. Depends on the {@link Kraken~Tier}. See the [Kraken API docs]{@link https://www.kraken.com/help/api#api-call-rate-limit} for more information.
  *
- * @typedef {number} Kraken~CounterInterval
+ * @typedef {number} Kraken~AuthDecrementInterval
  */

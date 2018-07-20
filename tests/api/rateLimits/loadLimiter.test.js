@@ -56,13 +56,13 @@ test('Limits pile-up calls correctly', async () => {
   jest.setTimeout(60000)
   const limiter = loadLimiter(defaults)
   let starttm = Date.now()
-  await limiter.attempt('other')
+  await limiter.attempt('Time')
   expect(Date.now() - starttm).toBeGreaterThan(defaults.limiter.baseIntvl - 100)
   expect(Date.now() - starttm).toBeLessThan(defaults.limiter.baseIntvl + 100)
-  limiter.addPass('other')
+  limiter.addPass('Time')
   let expectedIntvl = defaults.limiter.baseIntvl * 0.95
   for (let i = 0; i < 10; i++) {
-    limiter.attempt('other')
+    limiter.attempt('Time')
     if (i > 4) {
       if (expectedIntvl < 1000) {
         expectedIntvl = 1000
@@ -72,25 +72,66 @@ test('Limits pile-up calls correctly', async () => {
   }
   expectedIntvl *= 1.05
   starttm = Date.now()
-  await limiter.attempt('other')
+  await limiter.attempt('Time')
   expect(Date.now() - starttm).toBeGreaterThan(expectedIntvl - 100)
   expect(Date.now() - starttm).toBeLessThan(expectedIntvl + 100)
 })
 
-test('Limits categories correctly', async () => {
-  jest.setTimeout(60000)
+test('Limits public categories correctly', async () => {
+  jest.setTimeout(180000)
   const limiter = loadLimiter(defaults)
   let expectedIntvl = defaults.limiter.baseIntvl
   for (let i = 0; i < 10; i++) {
-    limiter.attempt('other')
-    limiter.addFail('other')
+    limiter.attempt('Time')
+    limiter.addFail('Time')
     if (expectedIntvl < 4500) {
       expectedIntvl = 4500
     }
     expectedIntvl *= 1.1
   }
   let starttm = Date.now()
-  await limiter.attempt('other')
+  await limiter.attempt('Time')
   expect(Date.now() - starttm).toBeGreaterThan(expectedIntvl - 100)
   expect(Date.now() - starttm).toBeLessThan(expectedIntvl + 100)
+
+  expectedIntvl = defaults.limiter.baseIntvl
+  for (let i = 0; i < 10; i++) {
+    limiter.attempt('OHLC')
+    limiter.addFail('OHLC')
+    if (expectedIntvl < 4500) {
+      expectedIntvl = 4500
+    }
+    expectedIntvl *= 1.1
+  }
+  starttm = Date.now()
+  await limiter.attempt('OHLC')
+  expect(Date.now() - starttm).toBeGreaterThan(expectedIntvl - 100)
+  expect(Date.now() - starttm).toBeLessThan(expectedIntvl + 100)
+
+  expectedIntvl = defaults.limiter.baseIntvl
+  for (let i = 0; i < 10; i++) {
+    limiter.attempt('Trades')
+    limiter.addFail('Trades')
+    if (expectedIntvl < 4500) {
+      expectedIntvl = 4500
+    }
+    expectedIntvl *= 1.1
+  }
+  starttm = Date.now()
+  await limiter.attempt('Trades')
+  expect(Date.now() - starttm).toBeGreaterThan(expectedIntvl - 100)
+  expect(Date.now() - starttm).toBeLessThan(expectedIntvl + 100)
+})
+
+test('Limits private calls correctly', async() => {
+  jest.setTimeout(60000)
+  const limiter = loadLimiter(defaults)
+  for (let i = 0; i < 15; i++) {
+    limiter.attempt('Balance')
+    limiter.addPass('Balance')
+  }
+  const starttm = Date.now()
+  await limiter.attempt('Ledgers')
+  expect(Date.now() - starttm).toBeGreaterThan(5800)
+  expect(Date.now() - starttm).toBeLessThan(6200)
 })

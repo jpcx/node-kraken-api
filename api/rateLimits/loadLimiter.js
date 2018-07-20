@@ -6,16 +6,45 @@
 
 'use strict'
 
+/**
+ * Returns the amount of counter incrementation based on the method.
+ *
+ * @function API~RateLimits~GetAuthIncrementAmt
+ * @param    {Kraken~Method} method       - Method being called.
+ * @returns  {Kraken~AuthIncrementAmount} Amount to increment the auth counter.
+ */
 const getAuthIncrementAmt = method =>
   method === 'Ledgers' || method === 'TradesHistory'
     ? 2
     : method === 'AddOrder' || method === 'CancelOrder' ? 0 : 1
 
-const getAuthDecrementTime = tier =>
+/**
+ * Returns the amount of time required to decrement the auth counter.
+ *
+ * @function API~RateLimits~GetAuthDecrementInterval
+ * @param    {Kraken~Tier} tier - Kraken verification tier.
+ * @returns  {Kraken~AuthDecrementInterval} Amount of time required to decrement the counter.
+ */
+const getAuthDecrementInterval = tier =>
   tier === 4 ? 1000 : tier === 3 ? 2000 : 3000
 
-const getAuthMaxCount = tier => (tier >= 3 ? 20 : 15)
+/**
+ * Returns the maximum counter value for authenticated methods.
+ *
+ * @function API~RateLimits~GetAuthCounterLimit
+ * @param    {Kraken~Tier} tier - Kraken verification tier.
+ * @returns  {Kraken~AuthCounterLimit} Maximum count for auth counter.
+ */
+const getAuthCounterLimit = tier => (tier >= 3 ? 20 : 15)
 
+/**
+ * Returns the rate-limit category for a given method. Different categories follow different server-side limiting behavior.
+ *
+ * @function API~RateLimits~GetRLCategory
+ * @param    {Kraken~PrivateMethods}   privMethods - List of all available private methods.
+ * @param    {Kraken~Method}           method      - Method being called.
+ * @returns  {API~RateLimits~Category} Rate-limiting category.
+ */
 const getRLCategory = (privMethods, method) =>
   method === 'OHLC'
     ? 'ohlc'
@@ -64,9 +93,9 @@ const checkContext = (context, limitConfig, any, spec) => {
  * Updates {@link API~RateLimits~CallInfo} and {@link API~RateLimits~CatInfo} intervals in response to server response behavior.
  *
  * @function API~RateLimits~Update
- * @param    {API~RateLimits~State}    state     - Stateful registry of limiter information.
- * @param    {API~RateLimits~Category} category  - Type of category based on rate-limiting behavior.
- * @param    {('pass'|'fail')}         [context] - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
+ * @param    {API~RateLimits~State} state     - Stateful registry of limiter information.
+ * @param    {Kraken~Method}        method    - Method being called.
+ * @param    {('pass'|'fail')}      [context] - Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt.
  */
 const update = (state, method, context) => {
   const cat = getRLCategory(state.settings.privMethods, method)
@@ -91,11 +120,12 @@ const update = (state, method, context) => {
   if (any.intvl < limitConfig.minIntvl) any.intvl = limitConfig.minIntvl
   if (spec.intvl < limitConfig.minIntvl) spec.intvl = limitConfig.minIntvl
 
-  if (cat === 'auth') {
+  if (cat === 'auth' && context === undefined) {
     const now = Date.now()
-    let newCount =
-      state.authCounter.count -
-      (now - state.authCounter.time) / getAuthDecrementTime(state.settings.tier)
+    const elapsed = now - state.authCounter.time
+    const intervalsPassed =
+      elapsed / getAuthDecrementInterval(state.settings.tier)
+    let newCount = state.authCounter.count - intervalsPassed
     if (newCount < 0) newCount = 0
     newCount += getAuthIncrementAmt(method)
     state.authCounter.count = newCount
@@ -160,8 +190,8 @@ module.exports = settings => {
      * Registers a new call attempt and returns a promise that signifies that the call placement may be submitted.
      *
      * @function API~RateLimits~Attempt
-     * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
-     * @returns  {Promise}                 Resolves when an adequate wait period has been completed.
+     * @param    {Kraken~Method} method - Method being called.
+     * @returns  {Promise}       Resolves when an adequate wait period has been completed.
      */
     attempt: method =>
       new Promise(resolve => {
@@ -196,15 +226,11 @@ module.exports = settings => {
 
         if (cat === 'auth') {
           const countDiff =
-            state.authCounter.count - getAuthMaxCount(state.settings.tier)
+            state.authCounter.count - getAuthCounterLimit(state.settings.tier)
           if (countDiff > 0) {
             const authWait =
-              countDiff * getAuthDecrementTime(state.settings.tier) -
-              (Date.now() - state.authCounter.time)
+              countDiff * getAuthDecrementInterval(state.settings.tier)
             if (authWait > wait) wait = authWait
-            // ANCHOR: DEBUG
-            // ! Double checking auth wait generation
-            console.log(`authWait: ${authWait}`)
           }
         }
 
@@ -214,8 +240,8 @@ module.exports = settings => {
      * Registers any response that is not a rate-limit violation and updates frequencies accordingly.
      *
      * @function API~RateLimits~AddPass
-     * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
-     * @returns  {boolean}                 True if successfully updated.
+     * @param    {Kraken~Method} method - Method being called.
+     * @returns  {boolean}       True if successfully updated.
      */
     addPass: method => {
       update(state, method, 'pass')
@@ -225,15 +251,15 @@ module.exports = settings => {
      * Registers a new rate-limit violation and updates frequencies accordingly.
      *
      * @function API~RateLimits~AddFail
-     * @param    {API~RateLimits~Category} category - Type of category based on rate-limiting behavior.
-     * @returns  {boolean}                 True if successfully updated.
+     * @param    {Kraken~Method} method - Method being called.
+     * @returns  {boolean}       True if successfully updated.
      */
     addFail: method => {
       update(state, method, 'fail')
       return true
     },
     /**
-     * Gets the type of server-side rate-limiter category based on the method.
+     * Gets the type of server-side rate-limiter category based on the method. Wrapper for {@link API~RateLimits~GetRLCategory}.
      *
      * @function API~RateLimits~GetCategory
      * @param    {Kraken~Method}           method - Method being called.
@@ -250,7 +276,7 @@ module.exports = settings => {
      */
     getAuthRegenIntvl: (method, tier) => {
       const increment = getAuthIncrementAmt(method)
-      const decIntvl = getAuthDecrementTime(method, tier)
+      const decIntvl = getAuthDecrementInterval(method, tier)
       return increment * decIntvl
     }
   }

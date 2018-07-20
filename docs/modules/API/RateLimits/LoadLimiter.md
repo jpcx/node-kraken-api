@@ -12,7 +12,7 @@ Loads settings and returns an object with rate-limiting functions.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 77](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L77)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 136](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L136)
 
 ##### Returns:
 
