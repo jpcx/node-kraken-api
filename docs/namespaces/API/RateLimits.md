@@ -16,7 +16,7 @@ Source:
 ### Methods
 
 <a name="~AddFail"></a>
-#### (inner) AddFail(category) → \{boolean}
+#### (inner) AddFail(method) → \{boolean}
 
 Registers a new rate-limit violation and updates frequencies accordingly.
 
@@ -24,12 +24,12 @@ Registers a new rate-limit violation and updates frequencies accordingly.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `category` | [API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category) | Type of category based on rate-limiting behavior. |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method) | Method being called. |
 
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 174](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L174)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 250](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L250)
 
 ##### Returns:
 
@@ -40,7 +40,7 @@ Type
 boolean
 
 <a name="~AddPass"></a>
-#### (inner) AddPass(category) → \{boolean}
+#### (inner) AddPass(method) → \{boolean}
 
 Registers any response that is not a rate-limit violation and updates frequencies accordingly.
 
@@ -48,12 +48,12 @@ Registers any response that is not a rate-limit violation and updates frequencie
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `category` | [API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category) | Type of category based on rate-limiting behavior. |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method) | Method being called. |
 
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 163](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L163)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 239](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L239)
 
 ##### Returns:
 
@@ -64,7 +64,7 @@ Type
 boolean
 
 <a name="~Attempt"></a>
-#### (inner) Attempt(category) → \{Promise}
+#### (inner) Attempt(method) → \{Promise}
 
 Registers a new call attempt and returns a promise that signifies that the call placement may be submitted.
 
@@ -72,12 +72,12 @@ Registers a new call attempt and returns a promise that signifies that the call 
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `category` | [API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category) | Type of category based on rate-limiting behavior. |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method) | Method being called. |
 
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 126](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L126)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 189](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L189)
 
 ##### Returns:
 
@@ -104,7 +104,7 @@ Checks the response context for [API\~RateLimits~Update](https://github.com/jpcx
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 25](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L25)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 71](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L71)
 
 <a name="~CheckPileUp"></a>
 #### (inner) CheckPileUp(limitConfig, any)
@@ -121,7 +121,79 @@ Checks for more calls being made than responses received and adjusts call freque
 
 Source:
 
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 55](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L55)
+
+<a name="~GetAuthCounterLimit"></a>
+#### (inner) GetAuthCounterLimit(tier) → \{[Kraken~AuthCounterLimit](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthCounterLimit)}
+
+Returns the maximum counter value for authenticated methods.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `tier` | [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Tier) | Kraken verification tier. |
+
+
+Source:
+
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 31](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L31)
+
+##### Returns:
+
+Maximum count for auth counter.
+
+Type
+
+[Kraken~AuthCounterLimit](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthCounterLimit)
+
+<a name="~GetAuthDecrementInterval"></a>
+#### (inner) GetAuthDecrementInterval(tier) → \{[Kraken~AuthDecrementInterval](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthDecrementInterval)}
+
+Returns the amount of time required to decrement the auth counter.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `tier` | [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Tier) | Kraken verification tier. |
+
+
+Source:
+
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 21](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L21)
+
+##### Returns:
+
+Amount of time required to decrement the counter.
+
+Type
+
+[Kraken~AuthDecrementInterval](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthDecrementInterval)
+
+<a name="~GetAuthIncrementAmt"></a>
+#### (inner) GetAuthIncrementAmt(method) → \{[Kraken~AuthIncrementAmount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthIncrementAmount)}
+
+Returns the amount of counter incrementation based on the method.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method) | Method being called. |
+
+
+Source:
+
 *   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 9](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L9)
+
+##### Returns:
+
+Amount to increment the auth counter.
+
+Type
+
+[Kraken~AuthIncrementAmount](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~AuthIncrementAmount)
 
 <a name="~GetAuthRegenIntvl"></a>
 #### (inner) GetAuthRegenIntvl(method, tier) → \{number}
@@ -138,7 +210,7 @@ Gets the frequency required for sustainable execution of a private method.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 201](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L201)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 269](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L269)
 
 ##### Returns:
 
@@ -151,7 +223,7 @@ number
 <a name="~GetCategory"></a>
 #### (inner) GetCategory(method) → \{[API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category)}
 
-Gets the type of server-side rate-limiter category based on the method.
+Gets the type of server-side rate-limiter category based on the method. Wrapper for [API\~RateLimits~GetRLCategory](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~GetRLCategory).
 
 ##### Parameters:
 
@@ -162,7 +234,7 @@ Gets the type of server-side rate-limiter category based on the method.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 185](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L185)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 261](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L261)
 
 ##### Returns:
 
@@ -172,8 +244,33 @@ Type
 
 [API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category)
 
+<a name="~GetRLCategory"></a>
+#### (inner) GetRLCategory(privMethods, method) → \{[API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category)}
+
+Returns the rate-limit category for a given method. Different categories follow different server-side limiting behavior.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `privMethods` | [Kraken~PrivateMethods](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~PrivateMethods) | List of all available private methods. |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method) | Method being called. |
+
+
+Source:
+
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 40](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L40)
+
+##### Returns:
+
+Rate-limiting category.
+
+Type
+
+[API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category)
+
 <a name="~Update"></a>
-#### (inner) Update(state, category, contextopt)
+#### (inner) Update(state, method, contextopt)
 
 Updates [API\~RateLimits~CallInfo](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~CallInfo) and [API\~RateLimits~CatInfo](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~CatInfo) intervals in response to server response behavior.
 
@@ -182,13 +279,13 @@ Updates [API\~RateLimits~CallInfo](https://github.com/jpcx/node-kraken-api/blob/
 | Name | Type | Attributes | Description |
 | --- | --- | --- | --- |
 | `state` | [API\~RateLimits~State](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~State) |  | Stateful registry of limiter information. |
-| `category` | [API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/API/RateLimits.md#~Category) |  | Type of category based on rate-limiting behavior. |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.2.0/docs/namespaces/Kraken.md#~Method) |  | Method being called. |
 | `context` | 'pass' \| 'fail' | \<optional> | Reason for invocation; may be called in response to a successful call, a rate limit violation, or a pre-response call attempt. |
 
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 46](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L46)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 92](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L92)
 
 ### Type Definitions
 
@@ -270,7 +367,7 @@ Contains functions for working with rate-limits.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 115](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L115)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 178](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L178)
 
 <a name="~LimitConfig"></a>
 #### LimitConfig
@@ -318,7 +415,7 @@ Holds data relevant to current execution state.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 85](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L85)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js), [line 144](https://github.com/jpcx/node-kraken-api/blob/0.2.0/api/rateLimits/loadLimiter.js#L144)
 
 <hr>
 
