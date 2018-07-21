@@ -145,11 +145,13 @@ const update = (state, method, context) => {
       }
       state.authCounter.reduction.push(Date.now())
     }
-    state.authCounter.reductions = state.authCounter.reductions.filter(
-      x => x > Date.now() - limitConfig.authCounterReductionTimeout
-    )
-    if (state.authCounter.reductions.length === 0) {
-      delete state.authCounter.reductions
+    if (state.authCounter.hasOwnProperty('reductions')) {
+      state.authCounter.reductions = state.authCounter.reductions.filter(
+        x => x > Date.now() - limitConfig.authCounterReductionTimeout
+      )
+      if (state.authCounter.reductions.length === 0) {
+        delete state.authCounter.reductions
+      }
     }
   }
 }
@@ -248,11 +250,10 @@ module.exports = settings => {
         }
 
         if (cat === 'auth') {
-          const limit =
-            getAuthCounterLimit(state.settings.tier) -
-            state.authCounter.reductions
-              ? state.authCounter.reductions.length
-              : 0
+          const adjustment = state.authCounter.reductions
+            ? state.authCounter.reductions.length
+            : 0
+          const limit = getAuthCounterLimit(state.settings.tier) - adjustment
           const countDiff = state.authCounter.count - limit
           if (countDiff > 0) {
             const authWait =

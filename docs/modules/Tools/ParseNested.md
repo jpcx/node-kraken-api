@@ -13,7 +13,7 @@ Parses objects based on [Tools~ParseNestedConfig](https://github.com/jpcx/node-k
 
 Source:
 
-*   [node-kraken-api/tools/parseNested.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/parseNested.js), [line 13](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/parseNested.js#L13)
+*   [node-kraken-api/tools/parseNested.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/parseNested.js), [line 12](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/parseNested.js#L12)
 
 ##### Returns:
 

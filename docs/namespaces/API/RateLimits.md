@@ -29,7 +29,31 @@ Registers a new rate-limit violation and updates frequencies accordingly.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 250](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L250)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 286](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L286)
+
+##### Returns:
+
+True if successfully updated.
+
+Type
+
+boolean
+
+<a name="~AddLockout"></a>
+#### (inner) AddLockout(method) → \{boolean}
+
+Registers a lockout state and forces a category pause.
+
+##### Parameters:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `method` | [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.3.1/docs/namespaces/Kraken.md#~Method) | Method being called. |
+
+
+Source:
+
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 297](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L297)
 
 ##### Returns:
 
@@ -53,7 +77,7 @@ Registers any response that is not a rate-limit violation and updates frequencie
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 239](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L239)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 275](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L275)
 
 ##### Returns:
 
@@ -77,7 +101,7 @@ Registers a new call attempt and returns a promise that signifies that the call 
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 189](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L189)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 214](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L214)
 
 ##### Returns:
 
@@ -210,7 +234,7 @@ Gets the frequency required for sustainable execution of a private method.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 269](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L269)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 316](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L316)
 
 ##### Returns:
 
@@ -234,7 +258,7 @@ Gets the type of server-side rate-limiter category based on the method. Wrapper 
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 261](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L261)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 308](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L308)
 
 ##### Returns:
 
@@ -285,7 +309,7 @@ Updates [API\~RateLimits~CallInfo](https://github.com/jpcx/node-kraken-api/blob/
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 92](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L92)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 100](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L100)
 
 ### Type Definitions
 
@@ -367,7 +391,7 @@ Contains functions for working with rate-limits.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 178](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L178)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 203](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L203)
 
 <a name="~LimitConfig"></a>
 #### LimitConfig
@@ -388,8 +412,10 @@ Rules for limiting call frequency and responding to violations. Frequencies are 
 | `pileUpThreshold` | number | Number of unanswered calls necessary to trigger frequency decrease. |
 | `pileUpResetIntvl` | number | Interval to reset all calls to in response to more calls made than received. |
 | `pileUpMultiplier` | number | Amount to multiply by call interval in response to excessive calling. |
+| `lockoutResetIntvl` | number | Interval to reset a call type to in response to a rate limit lockout. Interval is multiplied by the number of failed resume attempts plus one. |
 | `violationResetIntvl` | number | Interval to reset a call type to in response to a rate limit violation |
 | `violationMultiplier` | number | Multiplies call type interval in response to rate limit violations (if greater than violationResetIntvl). |
+| `authCounterReductionTimeout` | number | Rate limit violations during authenticated calling should only happen when multiple sources are utilizing the private API, or if node-kraken-api instance is reset before the authenticated counter expires. As such, maximum count is reduced by one for every violation, and is increased by one (restored) after this many milliseconds. |
 | `anyPassDecay` | number | Amount to multiply all calls interval in response to a successful call. |
 | `specificPassDecay` | number | Amount to multiply call type interval in response to a successful call. |
 
@@ -415,7 +441,7 @@ Holds data relevant to current execution state.
 
 Source:
 
-*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 144](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L144)
+*   [node-kraken-api/api/rateLimits/loadLimiter.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js), [line 167](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/rateLimits/loadLimiter.js#L167)
 
 <hr>
 
