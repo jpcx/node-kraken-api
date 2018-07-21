@@ -143,7 +143,7 @@ const update = (state, method, context) => {
       if (!state.authCounter.hasOwnProperty('reductions')) {
         state.authCounter.reductions = []
       }
-      state.authCounter.reduction.push(Date.now())
+      state.authCounter.reductions.push(Date.now())
     }
     if (state.authCounter.hasOwnProperty('reductions')) {
       state.authCounter.reductions = state.authCounter.reductions.filter(

@@ -135,8 +135,28 @@ test('Limits private calls correctly', async () => {
     limiter.attempt('Balance')
     limiter.addPass('Balance')
   }
-  const starttm = Date.now()
+  let starttm = Date.now()
   await limiter.attempt('Ledgers')
   expect(Date.now() - starttm).toBeGreaterThan(5800)
   expect(Date.now() - starttm).toBeLessThan(6200)
+  limiter.addFail('Ledgers')
+  starttm = Date.now()
+  await limiter.attempt('Ledgers')
+  expect(Date.now() - starttm).toBeGreaterThan(8800)
+  expect(Date.now() - starttm).toBeLessThan(9200)
 })
+
+test('Responds to lockouts', () =>
+  new Promise((resolve, reject) => {
+    jest.setTimeout(60000)
+    const limiter = loadLimiter(defaults)
+    limiter.attempt('Time')
+    limiter.addLockout('Time')
+    const starttm = Date.now()
+    limiter.attempt('OHLC').then(() => {
+      expect(Date.now() - starttm).toBeGreaterThan(400)
+      expect(Date.now() - starttm).toBeLessThan(600)
+      setTimeout(resolve, 50000)
+      limiter.attempt('Time').then(reject)
+    })
+  }))
