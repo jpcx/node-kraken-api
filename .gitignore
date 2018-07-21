@@ -68,3 +68,6 @@ out
 
 # VSCode configuration
 .vscode
+
+# API Key (project-specific)
+auth.json

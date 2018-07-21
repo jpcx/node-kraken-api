@@ -1,3 +1,18 @@
+<a name="0.3.0"></a>
+## [0.3.0](https://github.com/jpcx/node-kraken-api/tree/0.3.0) (2018-07-20)
+
+| __[Changes since 0.2.0](https://github.com/jpcx/node-kraken-api/compare/0.2.0...0.3.0)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/0.3.0) | [README](https://github.com/jpcx/node-kraken-api/tree/0.3.0/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/0.3.0.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/0.3.0.tar.gz) |
+| --- | --- |
+
+#### Features
+  + __RateLimits:__ Implemented authenticated call rate-limiting using a counter as defined in Kraken API Docs.
+
+#### Bugfixes
+  + __README:__     Reduced donation qr size.
+
 <a name="0.2.0"></a>
 ## [0.2.0](https://github.com/jpcx/node-kraken-api/tree/0.2.0) (2018-06-26)
 
