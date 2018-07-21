@@ -17,23 +17,28 @@ test('Returns correct object', () => {
   const limiter = loadLimiter(defaults)
   expect(limiter.constructor).toBe(Object)
   expect(new Set(Object.keys(limiter))).toEqual(
-    new Set(
-      ['attempt', 'addPass', 'addFail', 'getCategory', 'getAuthRegenIntvl']
-    )
+    new Set([
+      'attempt',
+      'addPass',
+      'addFail',
+      'addLockout',
+      'getCategory',
+      'getAuthRegenIntvl'
+    ])
   )
 })
 
-test('\'Attempt\' function returns promise', () => {
+test("'Attempt' function returns promise", () => {
   const limiter = loadLimiter(defaults)
   expect(limiter.attempt('other').constructor).toBe(Promise)
 })
 
-test('\'AddPass\' function returns true', () => {
+test("'AddPass' function returns true", () => {
   const limiter = loadLimiter(defaults)
   expect(limiter.addPass('other')).toBe(true)
 })
 
-test('\'AddFail\' function returns true', () => {
+test("'AddFail' function returns true", () => {
   const limiter = loadLimiter(defaults)
   expect(limiter.addFail('other')).toBe(true)
 })
@@ -123,15 +128,35 @@ test('Limits public categories correctly', async () => {
   expect(Date.now() - starttm).toBeLessThan(expectedIntvl + 100)
 })
 
-test('Limits private calls correctly', async() => {
+test('Limits private calls correctly', async () => {
   jest.setTimeout(60000)
   const limiter = loadLimiter(defaults)
   for (let i = 0; i < 15; i++) {
     limiter.attempt('Balance')
     limiter.addPass('Balance')
   }
-  const starttm = Date.now()
+  let starttm = Date.now()
   await limiter.attempt('Ledgers')
   expect(Date.now() - starttm).toBeGreaterThan(5800)
   expect(Date.now() - starttm).toBeLessThan(6200)
+  limiter.addFail('Ledgers')
+  starttm = Date.now()
+  await limiter.attempt('Ledgers')
+  expect(Date.now() - starttm).toBeGreaterThan(8800)
+  expect(Date.now() - starttm).toBeLessThan(9200)
 })
+
+test('Responds to lockouts', () =>
+  new Promise((resolve, reject) => {
+    jest.setTimeout(60000)
+    const limiter = loadLimiter(defaults)
+    limiter.attempt('Time')
+    limiter.addLockout('Time')
+    const starttm = Date.now()
+    limiter.attempt('OHLC').then(() => {
+      expect(Date.now() - starttm).toBeGreaterThan(400)
+      expect(Date.now() - starttm).toBeLessThan(600)
+      setTimeout(resolve, 50000)
+      limiter.attempt('Time').then(reject)
+    })
+  }))

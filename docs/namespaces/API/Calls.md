@@ -33,7 +33,7 @@ Makes a call to the Kraken server-side API.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 263](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L263)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 267](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L267)
 
 ##### Throws:
 
@@ -91,7 +91,7 @@ Makes a request to the Kraken server-side API.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 59](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L59)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 58](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L58)
 
 ##### Returns:
 
@@ -119,7 +119,7 @@ Parses inputted arguments and reassigns them based on their type. Arguments will
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 180](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L180)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 186](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L186)
 
 ##### Throws:
 
@@ -155,7 +155,7 @@ Processes a call queue for a given rate-limit category.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 89](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L89)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 90](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L90)
 
 ##### Returns:
 
@@ -183,7 +183,7 @@ Attaches calls to state maps. Launches dequeue operation if necessary. Recursive
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 136](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L136)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 139](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L139)
 
 ### Type Definitions
 
@@ -406,7 +406,7 @@ Holds information essential to call operations during state.
 
 Source:
 
-*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 247](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L247)
+*   [node-kraken-api/api/calls/loadCall.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js), [line 251](https://github.com/jpcx/node-kraken-api/blob/0.3.1/api/calls/loadCall.js#L251)
 
 <a name="~Thread"></a>
 #### Thread

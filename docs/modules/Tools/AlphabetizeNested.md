@@ -12,7 +12,7 @@ Alphabetizes a nested object.
 
 Source:
 
-*   [node-kraken-api/tools/alphabetizeNested.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/alphabetizeNested.js), [line 4](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/alphabetizeNested.js#L4)
+*   [node-kraken-api/tools/alphabetizeNested.js](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/alphabetizeNested.js), [line 3](https://github.com/jpcx/node-kraken-api/blob/0.3.1/tools/alphabetizeNested.js#L3)
 
 ##### Returns:
 

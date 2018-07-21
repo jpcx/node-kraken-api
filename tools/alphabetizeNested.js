@@ -1,5 +1,4 @@
-const extract = require('deep-props').extract
-const set = require('deep-props').set
+const { extract, set } = require('deep-props')
 
 /**
  * Alphabetizes a nested object.
