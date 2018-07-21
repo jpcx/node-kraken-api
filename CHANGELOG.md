@@ -8,7 +8,7 @@
 | --- | --- |
 
 #### Features
-  + __RateLimits:__ Counter ratelimiting as defined in Kraken API Docs has been implemented.
+  + __RateLimits:__ Implemented authenticated call rate-limiting using a counter as defined in Kraken API Docs.
 
 #### Bugfixes
   + __README:__     Reduced donation qr size.
