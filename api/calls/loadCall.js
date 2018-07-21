@@ -19,8 +19,8 @@ const genRequestData = require('./genRequestData.js')
  * @param    {Object}          res      - Provides an 'on' function which emits 'data' and 'end' events while receiving data chunks from request.
  * @returns  {Promise}         Promise that resolves with call data or rejects with any errors.
  */
-const handleResponse = (settings, res) => new Promise(
-  (resolve, reject) => {
+const handleResponse = (settings, res) =>
+  new Promise((resolve, reject) => {
     let body = ''
     res.setEncoding('utf8')
     res.on('data', chunk => {
@@ -53,8 +53,7 @@ const handleResponse = (settings, res) => new Promise(
         reject(Error(res.statusCode + ' ' + res.statusMessage))
       }
     })
-  }
-)
+  })
 
 /**
  * Makes a request to the Kraken server-side API.
@@ -64,13 +63,14 @@ const handleResponse = (settings, res) => new Promise(
  * @param    {API~Calls~Params} params   - Call parameters.
  * @returns  {Promise}          Resolves after successful operation and rejects upon errors.
  */
-const makeRequest = (settings, params) => new Promise(
-  (resolve, reject) => {
+const makeRequest = (settings, params) =>
+  new Promise((resolve, reject) => {
     try {
       const reqData = genRequestData(settings, params)
-      const req = https.request(
-        reqData.options,
-        res => handleResponse(settings, res).then(resolve).catch(reject)
+      const req = https.request(reqData.options, res =>
+        handleResponse(settings, res)
+          .then(resolve)
+          .catch(reject)
       )
       req.on('error', e => {
         req.abort()
@@ -82,9 +82,10 @@ const makeRequest = (settings, params) => new Promise(
       })
       req.write(reqData.post)
       req.end()
-    } catch (err) { reject(err) }
-  }
-)
+    } catch (err) {
+      reject(err)
+    }
+  })
 
 /**
  * Processes a call queue for a given rate-limit category.
@@ -107,23 +108,25 @@ const processCalls = async (settings, cat, thread, serialReg, limiter) => {
         continue
       }
       const listenersCopy = new Set([...thread.get(serial)])
-      makeRequest(settings, params).then(
-        data => {
+      makeRequest(settings, params)
+        .then(data => {
           limiter.addPass(params.method)
           if (typeof settings.dataFormatter === 'function') {
             data = settings.dataFormatter(params.method, params.options, data)
           }
           listenersCopy.forEach(listener => listener(null, data))
-        }
-      ).catch(
-        err => {
-          if (err.message.match(/rate limit/gi)) {
+        })
+        .catch(err => {
+          if (err.message.match(/temporary ?lockout/i)) {
+            limiter.addLockout(params.method)
+          } else if (err.message.match(/rate ?limit/gi)) {
             limiter.addFail(params.method)
-          } else limiter.addPass(params.method)
+          } else {
+            limiter.addPass(params.method)
+          }
 
           listenersCopy.forEach(listener => listener(err, null))
-        }
-      )
+        })
       listenersCopy.forEach(listener => thread.get(serial).delete(listener))
       if (thread.get(serial).size === 0) {
         thread.delete(serial)
@@ -167,7 +170,10 @@ const queueCall = (settings, state, args, opListener, retryCt = 0) => {
   } else if (!state.catThreads.get(cat).has(serial)) {
     state.catThreads.get(cat).set(serial, new Set([retryListener]))
   } else {
-    state.catThreads.get(cat).get(serial).add(retryListener)
+    state.catThreads
+      .get(cat)
+      .get(serial)
+      .add(retryListener)
   }
   if (launch) {
     const thread = state.catThreads.get(cat)
@@ -205,10 +211,7 @@ const parseArgs = (settings, method, options, cb) => {
     (op, arg) => {
       if (!op.invalid) {
         if (arg.constructor === Object) {
-          if (
-            op.args.has('options') ||
-            op.args.has('cb')
-          ) {
+          if (op.args.has('options') || op.args.has('cb')) {
             op.invalid = true
           } else {
             op.args.set('options', arg)
@@ -224,7 +227,8 @@ const parseArgs = (settings, method, options, cb) => {
         }
       }
       return op
-    }, { args: new Map(), invalid: false }
+    },
+    { args: new Map(), invalid: false }
   )
 
   if (parseOp.invalid) throw Error('Bad arguments. See documentation.')
@@ -274,12 +278,10 @@ module.exports = (settings, limiter) => {
     const args = parseArgs(settings, method, options, cb)
     args.method = method
 
-    const op = new Promise(
-      (resolve, reject) => {
-        const opListener = (err, data) => err ? reject(err) : resolve(data)
-        queueCall(settings, state, args, opListener)
-      }
-    )
+    const op = new Promise((resolve, reject) => {
+      const opListener = (err, data) => (err ? reject(err) : resolve(data))
+      queueCall(settings, state, args, opListener)
+    })
 
     if (typeof args.cb !== 'function') return op
     else {
