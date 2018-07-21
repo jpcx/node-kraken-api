@@ -1,3 +1,15 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/jpcx/node-kraken-api/tree/0.3.1) (2018-07-20)
+
+| __[Changes since 0.3.0](https://github.com/jpcx/node-kraken-api/compare/0.3.0...0.3.1)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/0.3.1) | [README](https://github.com/jpcx/node-kraken-api/tree/0.3.1/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/0.3.1.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/0.3.1.tar.gz) |
+| --- | --- |
+
+#### Bugfixes
+  + __CHANGELOG:__ Fixed new feature language and added more information to 0.3.0 bugfixes.
+
 <a name="0.3.0"></a>
 ## [0.3.0](https://github.com/jpcx/node-kraken-api/tree/0.3.0) (2018-07-20)
 
@@ -8,10 +20,11 @@
 | --- | --- |
 
 #### Features
-  + __RateLimits:__ Implemented authenticated call rate-limiting using a counter as defined in Kraken API Docs.
+  + __RateLimits:__       Implemented authenticated call rate-limiting using a counter as defined in the Kraken API Docs.
 
 #### Bugfixes
-  + __README:__     Reduced donation qr size.
+  + __README:__           Reduced donation qr size.
+  + __RateLimits/Tests:__ Fixed 'Limits public categories correctly' test.
 
 <a name="0.2.0"></a>
 ## [0.2.0](https://github.com/jpcx/node-kraken-api/tree/0.2.0) (2018-06-26)
