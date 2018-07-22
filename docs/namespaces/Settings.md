@@ -69,9 +69,9 @@ __Returns:__
 
 Formatted data.
 
-Type
+___Type:___
 
-* \*
+* * \*
 
 <a name="~RateLimiter"></a>
 

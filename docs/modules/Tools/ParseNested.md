@@ -17,9 +17,9 @@ __Returns:__
 
 Parsed object
 
-Type
+___Type:___
 
-Object | Array | Map | Set
+* Object | Array | Map | Set
 
 ___
 

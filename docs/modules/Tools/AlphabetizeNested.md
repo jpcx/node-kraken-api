@@ -16,9 +16,9 @@ __Returns:__
 
 Alphabetized object.
 
-Type
+___Type:___
 
-Object
+* Object
 
 ___
 

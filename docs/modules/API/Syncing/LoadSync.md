@@ -18,9 +18,9 @@ __Returns:__
 
 Function which creates sync instances.
 
-Type
+___Type:___
 
-[API\~Syncing~Sync](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md#~Sync)
+* [API\~Syncing~Sync](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md#~Sync)
 
 ___
 

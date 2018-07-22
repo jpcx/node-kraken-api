@@ -36,17 +36,17 @@ __Throws:__
 
 Throws a TypeError if limiter does not match specifications; throws a RangeError if settings are not >= 0.
 
-Type
+___Type:___
 
-TypeError | RangeError
+* TypeError | RangeError
 
 __Returns:__
 
 True if successful.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~SetOTP"></a>
 
@@ -68,17 +68,17 @@ __Throws:__
 
 Throws a TypeError if otp is a not string or a number.
 
-Type
+___Type:___
 
-TypeError
+* TypeError
 
 __Returns:__
 
 True if successful.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~SetRetryCt"></a>
 
@@ -100,17 +100,17 @@ __Throws:__
 
 Throws a TypeError if retryCt is a not equivalent to a number; throws a RangeError if retryCt is not >= 0.
 
-Type
+___Type:___
 
-TypeError | RangeError
+* TypeError | RangeError
 
 __Returns:__
 
 True if successful.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~SetTimeout"></a>
 
@@ -132,17 +132,17 @@ __Throws:__
 
 Throws a TypeError if timeout is a not equivalent to a number; throws a RangeError if timeout is not greater than 0.
 
-Type
+___Type:___
 
-TypeError | RangeError
+* TypeError | RangeError
 
 __Returns:__
 
 True if successful.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 ## Type Definitions
 

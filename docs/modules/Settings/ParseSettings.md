@@ -16,17 +16,17 @@ __Throws:__
 
 Throws an error if a setting is not of an acceptable type or range.
 
-Type
+___Type:___
 
-TypeError | RangeError
+* TypeError | RangeError
 
 __Returns:__
 
 Parsed settings.
 
-Type
+___Type:___
 
-[Settings~Config](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md#~Config)
+* [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md#~Config)
 
 ___
 

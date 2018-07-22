@@ -180,6 +180,14 @@ const reduceDoubleLineFeed = string => string.replace(
   '\n\n'
 )
 
+const formatThrowsAndReturnsTypes = string => string.replace(
+  /^(__Throws:__\n\n[\S\s]*?)(Type)(\n\n)([\S\s]*?)$(\n\n)/gm,
+  '$1___$2:___$3* $4$5'
+).replace(
+  /^(__Returns:__\n\n[\S\s]*?)(Type)(\n\n)([\S\s]*?)$(\n\n)/gm,
+  '$1___$2:___$3* $4$5'
+)
+
 /**
  * Escapes sub-namespace strikethrough indicators.
  *
@@ -540,6 +548,7 @@ const postProcess = (markdown, mappings) => Object.keys(
     proc[key] = removeTopNamespace(proc[key])
     proc[key] = formatTopModuleHeader(proc[key])
     proc[key] = formatLowLevelHeaders(proc[key])
+    proc[key] = formatThrowsAndReturnsTypes(proc[key])
     proc[key] = formatHomeFooter(proc[key], key, mappings)
     proc[key] = formatSourceCodeURLs(proc[key])
     proc[key] = replaceModuleLinks(proc[key], mappings)
