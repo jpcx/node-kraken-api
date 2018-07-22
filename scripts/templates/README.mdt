@@ -459,7 +459,7 @@ api.setLimiter({ minIntvl: 500 })
 
 Please browse the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for information pertaining to call types and options.
 
-Method names are found within the 'URL' subtitle in the Kraken API docs. For example: 'Get server time', lists the URL as <https://api.kraken.com/0/public/Time>, which shows that the method name is 'Time'.
+Method names are found within the 'URL' subtitle in the Kraken API docs. For example: 'Get server time', lists the URL as <https://api.kraken.com/0/public/Time>, which means that the method name is 'Time'.
 
 Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
 
