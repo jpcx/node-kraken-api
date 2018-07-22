@@ -185,7 +185,7 @@ module.exports = settings => {
       lockoutResetIntvl: 300000,
       violationResetIntvl: 4500,
       violationMultiplier: 1.1,
-      authCounterReductionTimeout: 60000,
+      authCounterReductionTimeout: 300000,
       anyPassDecay: 0.95,
       specificPassDecay: 0.95
     },
