@@ -171,7 +171,7 @@ api.call('AddOrder', {
 
 #### Custom formatting of response data
 
-Response data may be formatted in any way based on method and options by setting a [DataFormatter](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md#~DataFormatter) function during instantiation.
+Response data may be formatted in any way based on method and options by setting a [DataFormatter](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Settings.md#~DataFormatter) function during instantiation.
 
 ___NOTE:___ Any data returned from this function will be treated as the new data, and call responses will be undefined if it does not return anything.
 
@@ -437,7 +437,7 @@ twentyPeriodSMA.once()
 
 During creation of the API instance, a configuration object may be provided for authenticated calls and other options.
 
-Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md#~Config)
+Configuration specifications are detailed in the documentation [here](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Settings.md#~Config)
 
 Additionally, various settings may be modified during runtime by using the following functions:
 
@@ -461,7 +461,7 @@ Please browse the [Kraken API docs](https://www.kraken.com/help/api#public-marke
 
 Method names are found within the 'URL' subtitle in the Kraken API docs. For example: 'Get server time', lists the URL as <https://api.kraken.com/0/public/Time>, which means that the method name is 'Time'.
 
-Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
+Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
 
 Method options are found under the 'Input:' section. For example, 'Get order book' lists the following:
 
@@ -476,26 +476,26 @@ You may learn more about the types of options and response data by probing the A
 
 ### Internal
 
-* [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/node-kraken-api.md)
-  * [API](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API.md)
-    * [Calls](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md)
-      * [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Calls/GenRequestData.md)
-      * [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Calls/LoadCall.md)
-      * [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Calls/SignRequest.md)
-    * [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md)
-      * [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/RateLimits/LoadLimiter.md)
-    * [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md)
-      * [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Syncing/LoadSync.md)
-  * [Settings](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md)
-    * [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/Settings/ParseSettings.md)
-  * [Tools](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Tools.md)
-    * [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/Tools/AlphabetizeNested.md)
-    * [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/Tools/ParseNested.md)
-  * [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md)
+* [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/node-kraken-api.md)
+  * [API](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API.md)
+    * [Calls](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API/Calls.md)
+      * [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Calls/GenRequestData.md)
+      * [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Calls/LoadCall.md)
+      * [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Calls/SignRequest.md)
+    * [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API/RateLimits.md)
+      * [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/RateLimits/LoadLimiter.md)
+    * [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API/Syncing.md)
+      * [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Syncing/LoadSync.md)
+  * [Settings](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Settings.md)
+    * [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/Settings/ParseSettings.md)
+  * [Tools](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Tools.md)
+    * [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/Tools/AlphabetizeNested.md)
+    * [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/Tools/ParseNested.md)
+  * [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md)
 
 ## Versioning
 
-Versioned using [SemVer](http://semver.org/). For available versions, see the [Changelog](https://github.com/jpcx/node-kraken-api/blob/0.4.0/CHANGELOG.md).
+Versioned using [SemVer](http://semver.org/). For available versions, see the [Changelog](https://github.com/jpcx/node-kraken-api/blob/0.4.1/CHANGELOG.md).
 
 ## Contribution
 
@@ -513,4 +513,4 @@ Created using [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/0.4.0/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/0.4.1/LICENSE) file for details
