@@ -71,7 +71,7 @@ Formatted data.
 
 ___Type:___
 
-* * \*
+* \*
 
 <a name="~RateLimiter"></a>
 

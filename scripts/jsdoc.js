@@ -181,7 +181,7 @@ const reduceDoubleLineFeed = string => string.replace(
 )
 
 /**
- * Formats 'throws' and 'returns' type headings.
+ * Formats 'throws' and 'returns' type headings. Fixes double asterisks.
  *
  * @private
  * @param   {string} string - Search string.
@@ -193,6 +193,9 @@ const formatThrowsAndReturnsTypes = string => string.replace(
 ).replace(
   /^(__Returns:__\n\n[\S\s]*?)(Type)(\n\n)([\S\s]*?)$(\n\n)/gm,
   '$1___$2:___$3* $4$5'
+).replace(
+  /^\* \* \\\*$/gm,
+  '* \\*'
 )
 
 /**
