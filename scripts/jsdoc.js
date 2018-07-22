@@ -104,8 +104,8 @@ const fixTableLineBreaks = string => string.replace(
  * @returns {string} Formatted string.
  */
 const fixAsterixBullets = string => string.replace(
-  /\* {3}\*/g,
-  '*   \\*'
+  /\* +\*/g,
+  '* \\*'
 )
 
 /**
@@ -117,7 +117,7 @@ const fixAsterixBullets = string => string.replace(
  */
 const fixAsterixTypes = string => string.replace(
   /^Type\n\n\*\n\n/gm,
-  'Type\n\n*   \\*\n\n'
+  'Type\n\n* \\*\n\n'
 )
 
 /**
@@ -130,6 +130,54 @@ const fixAsterixTypes = string => string.replace(
 const removeTopNamespace = string => string.replace(
   /^Namespace: [\s\S]*?\n=*\n\n([\s\S]*?)\n-*\n$/gm,
   '# $1\n'
+)
+
+/**
+ * Formats header with # style.
+ *
+ * @private
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
+const formatTopModuleHeader = string => string.replace(
+  /^(Module:[\S\s]*?)\n=*\n/gm,
+  '# $1\n'
+)
+
+/**
+ * Formats low-level headers to bold text.
+ *
+ * @private
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
+const formatLowLevelHeaders = string => string.replace(
+  /^##### (.*:?)\n/gm,
+  '__$1__\n'
+)
+
+/**
+ * Converts bullets behind 3 spaces to bullets behind one space.
+ *
+ * @private
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
+const decreaseBulletSpaces = string => string.replace(
+  /\* {3}/gm,
+  '* '
+)
+
+/**
+ * Converts double linefeeds to single linefeeds.
+ *
+ * @private
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
+const reduceDoubleLineFeed = string => string.replace(
+  /\n\n\n/g,
+  '\n\n'
 )
 
 /**
@@ -259,7 +307,7 @@ const formatHomeFooter = (string, path, mappings) => {
     }
     return obj
   }, {})
-  let md = ''
+  let md = '\n'
   /**
    * Recursively generates markdown table of contents from contents object.
    *
@@ -269,8 +317,9 @@ const formatHomeFooter = (string, path, mappings) => {
    */
   const recurse = (ref, depth) => {
     Object.entries(ref).forEach(entry => {
-      md += '  ' + Array(depth + 1).join('  ')
-      md += '+ ' + '[' + entry[0] + '](' + entry[1].url + ')\n'
+      md += Array(depth + 1).join('  ')
+      md += '* ' + '[' + entry[0] + '](' + entry[1].url + ')\n'
+      if (depth === 0) depth++
       if (Object.keys(entry[1].children).length > 0) {
         recurse(entry[1].children, depth + 1)
       }
@@ -279,7 +328,7 @@ const formatHomeFooter = (string, path, mappings) => {
   recurse(contents, 0)
   return string.replace(
     /^\[Home\]\(index\.html\)\n-*\n[\s\S]*/gm,
-    `<hr>\n\n## [Home](${localPathToURL(path, mappings)}/README.md)\n${md}`
+    `___\n\n## [Home](${localPathToURL(path, mappings)}/README.md)\n${md}`
   )
 }
 
@@ -489,6 +538,8 @@ const postProcess = (markdown, mappings) => Object.keys(
     proc[key] = fixAsterixBullets(proc[key])
     proc[key] = fixAsterixTypes(proc[key])
     proc[key] = removeTopNamespace(proc[key])
+    proc[key] = formatTopModuleHeader(proc[key])
+    proc[key] = formatLowLevelHeaders(proc[key])
     proc[key] = formatHomeFooter(proc[key], key, mappings)
     proc[key] = formatSourceCodeURLs(proc[key])
     proc[key] = replaceModuleLinks(proc[key], mappings)
@@ -496,6 +547,8 @@ const postProcess = (markdown, mappings) => Object.keys(
     proc[key] = escapeSubNamespaceStrikethrough(proc[key])
     proc[key] = escapeOrCodeBars(proc[key])
     proc[key] = escapeBarsWithinTablesFix(proc[key])
+    proc[key] = decreaseBulletSpaces(proc[key])
+    proc[key] = reduceDoubleLineFeed(proc[key])
     proc[key] = proc[key].trim()
     return proc
   },
@@ -524,10 +577,16 @@ const convertHTML = HTML => {
     replacement: (content, node) => {
       const ID = node.getAttribute('id')
       if (ID !== undefined) {
-        return `<a name="${ID}"></a>\n#### ${content}`
+        return `<a name="${ID}"></a>\n\n### ${content}`
       } else {
-        return `#### ${content}`
+        return `### ${content}`
       }
+    }
+  })
+  turndown.addRule('increaseH3', {
+    filter: 'h3',
+    replacement: (content, node) => {
+      return `## ${content}\n\n`
     }
   })
   turndown.addRule('escapeBarsWithinTables', {

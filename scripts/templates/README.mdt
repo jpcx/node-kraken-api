@@ -35,11 +35,13 @@ ___Creating an auth.json file for authenticated testing:___
 ___NOTE:___ Replace 'nano' with your preferred editor.
 
 ___NOTE:___ Use a read-only key to be safe.
+
 ```console
 nano /path/to/node_modules/node-kraken-api/auth.json
 ```
 
 ___Installing the jest library:___
+
 ```console
 npm i --prefix /path/to/node_modules/node-kraken-api jest
 ```
@@ -53,16 +55,19 @@ npm test --prefix /path/to/node_modules/node-kraken-api
 ### Deployment
 
 ___Loading the module:___
+
 ```js
 const kraken = require('node-kraken-api')
 ```
 
 ___Public client instantiation:___
+
 ```js
 const api = kraken()
 ```
 
 ___Private client instantiation (with authenticated [configuration](#configuration)):___
+
 ```js
 const api = kraken({
   key: '****',
@@ -85,6 +90,7 @@ const api = kraken({
 ```
 
 ___Instantiation with any number of configuration settings (see [configuration](#configuration)):___
+
 ```js
 const api = kraken(require('./config.json'))
 ```
@@ -102,9 +108,10 @@ const api = kraken({
 
 ### Usage
 
-#### Making a single call:
+#### Making a single call
 
 ___Using promises:___
+
 ```js
 api.call('Time')
   .then(data => console.log(data))
@@ -112,6 +119,7 @@ api.call('Time')
 ```
 
 ___Using callbacks:___
+
 ```js
 api.call('Time', (err, data) => {
   if (err) console.error(err)
@@ -120,6 +128,7 @@ api.call('Time', (err, data) => {
 ```
 
 ___Using promises (with Kraken method options):___
+
 ```js
 api.call('Depth', { pair: 'XXBTZUSD', count: 1 })
   .then(data => console.log(data))
@@ -127,6 +136,7 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 })
 ```
 
 ___Using callbacks (with Kraken method options):___
+
 ```js
 api.call('Depth', { pair: 'XXBTZUSD', count: 1 },
   (err, data) => {
@@ -136,14 +146,16 @@ api.call('Depth', { pair: 'XXBTZUSD', count: 1 },
 )
 ```
 
+<a name='setOTP'></a>
+
 ___Using a one-time password (if enabled):___
 
-<a name='setOTP'></a>
 ___NOTE:___ Due to call queueing functionality and rate limiting, OTP may need to be set again if the call has not been executed before the password decays. This shouldn't be a problem unless there have been a very large volume of calls sent to the queue.
 
 Additionally, depending on settings.retryCt, calls with errors will be re-queued.
 
 As such, it is best to continuously call setOTP with each new password until an error or response has been received.
+
 ```js
 api.setOTP(158133)
 
@@ -156,7 +168,9 @@ api.call('AddOrder', {
 ```
 
 <a name='dataFormatter'></a>
-#### Custom formatting of response data:
+
+#### Custom formatting of response data
+
 Response data may be formatted in any way based on method and options by setting a [DataFormatter](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/Settings.md#~DataFormatter) function during instantiation.
 
 ___NOTE:___ Any data returned from this function will be treated as the new data, and call responses will be undefined if it does not return anything.
@@ -164,6 +178,7 @@ ___NOTE:___ Any data returned from this function will be treated as the new data
 ___NOTE:___ Data formatter is applied to data post-parsing (strings to numbers, strings to dates, etc.), if enabled.
 
 ___Adding a time formatting rule:___
+
 ```js
 const dataFormatter = (method, options, data) => {
   if (method === 'Time') {
@@ -183,9 +198,11 @@ api.call('Time').then(
 ```
 
 <a name='syncing'></a>
-#### Working with data syncing:
+
+#### Working with data syncing
 
 ___Creating a sync object:___
+
 ```js
 const timeSync = api.sync('Time')
 
@@ -197,6 +214,7 @@ setTimeout(() => console.log(timeSync.data), 5000)
 ```
 
 ___Creating a sync object with a custom update interval:___
+
 ```js
 // updates every 5 seconds
 const timeSync = api.sync('Time', 5000)
@@ -209,6 +227,7 @@ setTimeout(() => console.log(timeSync.data), 10000)
 ```
 
 ___Using syncing promises:___
+
 ```js
 const api = require('./')()
 const timeSync = api.sync('Time')
@@ -228,6 +247,7 @@ logUpdates()
 ```
 
 ___Creating a sync object (using a listener callback):___
+
 ```js
 const timeSync = api.sync('Time',
   (err, data) => {
@@ -238,6 +258,7 @@ const timeSync = api.sync('Time',
 ```
 
 ___Adding a listener callback after creation:___
+
 ```js
 const timeSync = api.sync('Time')
 timeSync.addListener((err, data) => {
@@ -247,6 +268,7 @@ timeSync.addListener((err, data) => {
 ```
 
 ___Adding a once listener via Promises:___
+
 ```js
 const timeSync = api.sync('Time')
 timeSync.once()
@@ -255,6 +277,7 @@ timeSync.once()
 ```
 
 ___Adding a once listener callback:___
+
 ```js
 const timeSync = api.sync('Time')
 timeSync.once((err, data) => {
@@ -264,6 +287,7 @@ timeSync.once((err, data) => {
 ```
 
 ___Closing a sync operation:___
+
 ```js
 const timeSync = api.sync('Time')
 timeSync.addListener(
@@ -277,6 +301,7 @@ setTimeout(timeSync.close, 5000)
 ```
 
 ___Re-opening a sync operation:___
+
 ```js
 const timeSync = api.sync('Time')
 timeSync.addListener(
@@ -292,6 +317,7 @@ setTimeout(timeSync.open, 10000)
 ```
 
 ___Removing a sync listener callback:___
+
 ```js
 const timeSync = api.sync('Time')
 const listener = (err, data) => {
@@ -305,12 +331,14 @@ setTimeout(() => timeSync.removeListener(listener), 5000)
 ```
 
 <a name='syncUpdates'></a>
+
 #### Updating Instance Options
 
 Using a listener within a sync instance may be used for tracking new data only.
 For example, methods such as 'Trades' or 'OHLC' respond with a 'last' property to allow for querying new updates.
 
 ___Logging new trades only:___
+
 ```js
 const tradesSync = api.sync(
   'Trades',
@@ -328,11 +356,13 @@ const tradesSync = api.sync(
 ```
 
 <a name='syncInstanceMods'></a>
+
 #### Custom Handling of Sync Data
 
 Sync object data may be custom tailored for various use cases by using an event listener. Event listeners are provided with a reference to the instance, so they can be defined to transform received data in any way and store it within a custom property.
 
 ___Creating a realtime historical trades tracker:___
+
 ```js
 const tradesHistory = api.sync(
   'Trades',
@@ -361,7 +391,7 @@ tradesHistory.once()
 
 ___Creating a realtime simple moving average (with safe float operations):___
 
-___NOTE:___ OHLC calls are set to a 60s sync interval by default. This may be changed either in the settings configuration, during instance creation, or by changing the instance's <code>interval</code> property.
+___NOTE:___ OHLC calls are set to a 60s sync interval by default. This may be changed either in the settings configuration, during instance creation, or by changing the instance's `interval` property.
 
 ```js
 const twentyPeriodSMA = api.sync(
@@ -402,6 +432,7 @@ twentyPeriodSMA.once()
 ```
 
 <a name='configuration'></a>
+
 ## Configuration
 
 During creation of the API instance, a configuration object may be provided for authenticated calls and other options.
@@ -428,24 +459,24 @@ api.setLimiter({ minIntvl: 500 })
 
 Please browse the [Kraken API docs](https://www.kraken.com/help/api#public-market-data) for information pertaining to call types and options.
 
-Method names are found within the 'URL' subtitle in the Kraken API docs. For example: under 'Get server time', the text 'URL: https://api.kraken.com/0/public/Time' shows that the method name is 'Time'.
+Method names are found within the 'URL' subtitle in the Kraken API docs. For example: 'Get server time', lists the URL as <https://api.kraken.com/0/public/Time>, which shows that the method name is 'Time'.
 
 Alternatively, refer to the [default settings](https://github.com/jpcx/node-kraken-api/blob/___{alias:node-kraken-api/tag}___/docs/namespaces/Settings.md#~Config) in the node-kraken-api documentation. Default method types are listed here (under the 'pubMethods' and 'privMethods' properties).
 
 Method options are found under the 'Input:' section. For example, 'Get order book' lists the following:
 
-```
+```js
 pair = asset pair to get market depth for
 count = maximum number of asks/bids (optional)
 ```
 
-This translates to an object such as <code>{ pair: 'XXBTZUSD', count: 10 }</code>, which should be used when passing method options to API calls.
+This translates to an object such as `{ pair: 'XXBTZUSD', count: 10 }`, which should be used when passing method options to API calls.
 
 You may learn more about the types of options and response data by probing the API. Use the methods 'Assets' and 'AssetPairs' to discover the naming scheme for the assets tradable via Kraken.
 
-### Internal:
-___{file:docs/modules/node-kraken-api.md___split-gm:^<hr>\n\n## \[Home\]\(.*$\n([\s\S]+)}___
+### Internal
 
+___{file:docs/modules/node-kraken-api.md___split-gm:^___\n\n## \[Home\]\(.*$\n\n([\s\S]+)}___
 
 ## Versioning
 
@@ -457,15 +488,11 @@ Please raise an issue if you find any. Pull requests are welcome!
 
 ## Author
 
-  + **Justin Collier** - [jpcx](https://github.com/jpcx)
+**Justin Collier** - [jpcx](https://github.com/jpcx)
+![bitcoin](http://i65.tinypic.com/34pkrib.jpg)
+`bitcoin:bc1qla9wynkvmnmcnygls5snqeu3rj5dxr7tunwzp6`
   
 Created using [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)) for reference.
-
-___BTC donation address:___
-
-bc1qla9wynkvmnmcnygls5snqeu3rj5dxr7tunwzp6
-
-![donate](http://i66.tinypic.com/2rp4kd5.jpg)
 
 ## License
 
