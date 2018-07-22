@@ -12,7 +12,7 @@
 
 __Bugfixes:__
 
-+ __API/RateLimits:__ Increased limitConfig.authCounterReductionTimeout to 300000
++ __API/RateLimits:__ Increased limitConfig.authCounterReductionTimeout to 300000.
 
 <a name="0.4.0"></a>
 
