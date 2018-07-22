@@ -4,7 +4,7 @@ Contains types specific to the Kraken servers.
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L7)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 7](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L7)
 
 ## Type Definitions
 
@@ -12,21 +12,21 @@ Source:
 
 ### AuthCounterLimit
 
-Positive integer counter limit used for determining private API rate limit adherence. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+Positive integer counter limit used for determining private API rate limit adherence. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
 
 __Type:__
 
-* [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthRateLimitCount)
+* [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~AuthRateLimitCount)
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 122](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L122)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 122](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L122)
 
 <a name="~AuthDecrementInterval"></a>
 
 ### AuthDecrementInterval
 
-Number of seconds for the [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthRateLimitCount) to decrement by one. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+Number of seconds for the [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~AuthRateLimitCount) to decrement by one. Depends on the [Kraken~Tier](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Tier). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
 
 __Type:__
 
@@ -34,21 +34,21 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 134](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L134)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 134](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L134)
 
 <a name="~AuthIncrementAmount"></a>
 
 ### AuthIncrementAmount
 
-Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Method). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
+Positive integer counter increment amount used for determining private API rate limit adherence. Depends on the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Method). See the [Kraken API docs](https://www.kraken.com/help/api#api-call-rate-limit) for more information.
 
 __Type:__
 
-* [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthRateLimitCount)
+* [Kraken~AuthRateLimitCount](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~AuthRateLimitCount)
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 128](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L128)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 128](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L128)
 
 <a name="~AuthRateLimitCount"></a>
 
@@ -62,7 +62,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 116](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L116)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 116](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L116)
 
 <a name="~Hostname"></a>
 
@@ -76,7 +76,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 80](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L80)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 80](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L80)
 
 <a name="~HTTPSRequestHeaders"></a>
 
@@ -92,12 +92,12 @@ __Properties:__
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `API-Key` | [Kraken~Key](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Key) | Kraken API key. |
-| `API-Sign` | [API\~Calls~Signature](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~Signature) | Cryptographic signature using API secret and other call parameters. |
+| `API-Key` | [Kraken~Key](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Key) | Kraken API key. |
+| `API-Sign` | [API\~Calls~Signature](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API/Calls.md#~Signature) | Cryptographic signature using API secret and other call parameters. |
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 92](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L92)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 92](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L92)
 
 <a name="~HTTPSRequestOptions"></a>
 
@@ -113,14 +113,14 @@ __Properties:__
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `hostname` | [Kraken~Hostname](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Hostname) | Kraken hostname. |
-| `path` | [Kraken~Path](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Path) | Kraken method path. |
-| `method` | string | 'POST' HTTPS request specification. NOTE: This is NOT the same as the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Method) for the request. |
-| `headers` | [Kraken~HTTPSRequestHeaders](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~HTTPSRequestHeaders) | Kraken HTTPS request headers. |
+| `hostname` | [Kraken~Hostname](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Hostname) | Kraken hostname. |
+| `path` | [Kraken~Path](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Path) | Kraken method path. |
+| `method` | string | 'POST' HTTPS request specification. NOTE: This is NOT the same as the [Kraken~Method](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Method) for the request. |
+| `headers` | [Kraken~HTTPSRequestHeaders](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~HTTPSRequestHeaders) | Kraken HTTPS request headers. |
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 100](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L100)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 100](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L100)
 
 <a name="~HTTPSRequestPOSTData"></a>
 
@@ -134,7 +134,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 110](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L110)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 110](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L110)
 
 <a name="~Key"></a>
 
@@ -148,7 +148,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 13](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L13)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 13](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L13)
 
 <a name="~Method"></a>
 
@@ -162,7 +162,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 55](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L55)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 55](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L55)
 
 <a name="~Nonce"></a>
 
@@ -176,7 +176,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 74](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L74)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 74](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L74)
 
 <a name="~Option"></a>
 
@@ -190,7 +190,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 61](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L61)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 61](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L61)
 
 <a name="~Options"></a>
 
@@ -206,11 +206,11 @@ __Properties:__
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `*` | [Kraken~Option](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~Option) | An option to send to the servers. |
+| `*` | [Kraken~Option](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md#~Option) | An option to send to the servers. |
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 67](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L67)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 67](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L67)
 
 <a name="~OTP"></a>
 
@@ -224,7 +224,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 31](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L31)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 31](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L31)
 
 <a name="~Path"></a>
 
@@ -238,7 +238,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 86](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L86)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 86](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L86)
 
 <a name="~PrivateMethods"></a>
 
@@ -252,7 +252,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 49](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L49)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 49](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L49)
 
 <a name="~PublicMethods"></a>
 
@@ -266,7 +266,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 43](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L43)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 43](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L43)
 
 <a name="~Secret"></a>
 
@@ -280,7 +280,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 19](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L19)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 19](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L19)
 
 <a name="~Tier"></a>
 
@@ -294,7 +294,7 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 25](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L25)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 25](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L25)
 
 <a name="~Version"></a>
 
@@ -308,25 +308,25 @@ __Type:__
 
 Source:
 
-* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc), [line 37](https://github.com/jpcx/node-kraken-api/blob/0.4.0/kraken/kraken.jsdoc#L37)
+* [node-kraken-api/kraken/kraken.jsdoc](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc), [line 37](https://github.com/jpcx/node-kraken-api/blob/0.4.1/kraken/kraken.jsdoc#L37)
 
 ___
 
-## [Home](https://github.com/jpcx/node-kraken-api/blob/0.4.0/README.md)
+## [Home](https://github.com/jpcx/node-kraken-api/blob/0.4.1/README.md)
 
-* [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/node-kraken-api.md)
-  * [API](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API.md)
-    * [Calls](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md)
-      * [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Calls/GenRequestData.md)
-      * [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Calls/LoadCall.md)
-      * [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Calls/SignRequest.md)
-    * [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md)
-      * [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/RateLimits/LoadLimiter.md)
-    * [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md)
-      * [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/API/Syncing/LoadSync.md)
-  * [Settings](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md)
-    * [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/Settings/ParseSettings.md)
-  * [Tools](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Tools.md)
-    * [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/Tools/AlphabetizeNested.md)
-    * [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/modules/Tools/ParseNested.md)
-  * [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md)
+* [node-kraken-api](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/node-kraken-api.md)
+  * [API](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API.md)
+    * [Calls](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API/Calls.md)
+      * [GenRequestData](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Calls/GenRequestData.md)
+      * [LoadCall](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Calls/LoadCall.md)
+      * [SignRequest](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Calls/SignRequest.md)
+    * [RateLimits](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API/RateLimits.md)
+      * [LoadLimiter](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/RateLimits/LoadLimiter.md)
+    * [Syncing](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/API/Syncing.md)
+      * [LoadSync](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/API/Syncing/LoadSync.md)
+  * [Settings](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Settings.md)
+    * [ParseSettings](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/Settings/ParseSettings.md)
+  * [Tools](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Tools.md)
+    * [AlphabetizeNested](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/Tools/AlphabetizeNested.md)
+    * [ParseNested](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/modules/Tools/ParseNested.md)
+  * [Kraken](https://github.com/jpcx/node-kraken-api/blob/0.4.1/docs/namespaces/Kraken.md)
