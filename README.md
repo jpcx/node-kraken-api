@@ -504,7 +504,9 @@ Please raise an issue if you find any. Pull requests are welcome!
 ## Author
 
 **Justin Collier** - [jpcx](https://github.com/jpcx)
+
 ![bitcoin](http://i65.tinypic.com/34pkrib.jpg)
+
 `bitcoin:bc1qla9wynkvmnmcnygls5snqeu3rj5dxr7tunwzp6`
   
 Created using [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)) for reference.
