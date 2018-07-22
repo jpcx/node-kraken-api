@@ -78,12 +78,20 @@ const checkPileUp = (limitConfig, any) => {
  * @param    {API~RateLimits~CatInfo}     spec        - Rate information for specific {@link API~RateLimits~Category}.
  */
 const checkContext = (context, limitConfig, any, spec) => {
-  if (context === 'fail') {
+  if (context === 'lockout') {
+    if (!spec.hasOwnProperty('lockoutCt')) spec.lockoutCt = 1
+    spec.intvl = limitConfig.lockoutResetIntvl * spec.lockoutCt
+    spec.lockoutCt++
+  } else if (context === 'fail') {
     if (spec.intvl < limitConfig.violationResetIntvl) {
       spec.intvl = limitConfig.violationResetIntvl
     }
     spec.intvl *= limitConfig.violationMultiplier
   } else if (context === 'pass') {
+    if (spec.hasOwnProperty('lockoutCt')) {
+      delete spec.lockoutCt
+      spec.intvl = limitConfig.baseIntvl
+    }
     any.intvl *= limitConfig.anyPassDecay
     spec.intvl *= limitConfig.specificPassDecay
   }
@@ -120,16 +128,31 @@ const update = (state, method, context) => {
   if (any.intvl < limitConfig.minIntvl) any.intvl = limitConfig.minIntvl
   if (spec.intvl < limitConfig.minIntvl) spec.intvl = limitConfig.minIntvl
 
-  if (cat === 'auth' && context === undefined) {
-    const now = Date.now()
-    const elapsed = now - state.authCounter.time
-    const intervalsPassed =
-      elapsed / getAuthDecrementInterval(state.settings.tier)
-    let newCount = state.authCounter.count - intervalsPassed
-    if (newCount < 0) newCount = 0
-    newCount += getAuthIncrementAmt(method)
-    state.authCounter.count = newCount
-    state.authCounter.time = now
+  if (cat === 'auth') {
+    if (context === undefined) {
+      const now = Date.now()
+      const elapsed = now - state.authCounter.time
+      const intervalsPassed =
+        elapsed / getAuthDecrementInterval(state.settings.tier)
+      let newCount = state.authCounter.count - intervalsPassed
+      if (newCount < 0) newCount = 0
+      newCount += getAuthIncrementAmt(method)
+      state.authCounter.count = newCount
+      state.authCounter.time = now
+    } else if (context === 'fail') {
+      if (!state.authCounter.hasOwnProperty('reductions')) {
+        state.authCounter.reductions = []
+      }
+      state.authCounter.reductions.push(Date.now())
+    }
+    if (state.authCounter.hasOwnProperty('reductions')) {
+      state.authCounter.reductions = state.authCounter.reductions.filter(
+        x => x > Date.now() - limitConfig.authCounterReductionTimeout
+      )
+      if (state.authCounter.reductions.length === 0) {
+        delete state.authCounter.reductions
+      }
+    }
   }
 }
 
@@ -159,8 +182,10 @@ module.exports = settings => {
       pileUpThreshold: 5,
       pileUpResetIntvl: 1000,
       pileUpMultiplier: 1.05,
+      lockoutResetIntvl: 300000,
       violationResetIntvl: 4500,
       violationMultiplier: 1.1,
+      authCounterReductionTimeout: 60000,
       anyPassDecay: 0.95,
       specificPassDecay: 0.95
     },
@@ -225,8 +250,11 @@ module.exports = settings => {
         }
 
         if (cat === 'auth') {
-          const countDiff =
-            state.authCounter.count - getAuthCounterLimit(state.settings.tier)
+          const adjustment = state.authCounter.reductions
+            ? state.authCounter.reductions.length
+            : 0
+          const limit = getAuthCounterLimit(state.settings.tier) - adjustment
+          const countDiff = state.authCounter.count - limit
           if (countDiff > 0) {
             const authWait =
               countDiff * getAuthDecrementInterval(state.settings.tier)
@@ -256,6 +284,17 @@ module.exports = settings => {
      */
     addFail: method => {
       update(state, method, 'fail')
+      return true
+    },
+    /**
+     * Registers a lockout state and forces a category pause.
+     *
+     * @function API~RateLimits~AddLockout
+     * @param    {Kraken~Method} method - Method being called.
+     * @returns  {boolean}       True if successfully updated.
+     */
+    addLockout: method => {
+      update(state, method, 'lockout')
       return true
     },
     /**

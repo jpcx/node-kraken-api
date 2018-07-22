@@ -1,6 +1,6 @@
 {
   "name": "node-kraken-api",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.",
   "engines": {
     "node": ">=8.7.0"
@@ -29,15 +29,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "crypto": "^1.0.1",
     "qs": "^6.5.2",
     "deep-props": "^0.3.3",
     "ranged-date": "^1.1.3"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-plugin-jsdoc": "^3.5.0",
-    "eslint-plugin-node": "^6.0.1",
     "jest": "^23.0.0",
     "jsdoc": "^3.5.5",
     "standard": "^11.0.1",
