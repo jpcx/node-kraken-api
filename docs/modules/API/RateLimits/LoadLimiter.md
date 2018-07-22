@@ -16,9 +16,9 @@ __Returns:__
 
 Rate-limiting functions.
 
-Type
+___Type:___
 
-[API\~RateLimits~Functions](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md#~Functions)
+* [API\~RateLimits~Functions](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md#~Functions)
 
 ___
 

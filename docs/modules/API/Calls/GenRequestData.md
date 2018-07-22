@@ -17,9 +17,9 @@ __Returns:__
 
 Request data.
 
-Type
+___Type:___
 
-[API\~Calls~RequestData](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~RequestData)
+* [API\~Calls~RequestData](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~RequestData)
 
 ___
 

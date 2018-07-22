@@ -16,17 +16,17 @@ __Throws:__
 
 Throws an error if a setting is not of an acceptable type or range.
 
-Type
+___Type:___
 
-TypeError | RangeError
+* TypeError | RangeError
 
 __Returns:__
 
 Object with methods for interacting with the API.
 
-Type
+___Type:___
 
-[API~Functions](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API.md#~Functions)
+* [API~Functions](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API.md#~Functions)
 
 ___
 

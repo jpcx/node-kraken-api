@@ -19,9 +19,9 @@ __Returns:__
 
 Signature for a given call.
 
-Type
+___Type:___
 
-[API\~Calls~Signature](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~Signature)
+* [API\~Calls~Signature](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~Signature)
 
 ___
 

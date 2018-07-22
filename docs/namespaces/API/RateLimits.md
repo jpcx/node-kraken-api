@@ -34,9 +34,9 @@ __Returns:__
 
 True if successfully updated.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~AddLockout"></a>
 
@@ -58,9 +58,9 @@ __Returns:__
 
 True if successfully updated.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~AddPass"></a>
 
@@ -82,9 +82,9 @@ __Returns:__
 
 True if successfully updated.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~Attempt"></a>
 
@@ -106,9 +106,9 @@ __Returns:__
 
 Resolves when an adequate wait period has been completed.
 
-Type
+___Type:___
 
-Promise
+* Promise
 
 <a name="~CheckContext"></a>
 
@@ -166,9 +166,9 @@ __Returns:__
 
 Maximum count for auth counter.
 
-Type
+___Type:___
 
-[Kraken~AuthCounterLimit](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthCounterLimit)
+* [Kraken~AuthCounterLimit](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthCounterLimit)
 
 <a name="~GetAuthDecrementInterval"></a>
 
@@ -190,9 +190,9 @@ __Returns:__
 
 Amount of time required to decrement the counter.
 
-Type
+___Type:___
 
-[Kraken~AuthDecrementInterval](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthDecrementInterval)
+* [Kraken~AuthDecrementInterval](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthDecrementInterval)
 
 <a name="~GetAuthIncrementAmt"></a>
 
@@ -214,9 +214,9 @@ __Returns:__
 
 Amount to increment the auth counter.
 
-Type
+___Type:___
 
-[Kraken~AuthIncrementAmount](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthIncrementAmount)
+* [Kraken~AuthIncrementAmount](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Kraken.md#~AuthIncrementAmount)
 
 <a name="~GetAuthRegenIntvl"></a>
 
@@ -239,9 +239,9 @@ __Returns:__
 
 Optimal interval.
 
-Type
+___Type:___
 
-number
+* number
 
 <a name="~GetCategory"></a>
 
@@ -263,9 +263,9 @@ __Returns:__
 
 Type of rate-limiter category.
 
-Type
+___Type:___
 
-[API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md#~Category)
+* [API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md#~Category)
 
 <a name="~GetRLCategory"></a>
 
@@ -288,9 +288,9 @@ __Returns:__
 
 Rate-limiting category.
 
-Type
+___Type:___
 
-[API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md#~Category)
+* [API\~RateLimits~Category](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/RateLimits.md#~Category)
 
 <a name="~Update"></a>
 

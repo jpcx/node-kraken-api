@@ -38,17 +38,17 @@ __Throws:__
 
 Throws 'Invalid method' if method is not found in [Settings~Config](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/Settings.md#~Config).
 
-Type
+___Type:___
 
-Error
+* Error
 
 __Returns:__
 
 Promise which resolves with error or data (if no callback supplied), or `true` if operation registered successfully.
 
-Type
+___Type:___
 
-Promise | boolean
+* Promise | boolean
 
 <a name="~HandleResponse"></a>
 
@@ -71,9 +71,9 @@ __Returns:__
 
 Promise that resolves with call data or rejects with any errors.
 
-Type
+___Type:___
 
-Promise
+* Promise
 
 <a name="~MakeRequest"></a>
 
@@ -96,9 +96,9 @@ __Returns:__
 
 Resolves after successful operation and rejects upon errors.
 
-Type
+___Type:___
 
-Promise
+* Promise
 
 <a name="~ParseArgs"></a>
 
@@ -124,17 +124,17 @@ __Throws:__
 
 Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
 
-Type
+___Type:___
 
-Error
+* Error
 
 __Returns:__
 
 Parsed arguments.
 
-Type
+___Type:___
 
-[API\~Calls~Arguments](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~Arguments)
+* [API\~Calls~Arguments](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~Arguments)
 
 <a name="~ProcessCalls"></a>
 
@@ -160,9 +160,9 @@ __Returns:__
 
 Returns a promise that resolves once all calls for a given category have completed. Rejects with operational errors.
 
-Type
+___Type:___
 
-Promise
+* Promise
 
 <a name="~QueueCall"></a>
 

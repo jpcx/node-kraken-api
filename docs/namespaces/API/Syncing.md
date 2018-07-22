@@ -34,9 +34,9 @@ __Returns:__
 
 True if added successfully.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~Close"></a>
 
@@ -52,9 +52,9 @@ __Returns:__
 
 True if closed or already closed.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~HandleRequests"></a>
 
@@ -77,9 +77,9 @@ __Returns:__
 
 Promise which resolves when there are no more requests to process and rejects upon any operational errors.
 
-Type
+___Type:___
 
-Promise
+* Promise
 
 <a name="~Once"></a>
 
@@ -101,9 +101,9 @@ __Returns:__
 
 Returns true if added successfully or a promise if a listener function is not provided.
 
-Type
+___Type:___
 
-boolean | Promise
+* boolean | Promise
 
 <a name="~Open"></a>
 
@@ -119,9 +119,9 @@ __Returns:__
 
 True if opened or already open.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~ParseArgs"></a>
 
@@ -147,17 +147,17 @@ __Throws:__
 
 Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
 
-Type
+___Type:___
 
-Error
+* Error
 
 __Returns:__
 
 Parsed sync arguments.
 
-Type
+___Type:___
 
-[API\~Syncing~Arguments](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md#~Arguments)
+* [API\~Syncing~Arguments](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md#~Arguments)
 
 <a name="~RemoveListener"></a>
 
@@ -179,9 +179,9 @@ __Returns:__
 
 True if not in the listeners set.
 
-Type
+___Type:___
 
-boolean
+* boolean
 
 <a name="~Sync"></a>
 
@@ -206,17 +206,17 @@ __Throws:__
 
 Throws 'Bad arguments' or 'Bad method' errors if arguments are invalid.
 
-Type
+___Type:___
 
-Error
+* Error
 
 __Returns:__
 
 Instance of sync operation.
 
-Type
+___Type:___
 
-[API\~Syncing~Instance](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md#~Instance)
+* [API\~Syncing~Instance](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Syncing.md#~Instance)
 
 <a name="~VerifyInternals"></a>
 

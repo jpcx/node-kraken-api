@@ -17,9 +17,9 @@ __Returns:__
 
 Stateful call function.
 
-Type
+___Type:___
 
-[API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~Call)
+* [API\~Calls~Call](https://github.com/jpcx/node-kraken-api/blob/0.4.0/docs/namespaces/API/Calls.md#~Call)
 
 ___
 
