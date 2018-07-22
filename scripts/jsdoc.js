@@ -180,6 +180,13 @@ const reduceDoubleLineFeed = string => string.replace(
   '\n\n'
 )
 
+/**
+ * Formats 'throws' and 'returns' type headings.
+ *
+ * @private
+ * @param   {string} string - Search string.
+ * @returns {string} Formatted string.
+ */
 const formatThrowsAndReturnsTypes = string => string.replace(
   /^(__Throws:__\n\n[\S\s]*?)(Type)(\n\n)([\S\s]*?)$(\n\n)/gm,
   '$1___$2:___$3* $4$5'
