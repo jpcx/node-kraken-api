@@ -16,7 +16,8 @@
     "QueryOrders", "TradesHistory", "QueryTrades", "OpenPositions",
     "Ledgers", "QueryLedgers", "TradeVolume", "AddOrder",
     "CancelOrder", "DepositMethods", "DepositAddresses", "DepositStatus",
-    "WithdrawInfo", "Withdraw", "WithdrawStatus", "WithdrawCancel"
+    "WithdrawInfo", "Withdraw", "WithdrawStatus", "WithdrawCancel",
+    "GetWebSocketsToken"
   ],
   "parse": {
     "numbers": true,
