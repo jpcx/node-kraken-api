@@ -1,5 +1,36 @@
 # Changelog
 
+<a name="1.0.0"></a>
+
+## [1.0.0](https://github.com/jpcx/node-kraken-api/tree/1.0.0) (2021-09-13)
+
+| __[Changes since 0.4.1](https://github.com/jpcx/node-kraken-api/compare/0.4.1...1.0.0)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/1.0.0) | [README](https://github.com/jpcx/node-kraken-api/tree/1.0.0/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/1.0.0.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/1.0.0.tar.gz) |
+| --- | --- |
+
+The entire project has been completely rewritten using TypeScript and many features have changed.
+
+__Added__
+
+- Complete WS 1.8.3 functionality
+- Typings
+- New REST methods
+
+__Removed__
+
+- Custom response parsing
+- Ratelimiting
+- REST syncing
+- Method name settings
+- Direct construction using `module.exports()`
+
+__Changed__
+
+- `.call()`: renamed to `.request()`.
+- `.setOTP()`: removed; OTP is now provided using a user-supplied generator.
+
 <a name="0.4.1"></a>
 
 ## [0.4.1](https://github.com/jpcx/node-kraken-api/tree/0.4.1) (2018-07-21)

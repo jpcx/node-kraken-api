@@ -1,48 +1,59 @@
 {
   "name": "node-kraken-api",
-  "version": "0.4.1",
-  "description": "Interfaces with the Kraken cryptocurrency exchange API. Observes rate limits. Parses response JSON, converts stringed numbers, and normalizes timestamps. Facilitates persistent data syncing.",
-  "engines": {
-    "node": ">=8.7.0"
-  },
-  "main": "index.js",
-  "scripts": {
-    "test": "jest --verbose",
-    "prepare": "npm run-script build && npm test",
-    "build": "sh scripts/build.sh",
-    "build-jsdoc": "jsdoc . -c .jsdoc.conf.json --readme README.md -d docs/jsdoc"
+  "version": "develop",
+  "description": "node-kraken-api",
+  "license": "MIT",
+  "repository": "git://github.com/jpcx/node-kraken-api.git",
+  "author": {
+    "name": "Justin Collier",
+    "email": "m@jpcx.dev",
+    "url": "https://github.com/jpcx"
   },
   "keywords": [
     "kraken",
+    "REST",
+    "WS",
     "api",
     "cryptocurrency",
     "bitcoin",
+    "litecoin",
     "ethereum",
     "exchange",
     "trading"
   ],
-  "author": "Justin Collier",
-  "repository": "github:jpcx/node-kraken-api",
-  "bugs": {
-    "url": "https://github.com/jpcx/node-kraken-api/issues",
-    "email": "jpcxme@gmail.com"
+  "files": [
+    "./README.md",
+    "index.d.ts",
+    "index.js",
+    "package-lock.json",
+    "package.json"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "clean": "rm -f index.js; rm -f index.d.ts; rm -rf test/.build; rm -rf codegen/.build",
+    "build": "tsc --pretty -p .",
+    "test": "npm run clean && tsc --pretty -p test && npx testts test/.build/test/test.js",
+    "codegen": "npm run clean && tsc --pretty -p codegen && sh codegen/codegen.sh",
+    "prepare": "npm run build",
+    "postinstall": "echo \"[node-kraken-api] if you are upgrading from 0.4.1, please read the new documentation to review the breaking changes.\""
   },
-  "license": "MIT",
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "dependencies": {
-    "qs": "^6.5.2",
-    "deep-props": "^0.3.3",
-    "ranged-date": "^1.1.3"
+    "ws": "^8.2.2",
+    "crc": "^3.8.0"
   },
   "devDependencies": {
-    "jest": "^23.0.0",
-    "jsdoc": "^3.5.5",
-    "standard": "^11.0.1",
-    "turndown": "^4.0.2",
-    "turndown-plugin-gfm": "^1.0.1"
+    "typescript": "^4.4.3",
+    "@types/ws": "^7.4.7",
+    "@types/crc": "^3.4.0",
+    "@types/node": "^16.9.1",
+    "@jpcx/testts": "^0.4.0"
   },
-  "standard": {
-    "ignore": [
-      "tests/**/*.test.js"
-    ]
+  "optionalDependencies": {
+    "bufferutil": "^4.0.3",
+    "utf-8-validate": "^5.0.5"
   }
 }
