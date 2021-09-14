@@ -249,7 +249,7 @@ await orders.unsubscribe();
 
 ### Testing
 
-Testing is performed by `@jpcx/testts`.
+Testing is performed by [@jpcx/testts](https://github.com/jpcx/testts).
 
 To run tests:
 - Save an `auth.json` file with your key and secret: `{ key: string, secret: string }`
