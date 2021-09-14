@@ -36,7 +36,7 @@
     "test": "npm run clean && tsc --pretty -p test && npx testts test/.build/test/test.js",
     "codegen": "npm run clean && tsc --pretty -p codegen && sh codegen/codegen.sh",
     "prepare": "npm run build",
-    "postinstall": "echo \"[node-kraken-api] if you are upgrading from 0.4.1, please read the new documentation to review the breaking changes.\""
+    "install": "echo \"[node-kraken-api] if you are upgrading from 0.4.1, please read the new documentation to review the breaking changes.\""
   },
   "engines": {
     "node": ">=10.0.0"

@@ -1,14 +1,5 @@
 # node-kraken-api
 
-```
-                   _          _              _                              _
-   _ __   ___   __| | ___    | | ___ __ __ _| | _____ _ __       __ _ _ __ (_)
-  | '_ \ / _ \ / _` |/ _ \___| |/ / '__/ _` | |/ / _ \ '_ \ ___ / _` | '_ \| |
-  | | | | (_) | (_| |  __/___|   <| | | (_| |   <  __/ | | |___| (_| | |_) | |
-  |_| |_|\___/ \__,_|\___|   |_|\_\_|  \__,_|_|\_\___|_| |_|    \__,_| .__/|_|
-                                                                     |_|
-```
-
 [![NPM](https://nodei.co/npm/node-kraken-api.png)](https://nodei.co/npm/node-kraken-api/)
 
 ## About
@@ -56,59 +47,59 @@ The entire project has been completely rewritten using TypeScript and many featu
 
 ### Methods
 
-- [`.request()                 -> Promise<any>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L177)
-- [`.time()                    -> Promise<Kraken.Time>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L193)
-- [`.systemStatus()            -> Promise<Kraken.SystemStatus>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L200)
-- [`.assets()                  -> Promise<Kraken.Assets>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L207)
-- [`.assetPairs()              -> Promise<Kraken.AssetPairs>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L229)
-- [`.ticker()                  -> Promise<Kraken.Ticker>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L255)
-- [`.ohlc()                    -> Promise<Kraken.OHLC>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L272)
-- [`.depth()                   -> Promise<Kraken.Depth>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L300)
-- [`.trades()                  -> Promise<Kraken.Trades>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L323)
-- [`.spread()                  -> Promise<Kraken.Spread>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L345)
-- [`.getWebSocketsToken()      -> Promise<Kraken.GetWebSocketsToken>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L368)
-- [`.balance()                 -> Promise<Kraken.Balance>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L375)
-- [`.tradeBalance()            -> Promise<Kraken.TradeBalance>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L382)
-- [`.openOrders()              -> Promise<Kraken.OpenOrders>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L399)
-- [`.closedOrders()            -> Promise<Kraken.ClosedOrders>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L420)
-- [`.queryOrders()             -> Promise<Kraken.QueryOrders>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L457)
-- [`.tradesHistory()           -> Promise<Kraken.TradesHistory>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L482)
-- [`.queryTrades()             -> Promise<Kraken.QueryTrades>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L515)
-- [`.openPositions()           -> Promise<Kraken.OpenPositions>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L535)
-- [`.ledgers()                 -> Promise<Kraken.Ledgers>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L559)
-- [`.queryLedgers()            -> Promise<Kraken.QueryLedgers>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L598)
-- [`.tradeVolume()             -> Promise<Kraken.TradeVolume>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L618)
-- [`.addExport()               -> Promise<Kraken.AddExport>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L638)
-- [`.exportStatus()            -> Promise<Kraken.ExportStatus>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L678)
-- [`.retrieveExport()          -> Promise<Kraken.RetrieveExport>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L694)
-- [`.removeExport()            -> Promise<Kraken.RemoveExport>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L710)
-- [`.addOrder()                -> Promise<Kraken.AddOrder>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L731)
-- [`.cancelOrder()             -> Promise<Kraken.CancelOrder>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L825)
-- [`.cancelAll()               -> Promise<Kraken.CancelAll>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L841)
-- [`.cancelAllOrdersAfter()    -> Promise<Kraken.CancelAllOrdersAfter>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L849)
-- [`.depositMethods()          -> Promise<Kraken.DepositMethods>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L865)
-- [`.depositAddresses()        -> Promise<Kraken.DepositAddresses>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L881)
-- [`.depositStatus()           -> Promise<Kraken.DepositStatus>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L905)
-- [`.withdrawInfo()            -> Promise<Kraken.WithdrawInfo>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L925)
-- [`.withdrawStatus()          -> Promise<Kraken.WithdrawStatus>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L973)
-- [`.withdrawCancel()          -> Promise<Kraken.WithdrawCancel>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L993)
-- [`.walletTransfer()          -> Promise<Kraken.WalletTransfer>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1013)
-- [`.stake()                   -> Promise<Kraken.Stake>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1042)
-- [`.unstake()                 -> Promise<Kraken.Unstake>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1067)
-- [`.stakingAssets()           -> Promise<Kraken.StakingAssets>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1089)
-- [`.stakingPending()          -> Promise<Kraken.StakingPending>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1098)
-- [`.stakingTransactions()     -> Promise<Kraken.StakingTransactions>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1107)
-- [`.ws.ticker()               -> Kraken.WS.Subscriber<Kraken.WS.Ticker>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1132)
-- [`.ws.ohlc()                 -> Kraken.WS.Subscriber<Kraken.WS.OHLC>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1155)
-- [`.ws.trade()                -> Kraken.WS.Subscriber<Kraken.WS.Trade>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1178)
-- [`.ws.spread()               -> Kraken.WS.Subscriber<Kraken.WS.Spread>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1197)
-- [`.ws.book()                 -> Kraken.WS.Subscriber<Kraken.WS.Book>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1216)
-- [`.ws.ownTrades()            -> Kraken.WS.Subscriber<Kraken.WS.OwnTrades>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1291)
-- [`.ws.openOrders()           -> Kraken.WS.Subscriber<Kraken.WS.OpenOrders>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1316)
-- [`.ws.addOrder()             -> Kraken.WS.Subscriber<Kraken.WS.AddOrder>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1341)
-- [`.ws.cancelOrder()          -> Kraken.WS.Subscriber<Kraken.WS.CancelOrder>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1395)
-- [`.ws.cancelAll()            -> Kraken.WS.Subscriber<Kraken.WS.CancelAll>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1411)
-- [`.ws.cancelAllOrdersAfter() -> Kraken.WS.Subscriber<Kraken.WS.CancelAllOrdersAfter>`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1431)
+- [`.request()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L177)
+- [`.time()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L193)
+- [`.systemStatus()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L200)
+- [`.assets()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L207)
+- [`.assetPairs()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L229)
+- [`.ticker()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L255)
+- [`.ohlc()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L272)
+- [`.depth()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L300)
+- [`.trades()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L323)
+- [`.spread()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L345)
+- [`.getWebSocketsToken()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L368)
+- [`.balance()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L375)
+- [`.tradeBalance()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L382)
+- [`.openOrders()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L399)
+- [`.closedOrders()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L420)
+- [`.queryOrders()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L457)
+- [`.tradesHistory()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L482)
+- [`.queryTrades()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L515)
+- [`.openPositions()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L535)
+- [`.ledgers()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L559)
+- [`.queryLedgers()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L598)
+- [`.tradeVolume()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L618)
+- [`.addExport()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L638)
+- [`.exportStatus()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L678)
+- [`.retrieveExport()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L694)
+- [`.removeExport()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L710)
+- [`.addOrder()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L731)
+- [`.cancelOrder()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L825)
+- [`.cancelAll()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L841)
+- [`.cancelAllOrdersAfter()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L849)
+- [`.depositMethods()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L865)
+- [`.depositAddresses()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L881)
+- [`.depositStatus()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L905)
+- [`.withdrawInfo()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L925)
+- [`.withdrawStatus()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L973)
+- [`.withdrawCancel()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L993)
+- [`.walletTransfer()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1013)
+- [`.stake()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1042)
+- [`.unstake()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1067)
+- [`.stakingAssets()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1089)
+- [`.stakingPending()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1098)
+- [`.stakingTransactions()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1107)
+- [`.ws.ticker()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1132)
+- [`.ws.ohlc()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1155)
+- [`.ws.trade()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1178)
+- [`.ws.spread()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1197)
+- [`.ws.book()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1216)
+- [`.ws.ownTrades()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1291)
+- [`.ws.openOrders()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1316)
+- [`.ws.addOrder()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1341)
+- [`.ws.cancelOrder()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1395)
+- [`.ws.cancelAll()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1411)
+- [`.ws.cancelAllOrdersAfter()`](https://github.com/jpcx/node-kraken-api/blob/develop/index.ts#L1431)
 
 ### Properties
 
@@ -276,12 +267,17 @@ Also, I am US-based and can't access the futures API; if you have access and wan
 
 **Justin Collier** - [jpcx](https://github.com/jpcx)
 
-[![BTC](https://github.com/jpcx/node-kraken-api/blob/develop/assets/btc.png)](bitcoin:bc1qnkturlnv4yufkc40k4ysxz4maak5mug7l820my)
-[![LTC](https://github.com/jpcx/node-kraken-api/blob/develop/assets/ltc.png)](litecoin:ltc1q9jnvesyffgysel7h4cttg7fscenaje2ka08qvc)
-[![ETH](https://github.com/jpcx/node-kraken-api/blob/develop/assets/eth.png)](ethereum:0xD03c9c3027C6bBDDad31d183Ba07DA9db34ee641)  
-[![XMR](https://github.com/jpcx/node-kraken-api/blob/develop/assets/xmr.png)](monero:49UydqpjBjfPcYEV26jrruQwkCkW9VVFxXdmBwmarAVUPz6FSK2nLsRCdtQTMrFZ3NBy9aGrgGGhKZKCpApy5xBWA3GiBsn)
-[![ZEC](https://github.com/jpcx/node-kraken-api/blob/develop/assets/zec.png)](zcash:t1S9TJAa4uxtXdh8NJWJu8HKZ1MkCddp5sH)
-[![DOGE](https://github.com/jpcx/node-kraken-api/blob/develop/assets/doge.png)](dogecoin:DRCtMGVyCEgfdMqrawazorkpnU8wehyXLQ)
+![BTC](https://github.com/jpcx/node-kraken-api/blob/develop/assets/btc.png)&emsp;
+![LTC](https://github.com/jpcx/node-kraken-api/blob/develop/assets/ltc.png)&emsp;
+![ETH](https://github.com/jpcx/node-kraken-api/blob/develop/assets/eth.png)&emsp;
+![XMR](https://github.com/jpcx/node-kraken-api/blob/develop/assets/xmr.png)
+
+```
+ bitcoin:bc1qnkturlnv4yufkc40k4ysxz4maak5mug7l820my
+litecoin:ltc1q9jnvesyffgysel7h4cttg7fscenaje2ka08qvc
+ethereum:0xD03c9c3027C6bBDDad31d183Ba07DA9db34ee641
+  monero:49UydqpjBjfPcYEV26jrruQwkCkW9VVFxXdmBwmarAVUPz6FSK2nLsRCdtQTMrFZ3NBy9aGrgGGhKZKCpApy5xBWA3GiBsn
+```
 
 Inspired by [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)).
 
