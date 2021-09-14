@@ -1,7 +1,7 @@
 {
   "name": "node-kraken-api",
   "version": "1.0.0",
-  "description": "node-kraken-api",
+  "description": "a typed REST/WS Node.JS client for the Kraken cryptocurrency exchange",
   "license": "MIT",
   "repository": "git://github.com/jpcx/node-kraken-api.git",
   "author": {
@@ -22,7 +22,8 @@
     "trading"
   ],
   "files": [
-    "./README.md",
+    "README.md",
+    "LICENSE",
     "index.d.ts",
     "index.js",
     "package-lock.json",
