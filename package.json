@@ -1,6 +1,6 @@
 {
   "name": "node-kraken-api",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "a typed REST/WS Node.JS client for the Kraken cryptocurrency exchange",
   "license": "MIT",
   "repository": "git://github.com/jpcx/node-kraken-api.git",
@@ -42,15 +42,16 @@
     "node": ">=10.0.0"
   },
   "dependencies": {
-    "ws": "^8.2.2",
-    "crc": "^3.8.0"
+    "crc": "^3.8.0",
+    "ts-ev": "^0.3.0",
+    "ws": "^8.2.2"
   },
   "devDependencies": {
-    "typescript": "^4.4.3",
-    "@types/ws": "^7.4.7",
+    "@jpcx/testts": "^0.4.0",
     "@types/crc": "^3.4.0",
     "@types/node": "^16.9.1",
-    "@jpcx/testts": "^0.4.0"
+    "@types/ws": "^7.4.7",
+    "typescript": "^4.4.3"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.3",

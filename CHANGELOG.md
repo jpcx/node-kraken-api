@@ -1,5 +1,26 @@
 # Changelog
 
+<a name="2.0.0"></a>
+
+## [2.0.0](https://github.com/jpcx/node-kraken-api/tree/2.0.0) (2021-09-15)
+
+| __[Changes since 1.0.0](https://github.com/jpcx/node-kraken-api/compare/1.0.0...2.0.0)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/2.0.0) | [README](https://github.com/jpcx/node-kraken-api/tree/2.0.0/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/2.0.0.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/2.0.0.tar.gz) |
+| --- | --- |
+
+__Changed__
+
+- Made improvements to the [0.4.1 migration guide](https://github.com/jpcx/node-kraken-api/releases/tag/1.0.0) and README.
+- Kraken.Emitter moved to its [own package](https://github.com/jpcx/ts-ev) and improved; filters now pass on type assertion result to listeners.
+  - _This changed the signature for event filtering:_
+    - _`(...args: <type>[]) => boolean` -> `(args: [<type>, <type>, ...]) => args is [<subtype>, <subtype>, ...]`_
+
+__Removed__
+  
+- Kraken.Emitter
+
 <a name="1.0.0"></a>
 
 ## [1.0.0](https://github.com/jpcx/node-kraken-api/tree/1.0.0) (2021-09-13)

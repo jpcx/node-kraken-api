@@ -1,8 +1,8 @@
 /// <reference types="node" />
-import * as qs from "querystring";
 import * as http from "http";
+import { Emitter } from "ts-ev";
 import WebSocket from "ws";
-export declare const _USER_AGENT = "node-kraken-api/1.0.0";
+export declare const _USER_AGENT = "node-kraken-api/2.0.0";
 export declare const _REST_HOSTNAME = "api.kraken.com";
 export declare const _WS_PUB_HOSTNAME = "ws.kraken.com";
 export declare const _WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -325,31 +325,6 @@ export declare module Kraken {
         });
     }
     type FirstParam<T extends (...args: any[]) => any> = Parameters<T> extends [] ? void : Parameters<T>[0];
-    class Emitter<Internal extends {
-        [event: string]: (...args: any[]) => any;
-    }, External extends {
-        [event: string]: (...args: any[]) => any;
-    } = {}> {
-        private _evdata;
-        private _running;
-        private _opqueue;
-        constructor();
-        on<Ev extends string & (keyof Internal | keyof External)>(event: Ev, listener: Ev extends keyof Internal ? Internal[Ev] : Ev extends keyof External ? External[Ev] : never, options?: {
-            filter?: Ev extends keyof Internal ? (...args: Parameters<Internal[Ev]>) => boolean : Ev extends keyof External ? (...args: Parameters<External[Ev]>) => boolean : never;
-            protect?: boolean;
-        }): this;
-        once<Ev extends string & (keyof Internal | keyof External)>(ev: Ev, cb: Ev extends keyof Internal ? Internal[Ev] : Ev extends keyof External ? External[Ev] : never, options?: {
-            filter?: Ev extends keyof Internal ? (...args: Parameters<Internal[Ev]>) => boolean : Ev extends keyof External ? (...args: Parameters<External[Ev]>) => boolean : never;
-            protect?: boolean;
-        }): this;
-        once<Ev extends string & (keyof Internal | keyof External)>(ev: Ev, options?: {
-            filter?: Ev extends keyof Internal ? (...args: Parameters<Internal[Ev]>) => boolean : Ev extends keyof External ? (...args: Parameters<External[Ev]>) => boolean : never;
-        }): Promise<Ev extends keyof Internal ? Parameters<Internal[Ev]> : Ev extends keyof External ? Parameters<External[Ev]> : never>;
-        off<Ev extends string & (keyof Internal | keyof External)>(ev: Ev, cb: Ev extends keyof Internal ? Internal[Ev] : Ev extends keyof External ? External[Ev] : never): this;
-        off<Ev extends string & (keyof Internal | keyof External)>(ev: Ev): this;
-        off(): this;
-        emit<Ev extends string & (keyof Internal | keyof External)>(event: Ev, ...data: Ev extends keyof Internal ? Parameters<Internal[Ev]> : Ev extends keyof External ? Parameters<External[Ev]> : never): this;
-    }
     type Time = {
         unixtime?: number | null;
         rfc1123?: string | null;
@@ -1310,7 +1285,7 @@ export declare class _Authenticator {
         "API-Key": string;
         "API-Sign": string;
     };
-    signedQuery: (input: Readonly<qs.ParsedUrlQueryInput>) => qs.ParsedUrlQueryInput & {
+    signedQuery: (input: Readonly<NodeJS.Dict<any>>) => NodeJS.Dict<any> & {
         otp?: string;
     };
     constructor(key: string, secret: string, genotp?: () => string);

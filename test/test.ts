@@ -155,17 +155,33 @@ test("main", async (test) => {
             }
 
             const xbtMirror0 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "XBT/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "XBT/USD"] => data[1] === "XBT/USD",
+              })
             );
             const ethMirror0 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "ETH/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "ETH/USD"] => data[1] === "ETH/USD",
+              })
             );
 
             const xbtMirror1 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "XBT/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "XBT/USD"] => data[1] === "XBT/USD",
+              })
             );
             const ethMirror1 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "ETH/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "ETH/USD"] => data[1] === "ETH/USD",
+              })
             );
 
             assert(xbtMirror0.as.length === 10);
@@ -195,14 +211,22 @@ test("main", async (test) => {
                 didReReceive = true;
                 assert(didResubscribe);
               },
-              { filter: (_, pair) => pair === "ETH/USD" }
+              {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "ETH/USD"] => data[1] === "ETH/USD",
+              }
             );
 
             assert(book.subscriptions.size === 1);
             assert([...book.subscriptions][0].status.pair === "XBT/USD");
 
             const xbtMirror2 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "XBT/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "XBT/USD"] => data[1] === "XBT/USD",
+              })
             );
 
             assert(xbtMirror2.as.length === 10);
@@ -216,17 +240,33 @@ test("main", async (test) => {
             didResubscribe = true;
 
             const xbtMirror3 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "XBT/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "XBT/USD"] => data[1] === "XBT/USD",
+              })
             );
             const ethMirror2 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "ETH/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "ETH/USD"] => data[1] === "ETH/USD",
+              })
             );
 
             const xbtMirror4 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "XBT/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "XBT/USD"] => data[1] === "XBT/USD",
+              })
             );
             const ethMirror3 = copybookres(
-              await book.once("mirror", { filter: (_, pair) => pair === "ETH/USD" })
+              await book.once("mirror", {
+                filter: (
+                  data: [_.Kraken.WS.Book.Mirror, string]
+                ): data is [_.Kraken.WS.Book.Mirror, "ETH/USD"] => data[1] === "ETH/USD",
+              })
             );
 
             assert(xbtMirror3.as.length === 10);
@@ -265,62 +305,6 @@ test("main", async (test) => {
           await ownTrades.unsubscribe();
         });
       });
-    });
-
-    await test("Emitter", async () => {
-      const e = new _.Kraken.Emitter();
-
-      let received: string = "";
-      const l = (recv: string) => {
-        received = recv;
-      };
-
-      e.on("foo", l);
-      assert(received === "");
-
-      // test on/emit
-      e.emit("foo", "bar");
-      assert((received as string) === "bar");
-
-      // on remains
-      e.emit("foo", "baz");
-      assert((received as string) === "baz");
-
-      // test all off
-      e.off();
-      e.emit("foo", "beh");
-      assert((received as string) === "baz");
-
-      // reset
-      e.on("foo", l);
-      e.emit("foo", "bar");
-      assert((received as string) === "bar");
-
-      // test all event off
-      e.off("foo");
-      e.emit("foo", "beh");
-      assert((received as string) === "bar");
-
-      // reset
-      e.on("foo", l);
-      e.emit("foo", "bar");
-      assert((received as string) === "bar");
-
-      // test listener off
-      e.off("foo", l);
-      e.emit("foo", "beh");
-      assert((received as string) === "bar");
-
-      // test once (cb)
-      e.once("foo", l);
-      e.emit("foo", "baar");
-      assert((received as string) === "baar");
-      e.emit("foo", "baaz");
-      assert((received as string) === "baar");
-
-      // test once (promise)
-      setTimeout(() => e.emit("foo", "fooo"), 0);
-      assert((await e.once("foo"))[0] === "fooo");
     });
 
     await test("WS", async (test) => {
