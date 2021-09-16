@@ -30,9 +30,10 @@
  * DEALINGS IN THE SOFTWARE.                                                ***
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * ****/
 
-import * as qs from "querystring";
+import { URLSearchParams } from "url";
 import * as http from "http";
 import * as https from "https";
+import { Emitter } from "ts-ev";
 import { crc32 } from "crc";
 import crypto from "crypto";
 import WebSocket from "ws";
@@ -40,7 +41,7 @@ import WebSocket from "ws";
 /*                                                                 constants {*/
 
 /** Our user agent for REST request. */
-export const _USER_AGENT = "node-kraken-api/1.0.0";
+export const _USER_AGENT = "node-kraken-api/2.0.0";
 /** REST server hostname. */
 export const _REST_HOSTNAME = "api.kraken.com";
 /** WS public server hostname. */
@@ -1221,7 +1222,7 @@ export class Kraken {
         snapshot: (snapshot: Kraken.WS.Book.Snapshot, pair: string) => any;
         ask: (ask: Kraken.WS.Book.Ask, pair: string) => any;
         bid: (bid: Kraken.WS.Book.Bid, pair: string) => any;
-        mirror: (mirror: Kraken.WS.Book.Snapshot, pair: string) => any;
+        mirror: (mirror: Kraken.WS.Book.Mirror, pair: string) => any;
       },
       { depth?: number }
     > {
@@ -1552,330 +1553,6 @@ export module Kraken {
   export type FirstParam<T extends (...args: any[]) => any> = Parameters<T> extends []
     ? void
     : Parameters<T>[0];
-
-  /**
-   * A typed event emitter that provides removal protection and filtering.
-   * Ensures that listener changes do not take effect until the emit loop has completed.
-   *
-   * Internal Listeners:
-   *   - Any listeners that are used directly by the first derived class or Emitter instance.
-   *
-   * External Listeners:
-   *   - Any listeners that are not statically known by the derived class (i.e. via derived tparams)
-   *     that should be available outside of the derived class (e.g. for further derived classes).
-   *
-   * Protection:
-   *   - `.off()` will not remove the listener unless it is explicitly specified.
-   *
-   * Filtering:
-   *   - Particularly useful for once listeners;
-   *     supply a predicate that checks data before calling the listener.
-   *
-   * Example:
-   *   ```
-   *   class Foo<
-   *     OtherEvents extends { myevent?: never; myotherevent?: never } & {
-   *       [event: string]: (...args: any[]) => any;
-   *     }
-   *   > extends Emitter<
-   *     {
-   *       myevent: (requires: number, these: string, args: boolean) => any;
-   *       myotherevent: () => any;
-   *     },
-   *     OtherEvents
-   *   > {
-   *     constructor() {
-   *       super();
-   *       setTimeout(() => this.emit("myevent", 1, "foo", true), 100);
-   *       setTimeout(() => this.emit("myotherevent"), 1000);
-   *     }
-   *   }
-   *   const foo = new Foo();
-   *   foo.on("myevent", (requires, these, args) => console.log(requires, these, args), {
-   *     protect: true,
-   *     filter: (_, these) => these === "foo",
-   *   });
-   *
-   *   class Bar extends Foo<{
-   *     anotherevent: (add: "more", events: "to", the: "emitter") => any;
-   *   }> {
-   *     constructor() {
-   *       super();
-   *
-   *       // can operate on base class events
-   *       setTimeout(() => this.emit("myevent", 1, "foo", true), 100);
-   *       // can operate on events provided to Foo via OtherEvents
-   *       setTimeout(() => this.emit("anotherevent", "more", "to", "emitter"), 200);
-   *     }
-   *   }
-   *
-   *   const bar = new Bar();
-   *   bar.on("myotherevent", () => console.log("receives base class events!"));
-   *   bar.on("anotherevent", () => console.log("receives derived class events!"));
-   *   ```
-   *
-   */
-  export class Emitter<
-    Internal extends { [event: string]: (...args: any[]) => any },
-    External extends { [event: string]: (...args: any[]) => any } = {}
-  > {
-    /* private data {*/
-
-    private _evdata: {
-      [event in keyof Internal | keyof External]?: Map<
-        event extends keyof Internal
-          ? Internal[event]
-          : event extends keyof External
-          ? External[event]
-          : never,
-        {
-          readonly once: boolean;
-          readonly protect?: boolean;
-          readonly filter?: event extends keyof Internal
-            ? (...args: Parameters<Internal[event]>) => boolean
-            : event extends keyof External
-            ? (...args: Parameters<External[event]>) => boolean
-            : never;
-        }
-      >;
-    } = {};
-    private _running: boolean = false;
-    private _opqueue: (() => any)[] = [];
-
-    /* private data }*/
-
-    /* default constructor {*/
-
-    constructor() {
-      _hidePrivates(this);
-    }
-
-    /* default constructor }*/
-
-    /** Add a listener for a given event. */
-    public on<Ev extends string & (keyof Internal | keyof External)>(
-      event: Ev,
-      listener: Ev extends keyof Internal
-        ? Internal[Ev]
-        : Ev extends keyof External
-        ? External[Ev]
-        : never,
-      options?: {
-        filter?: Ev extends keyof Internal
-          ? (...args: Parameters<Internal[Ev]>) => boolean
-          : Ev extends keyof External
-          ? (...args: Parameters<External[Ev]>) => boolean
-          : never;
-        protect?: boolean;
-      }
-    ): this {
-      /*· {*/
-
-      const op = () => {
-        const cbs = this._evdata[event];
-        const opts = { once: false, ...options };
-        if (cbs) cbs.set(listener, opts);
-        else this._evdata[event] = new Map([[listener, opts]]);
-      };
-      if (!this._running) op();
-      else this._opqueue.push(op);
-      return this;
-
-      /*· }*/
-    }
-
-    /** Add a once listener for a given event.  */
-    public once<Ev extends string & (keyof Internal | keyof External)>(
-      ev: Ev,
-      cb: Ev extends keyof Internal
-        ? Internal[Ev]
-        : Ev extends keyof External
-        ? External[Ev]
-        : never,
-      options?: {
-        filter?: Ev extends keyof Internal
-          ? (...args: Parameters<Internal[Ev]>) => boolean
-          : Ev extends keyof External
-          ? (...args: Parameters<External[Ev]>) => boolean
-          : never;
-        protect?: boolean;
-      }
-    ): this;
-    /** Promise the next event update (promise listeners are protected). */
-    public once<Ev extends string & (keyof Internal | keyof External)>(
-      ev: Ev,
-      options?: {
-        filter?: Ev extends keyof Internal
-          ? (...args: Parameters<Internal[Ev]>) => boolean
-          : Ev extends keyof External
-          ? (...args: Parameters<External[Ev]>) => boolean
-          : never;
-      }
-    ): Promise<
-      Ev extends keyof Internal
-        ? Parameters<Internal[Ev]>
-        : Ev extends keyof External
-        ? Parameters<External[Ev]>
-        : never
-    >;
-    public once<Ev extends string & (keyof Internal | keyof External)>(
-      ev: Ev,
-      cbOrOptions?:
-        | (Ev extends keyof Internal
-            ? Internal[Ev]
-            : Ev extends keyof External
-            ? External[Ev]
-            : never)
-        | {
-            filter?: Ev extends keyof Internal
-              ? (...args: Parameters<Internal[Ev]>) => boolean
-              : Ev extends keyof External
-              ? (...args: Parameters<External[Ev]>) => boolean
-              : never;
-          },
-      options?: {
-        filter?: Ev extends keyof Internal
-          ? (...args: Parameters<Internal[Ev]>) => boolean
-          : Ev extends keyof External
-          ? (...args: Parameters<External[Ev]>) => boolean
-          : never;
-        protect?: boolean;
-      }
-    ):
-      | this
-      | Promise<
-          Ev extends keyof Internal
-            ? Parameters<Internal[Ev]>
-            : Ev extends keyof External
-            ? Parameters<External[Ev]>
-            : never
-        > {
-      /*· {*/
-
-      if (typeof cbOrOptions === "function") {
-        const op = () => {
-          const cbs = this._evdata[ev];
-          const opts = { once: true, ...options };
-          if (cbs) cbs.set(cbOrOptions, opts);
-          else this._evdata[ev] = new Map([[cbOrOptions, opts]]);
-        };
-        if (!this._running) op();
-        else this._opqueue.push(op);
-
-        return this;
-      } else {
-        return new Promise((resolve) => {
-          const op = () => {
-            const cbs = this._evdata[ev];
-            // force protect for promises
-            const opts = { once: true, ...cbOrOptions, protect: true };
-            const shim = ((
-              ...data: Ev extends keyof Internal
-                ? Parameters<Internal[Ev]>
-                : Ev extends keyof External
-                ? Parameters<Internal[Ev]>
-                : never
-            ) => resolve(data)) as Ev extends keyof Internal
-              ? Internal[Ev]
-              : Ev extends keyof External
-              ? External[Ev]
-              : never;
-            if (cbs) cbs.set(shim, opts);
-            else this._evdata[ev] = new Map([[shim, opts]]);
-          };
-          if (!this._running) op();
-          else this._opqueue.push(op);
-        });
-      }
-
-      /*· }*/
-    }
-
-    /** Remove a specific event listener (removes 'protected' listeners). */
-    public off<Ev extends string & (keyof Internal | keyof External)>(
-      ev: Ev,
-      cb: Ev extends keyof Internal
-        ? Internal[Ev]
-        : Ev extends keyof External
-        ? External[Ev]
-        : never
-    ): this;
-    /** Remove all listeners for an event (skips 'protected' listeners). */
-    public off<Ev extends string & (keyof Internal | keyof External)>(ev: Ev): this;
-    /** Remove all listeners (skips 'protected' listeners). */
-    public off(): this;
-    public off<Ev extends string & (keyof Internal | keyof External)>(
-      ev?: Ev,
-      cb?: Ev extends keyof Internal
-        ? Internal[Ev]
-        : Ev extends keyof External
-        ? External[Ev]
-        : never
-    ): this {
-      /*· {*/
-
-      const op = () => {
-        if (ev !== undefined && cb !== undefined) {
-          // delete this event callback (regardless of lock setting)
-          const cbs = this._evdata[ev];
-          if (cbs) {
-            cbs.delete(cb);
-            if (cbs.size === 0) delete this._evdata[ev];
-          }
-        } else if (ev !== undefined) {
-          // delete all event callbacks that are not locked
-          const cbs = this._evdata[ev];
-          if (cbs) {
-            const todel: (Ev extends keyof Internal
-              ? Internal[Ev]
-              : Ev extends keyof External
-              ? External[Ev]
-              : never)[] = [];
-            cbs.forEach(({ protect }, cb) => {
-              if (!protect) todel.push(cb);
-            });
-            todel.forEach((cb) => cbs.delete(cb));
-            if (cbs.size === 0) delete this._evdata[ev];
-          }
-        } else {
-          Object.keys(this._evdata).forEach((ev) => this.off(ev));
-        }
-      };
-      if (!this._running) op();
-      else this._opqueue.push(op);
-      return this;
-
-      /*· }*/
-    }
-
-    /** Emit data for an event. Changes to listeners during this loop are queued until the loop completes. */
-    public emit<Ev extends string & (keyof Internal | keyof External)>(
-      event: Ev,
-      ...data: Ev extends keyof Internal
-        ? Parameters<Internal[Ev]>
-        : Ev extends keyof External
-        ? Parameters<External[Ev]>
-        : never
-    ): this {
-      /*· {*/
-
-      this._running = true;
-      this._evdata[event]?.forEach(({ once, filter }, cb) => {
-        if (filter ? filter(...data) : true) {
-          cb(...data);
-          if (once) this.off(event, cb);
-        }
-      });
-      if (this._opqueue.length) {
-        this._opqueue.forEach((op) => op());
-        this._opqueue = [];
-      }
-      this._running = false;
-      return this;
-
-      /*· }*/
-    }
-  }
 
   /*                                                        Kraken Utilities }*/
 
@@ -4724,7 +4401,7 @@ export module Kraken {
 
           this.once(
             "dict",
-            (o: NodeJS.Dict<any>) => {
+            (o: { reqid: number; errorMessage?: string }) => {
               if (!o.errorMessage) {
                 if (prevreqid) o.reqid = prevreqid;
                 resolve(o);
@@ -4732,7 +4409,12 @@ export module Kraken {
                 reject(new WSAPIError(o as { errorMessage: string }));
               }
             },
-            { protect: true, filter: (o) => o.reqid === reqid }
+            {
+              protect: true,
+              filter: (
+                args: [NodeJS.Dict<any>]
+              ): args is [{ reqid: number; errorMessage?: string }] => args[0].reqid === reqid,
+            }
           );
           this.write(
             JSON.stringify({
@@ -4770,12 +4452,16 @@ export module Kraken {
             resolve(responses);
           });
 
-          const l = (o: NodeJS.Dict<any>) => {
+          const l = (o: { reqid: number }) => {
             if (prevreqid) o.reqid = prevreqid;
             responses.push(o);
             resolver.fireWhenReady();
           };
-          this.on("dict", l, { protect: true, filter: (o) => o.reqid === reqid });
+          this.on("dict", l, {
+            protect: true,
+            filter: (args: [NodeJS.Dict<any>]): args is [{ reqid: number }] =>
+              args[0].reqid === reqid,
+          });
           this.write(
             JSON.stringify({
               ...request,
@@ -5000,7 +4686,7 @@ export module Kraken {
 
       /**
        * Subscribe to some pairs (if applicable).
-       * Requires at least one pair if public (token not provided).
+       * Requires at least one pair if public (i.e. token not in options).
        *
        * DOES NOT REJECT.
        * If there is an issue with the subscription an error event will be emitted.
@@ -5034,7 +4720,7 @@ export module Kraken {
 
       /**
        * Unsubscribe from some pairs (if applicable).
-       * Requires at least one pair if public (token not provided).
+       * Requires at least one pair if public (i.e. token not in options).
        *
        * DOES NOT REJECT.
        * If there is an issue with the subscription an error event will be emitted.
@@ -5132,7 +4818,7 @@ export module Kraken {
           status: "init",
         };
 
-        this._con.once("dict", this._init as (dict: NodeJS.Dict<any>) => any, {
+        this._con.once("dict", this._init, {
           protect: true,
           filter: this._isstatus,
         });
@@ -5140,11 +4826,11 @@ export module Kraken {
         _hidePrivates(this);
       }
 
-      private _isstatus = (dict: NodeJS.Dict<any>): dict is SubscriptionStatus => {
+      private _isstatus = (args: [NodeJS.Dict<any>]): args is [SubscriptionStatus] => {
         return (
-          dict.event === "subscriptionStatus" &&
-          dict.reqid === this.status.reqid &&
-          dict.pair === this.status.pair
+          args[0].event === "subscriptionStatus" &&
+          args[0].reqid === this.status.reqid &&
+          args[0].pair === this.status.pair
         );
       };
 
@@ -5171,16 +4857,16 @@ export module Kraken {
         } else if (this.status.status === "subscribed") {
           this.emit("created");
 
-          this._con.on("dict", this._onstatus as (dict: NodeJS.Dict<any>) => any, {
+          this._con.on("dict", this._onstatus, {
             protect: true,
             filter: this._isstatus,
           });
 
-          this._con.on("array", this._onpayload as (arr: any[]) => any, {
+          this._con.on("array", this._onpayload, {
             protect: true,
-            filter: (arr) =>
-              arr[arr.length - 2] === this.status.channelName &&
-              (this.status.pair ? arr[arr.length - 1] === this.status.pair : true),
+            filter: (args: [any[]]): args is [any[]] =>
+              args[0][args[0].length - 2] === this.status.channelName &&
+              (this.status.pair ? args[0][args[0].length - 1] === this.status.pair : true),
           });
         } else {
           this.emit(
@@ -5217,9 +4903,7 @@ export class _Authenticator {
     "API-Sign": string;
   };
 
-  public signedQuery: (
-    input: Readonly<qs.ParsedUrlQueryInput>
-  ) => qs.ParsedUrlQueryInput & { otp?: string };
+  public signedQuery: (input: Readonly<NodeJS.Dict<any>>) => NodeJS.Dict<any> & { otp?: string };
 
   constructor(key: string, secret: string, genotp?: () => string) {
     this.signedHeaders = (path, postdata, nonce) => {
@@ -5421,8 +5105,8 @@ export function _prepareRequest(
     const method = "POST";
     const path = `/${_REST_VERSION}/private/${endpoint}`;
     const postdata = options
-      ? qs.stringify(auth.signedQuery({ ...options, nonce }))
-      : qs.stringify(auth.signedQuery({ nonce }));
+      ? new URLSearchParams(auth.signedQuery({ ...options, nonce })).toString()
+      : new URLSearchParams(auth.signedQuery({ nonce })).toString();
     const headers = auth.signedHeaders(path, postdata, nonce);
     return {
       requestOptions: {
@@ -5440,7 +5124,7 @@ export function _prepareRequest(
     };
     if (options) {
       const method = "POST";
-      const postdata = qs.stringify({ ...options, nonce });
+      const postdata = new URLSearchParams({ ...options, nonce } as NodeJS.Dict<any>).toString();
       return {
         requestOptions: {
           hostname,

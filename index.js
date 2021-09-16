@@ -32,12 +32,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports._hidePrivates = exports._CountTrigger = exports._request = exports._sendRequest = exports._prepareRequest = exports._BinaryReceiver = exports._UTF8Receiver = exports._Authenticator = exports.Kraken = exports._GENNONCE = exports._REST_VERSION = exports._WS_PRIV_HOSTNAME = exports._WS_PUB_HOSTNAME = exports._REST_HOSTNAME = exports._USER_AGENT = void 0;
-const qs = __importStar(require("querystring"));
+const url_1 = require("url");
 const https = __importStar(require("https"));
+const ts_ev_1 = require("ts-ev");
 const crc_1 = require("crc");
 const crypto_1 = __importDefault(require("crypto"));
 const ws_1 = __importDefault(require("ws"));
-exports._USER_AGENT = "node-kraken-api/1.0.0";
+exports._USER_AGENT = "node-kraken-api/2.0.0";
 exports._REST_HOSTNAME = "api.kraken.com";
 exports._WS_PUB_HOSTNAME = "ws.kraken.com";
 exports._WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -384,114 +385,6 @@ exports.Kraken = Kraken;
         }
     }
     Kraken.WSAPIError = WSAPIError;
-    class Emitter {
-        constructor() {
-            this._evdata = {};
-            this._running = false;
-            this._opqueue = [];
-            _hidePrivates(this);
-        }
-        on(event, listener, options) {
-            const op = () => {
-                const cbs = this._evdata[event];
-                const opts = Object.assign({ once: false }, options);
-                if (cbs)
-                    cbs.set(listener, opts);
-                else
-                    this._evdata[event] = new Map([[listener, opts]]);
-            };
-            if (!this._running)
-                op();
-            else
-                this._opqueue.push(op);
-            return this;
-        }
-        once(ev, cbOrOptions, options) {
-            if (typeof cbOrOptions === "function") {
-                const op = () => {
-                    const cbs = this._evdata[ev];
-                    const opts = Object.assign({ once: true }, options);
-                    if (cbs)
-                        cbs.set(cbOrOptions, opts);
-                    else
-                        this._evdata[ev] = new Map([[cbOrOptions, opts]]);
-                };
-                if (!this._running)
-                    op();
-                else
-                    this._opqueue.push(op);
-                return this;
-            }
-            else {
-                return new Promise((resolve) => {
-                    const op = () => {
-                        const cbs = this._evdata[ev];
-                        const opts = Object.assign(Object.assign({ once: true }, cbOrOptions), { protect: true });
-                        const shim = ((...data) => resolve(data));
-                        if (cbs)
-                            cbs.set(shim, opts);
-                        else
-                            this._evdata[ev] = new Map([[shim, opts]]);
-                    };
-                    if (!this._running)
-                        op();
-                    else
-                        this._opqueue.push(op);
-                });
-            }
-        }
-        off(ev, cb) {
-            const op = () => {
-                if (ev !== undefined && cb !== undefined) {
-                    const cbs = this._evdata[ev];
-                    if (cbs) {
-                        cbs.delete(cb);
-                        if (cbs.size === 0)
-                            delete this._evdata[ev];
-                    }
-                }
-                else if (ev !== undefined) {
-                    const cbs = this._evdata[ev];
-                    if (cbs) {
-                        const todel = [];
-                        cbs.forEach(({ protect }, cb) => {
-                            if (!protect)
-                                todel.push(cb);
-                        });
-                        todel.forEach((cb) => cbs.delete(cb));
-                        if (cbs.size === 0)
-                            delete this._evdata[ev];
-                    }
-                }
-                else {
-                    Object.keys(this._evdata).forEach((ev) => this.off(ev));
-                }
-            };
-            if (!this._running)
-                op();
-            else
-                this._opqueue.push(op);
-            return this;
-        }
-        emit(event, ...data) {
-            var _a;
-            this._running = true;
-            (_a = this._evdata[event]) === null || _a === void 0 ? void 0 : _a.forEach(({ once, filter }, cb) => {
-                if (filter ? filter(...data) : true) {
-                    cb(...data);
-                    if (once)
-                        this.off(event, cb);
-                }
-            });
-            if (this._opqueue.length) {
-                this._opqueue.forEach((op) => op());
-                this._opqueue = [];
-            }
-            this._running = false;
-            return this;
-        }
-    }
-    Kraken.Emitter = Emitter;
     let WS;
     (function (WS) {
         let Book;
@@ -568,7 +461,7 @@ exports.Kraken = Kraken;
             }
             Book.applyUpdate = applyUpdate;
         })(Book = WS.Book || (WS.Book = {}));
-        class Connection extends Emitter {
+        class Connection extends ts_ev_1.Emitter {
             constructor(hostname, gettimeout) {
                 super();
                 this._state = "closed";
@@ -604,7 +497,10 @@ exports.Kraken = Kraken;
                             else {
                                 reject(new WSAPIError(o));
                             }
-                        }, { protect: true, filter: (o) => o.reqid === reqid });
+                        }, {
+                            protect: true,
+                            filter: (args) => args[0].reqid === reqid,
+                        });
                         this.write(JSON.stringify(Object.assign(Object.assign({}, request), { reqid })));
                     });
                 });
@@ -625,7 +521,10 @@ exports.Kraken = Kraken;
                             responses.push(o);
                             resolver.fireWhenReady();
                         };
-                        this.on("dict", l, { protect: true, filter: (o) => o.reqid === reqid });
+                        this.on("dict", l, {
+                            protect: true,
+                            filter: (args) => args[0].reqid === reqid,
+                        });
                         this.write(JSON.stringify(Object.assign(Object.assign({}, request), { reqid })));
                     });
                 });
@@ -760,7 +659,7 @@ exports.Kraken = Kraken;
             }
         }
         WS.Connection = Connection;
-        class Subscriber extends Emitter {
+        class Subscriber extends ts_ev_1.Emitter {
             constructor(con, name, payloadDistributor, options) {
                 super();
                 this._reqid = (0, exports._GENNONCE)();
@@ -843,13 +742,13 @@ exports.Kraken = Kraken;
             }
         }
         WS.Subscriber = Subscriber;
-        class Subscription extends Emitter {
+        class Subscription extends ts_ev_1.Emitter {
             constructor(con, reqid, pair) {
                 super();
-                this._isstatus = (dict) => {
-                    return (dict.event === "subscriptionStatus" &&
-                        dict.reqid === this.status.reqid &&
-                        dict.pair === this.status.pair);
+                this._isstatus = (args) => {
+                    return (args[0].event === "subscriptionStatus" &&
+                        args[0].reqid === this.status.reqid &&
+                        args[0].pair === this.status.pair);
                 };
                 this._onstatus = (status) => {
                     this.status = status;
@@ -876,8 +775,8 @@ exports.Kraken = Kraken;
                         });
                         this._con.on("array", this._onpayload, {
                             protect: true,
-                            filter: (arr) => arr[arr.length - 2] === this.status.channelName &&
-                                (this.status.pair ? arr[arr.length - 1] === this.status.pair : true),
+                            filter: (args) => args[0][args[0].length - 2] === this.status.channelName &&
+                                (this.status.pair ? args[0][args[0].length - 1] === this.status.pair : true),
                         });
                     }
                     else {
@@ -1070,8 +969,8 @@ function _prepareRequest(endpoint, options, type, gennonce, auth) {
         const method = "POST";
         const path = `/${exports._REST_VERSION}/private/${endpoint}`;
         const postdata = options
-            ? qs.stringify(auth.signedQuery(Object.assign(Object.assign({}, options), { nonce })))
-            : qs.stringify(auth.signedQuery({ nonce }));
+            ? new url_1.URLSearchParams(auth.signedQuery(Object.assign(Object.assign({}, options), { nonce }))).toString()
+            : new url_1.URLSearchParams(auth.signedQuery({ nonce })).toString();
         const headers = auth.signedHeaders(path, postdata, nonce);
         return {
             requestOptions: {
@@ -1090,7 +989,7 @@ function _prepareRequest(endpoint, options, type, gennonce, auth) {
         };
         if (options) {
             const method = "POST";
-            const postdata = qs.stringify(Object.assign(Object.assign({}, options), { nonce }));
+            const postdata = new url_1.URLSearchParams(Object.assign(Object.assign({}, options), { nonce })).toString();
             return {
                 requestOptions: {
                     hostname,
