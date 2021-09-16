@@ -2,7 +2,7 @@
 import * as http from "http";
 import { Emitter } from "ts-ev";
 import WebSocket from "ws";
-export declare const _USER_AGENT = "node-kraken-api/2.0.0";
+export declare const _USER_AGENT = "node-kraken-api/2.1.0";
 export declare const _REST_HOSTNAME = "api.kraken.com";
 export declare const _WS_PUB_HOSTNAME = "ws.kraken.com";
 export declare const _WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -11,15 +11,17 @@ export declare const _GENNONCE: () => number;
 export declare class Kraken {
     private _gennonce;
     private _auth;
+    private _legacy;
     timeout: number;
-    constructor({ key, secret, genotp, gennonce, timeout, }?: Readonly<{
+    constructor({ key, secret, genotp, gennonce, timeout, pubMethods, privMethods, parse, dataFormatter, }?: Readonly<{
         key?: string;
         secret?: string;
         genotp?: () => string;
         gennonce?: () => number;
         timeout?: number;
-    }>);
+    } & _Legacy.Settings>);
     request(endpoint: string, options?: NodeJS.Dict<any> | null, type?: "public" | "private", encoding?: "utf8" | "binary"): Promise<any>;
+    call(method: any, options?: any, cb?: (err: any, data: any) => any): any;
     time(): Promise<Kraken.Time>;
     systemStatus(): Promise<Kraken.SystemStatus>;
     assets(options?: {
@@ -1316,6 +1318,18 @@ export declare function _prepareRequest(endpoint: string, options: NodeJS.Dict<a
 };
 export declare function _sendRequest(requestOptions: http.RequestOptions, postdata: string | null, encoding: "utf8" | "binary", timeout: number): Promise<unknown>;
 export declare function _request(endpoint: string, options: NodeJS.Dict<any> | null, type: "public" | "private", encoding: "utf8" | "binary", timeout: number, gennonce: () => number, auth: _Authenticator | null): Promise<any>;
+export declare module _Legacy {
+    interface Settings {
+        pubMethods?: any;
+        privMethods?: any;
+        parse?: any;
+        dataFormatter?: any;
+    }
+    module Settings {
+        function defaults(): Required<Settings>;
+    }
+    function parseNested(o: any, parse: any): any;
+}
 export declare class _CountTrigger {
     private _count;
     private _action;

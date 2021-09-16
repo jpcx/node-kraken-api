@@ -1,5 +1,21 @@
 # Changelog
 
+<a name="2.1.0"></a>
+
+## [2.1.0](https://github.com/jpcx/node-kraken-api/tree/2.1.0) (2021-09-16)
+
+| __[Changes since 2.0.0](https://github.com/jpcx/node-kraken-api/compare/2.0.0...2.1.0)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/2.1.0) | [README](https://github.com/jpcx/node-kraken-api/tree/2.1.0/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/2.1.0.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/2.1.0.tar.gz) |
+| --- | --- |
+
+__Added__
+
+- Added a few (deprecated) legacy settings and `.call()` to ease the upgrade process.
+  - As before, `.call()` configurably parses responses (dates and numbers by default), but does not use a rate limiter, queueing, or retries.
+  - Function signature maintained from 0.4.1.
+
 <a name="2.0.0"></a>
 
 ## [2.0.0](https://github.com/jpcx/node-kraken-api/tree/2.0.0) (2021-09-15)
