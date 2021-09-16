@@ -213,7 +213,7 @@ import { Kraken } from "node-kraken-api";
 ### Settings
 
 ```ts
-{
+new Kraken({
   /** REST API key. */
   key?: string;
   /** REST API secret. */
@@ -224,7 +224,7 @@ import { Kraken } from "node-kraken-api";
   gennonce?: () => number;
   /** Connection timeout. */
   timeout?: number;
-}
+});
 ```
 
 ### REST API
