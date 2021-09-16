@@ -1060,6 +1060,102 @@ test("main", async (test) => {
       });
     });
   });
+
+  await test("Legacy", async (test) => {
+    await test("parseNested", (test) => {
+      const defaultParseSettings = { numbers: true, dates: true };
+      test("Parses objects successfully", () => {
+        const date = new Date();
+        const obj = {
+          foo: date.toISOString(),
+          bar: {
+            baz: "1325.32",
+          },
+        };
+
+        const parsedObj = {
+          foo: date.valueOf(),
+          bar: {
+            baz: 1325.32,
+          },
+        };
+
+        assert.deepStrictEqual(_._Legacy.parseNested(obj, defaultParseSettings), parsedObj);
+      });
+
+      test("Parses arrays successfully", () => {
+        const date = new Date();
+        const arr = [date.toISOString(), ["1325.32"]];
+
+        const parsedArr = [date.valueOf(), [1325.32]];
+
+        assert.deepStrictEqual(_._Legacy.parseNested(arr, defaultParseSettings), parsedArr);
+      });
+    });
+
+    await test("call", async (test) => {
+      await test("Returns parsed time data from Kraken", async () => {
+        const k = new _.Kraken();
+        const time = await k.call("Time");
+        assert(typeof time.unixtime === "number");
+        assert(typeof time.rfc1123 === "number");
+        assert(time.unixtime <= Date.now() + 60000);
+        assert(time.unixtime >= Date.now() - 60000);
+        assert(time.rfc1123 <= Date.now() + 60000);
+        assert(time.rfc1123 >= Date.now() - 60000);
+      });
+
+      await test("Callbacks work", async () => {
+        const k = new _.Kraken();
+        const time: any = await new Promise((resolve) =>
+          k.call("Time", null, (_: any, data: any) => resolve(data))
+        );
+        assert(typeof time.unixtime === "number");
+        assert(typeof time.rfc1123 === "number");
+        assert(time.unixtime <= Date.now() + 60000);
+        assert(time.unixtime >= Date.now() - 60000);
+        assert(time.rfc1123 <= Date.now() + 60000);
+        assert(time.rfc1123 >= Date.now() - 60000);
+      });
+
+      await test("Retrieves unparsed time when settings.parse.dates is false", async () => {
+        const k = new _.Kraken({ parse: { numbers: true, dates: false } });
+        const time = await k.call("Time");
+        assert(typeof time.unixtime === "number");
+        assert(typeof time.rfc1123 === "string");
+        assert(time.unixtime * 1000 <= Date.now() + 60000);
+        assert(time.unixtime * 1000 >= Date.now() - 60000);
+        assert(Date.parse(time.rfc1123) <= Date.now() + 60000);
+        assert(Date.parse(time.rfc1123) >= Date.now() - 60000);
+      });
+
+      await test("Retrieves parsed time when settings.parse.numbers is false", async () => {
+        const k = new _.Kraken({ parse: { numbers: false, dates: true } });
+        const time = await k.call("Time");
+        assert(typeof time.unixtime === "number");
+        assert(typeof time.rfc1123 === "number");
+        assert(time.unixtime <= Date.now() + 60000);
+        assert(time.unixtime >= Date.now() - 60000);
+        assert(time.rfc1123 <= Date.now() + 60000);
+        assert(time.rfc1123 >= Date.now() - 60000);
+      });
+
+      await test("Retrieves custom-parsed data", async () => {
+        const dataFormatter = (method: any, _: any, data: any) => {
+          if (method === "Time") {
+            return data.unixtime;
+          } else {
+            return data;
+          }
+        };
+        const k = new _.Kraken({ dataFormatter });
+        const time = await k.call("Time");
+        assert(typeof time === "number");
+        assert(time <= Date.now() + 60000);
+        assert(time >= Date.now() - 60000);
+      });
+    });
+  });
 });
 
 // vim: fdm=syntax

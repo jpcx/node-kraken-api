@@ -31,14 +31,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._hidePrivates = exports._CountTrigger = exports._request = exports._sendRequest = exports._prepareRequest = exports._BinaryReceiver = exports._UTF8Receiver = exports._Authenticator = exports.Kraken = exports._GENNONCE = exports._REST_VERSION = exports._WS_PRIV_HOSTNAME = exports._WS_PUB_HOSTNAME = exports._REST_HOSTNAME = exports._USER_AGENT = void 0;
+exports._hidePrivates = exports._CountTrigger = exports._Legacy = exports._request = exports._sendRequest = exports._prepareRequest = exports._BinaryReceiver = exports._UTF8Receiver = exports._Authenticator = exports.Kraken = exports._GENNONCE = exports._REST_VERSION = exports._WS_PRIV_HOSTNAME = exports._WS_PUB_HOSTNAME = exports._REST_HOSTNAME = exports._USER_AGENT = void 0;
 const url_1 = require("url");
 const https = __importStar(require("https"));
 const ts_ev_1 = require("ts-ev");
 const crc_1 = require("crc");
 const crypto_1 = __importDefault(require("crypto"));
 const ws_1 = __importDefault(require("ws"));
-exports._USER_AGENT = "node-kraken-api/2.0.0";
+exports._USER_AGENT = "node-kraken-api/2.1.0";
 exports._REST_HOSTNAME = "api.kraken.com";
 exports._WS_PUB_HOSTNAME = "ws.kraken.com";
 exports._WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -55,7 +55,8 @@ exports._GENNONCE = (() => {
     });
 })();
 class Kraken {
-    constructor({ key, secret, genotp, gennonce = exports._GENNONCE, timeout = 1000, } = {}) {
+    constructor({ key, secret, genotp, gennonce = exports._GENNONCE, timeout = 1000, pubMethods, privMethods, parse, dataFormatter, } = {}) {
+        this._legacy = _Legacy.Settings.defaults();
         this.ws = new (class WS {
             constructor(kraken) {
                 this.pub = new Kraken.WS.Connection(exports._WS_PUB_HOSTNAME, () => kraken.timeout);
@@ -179,10 +180,50 @@ class Kraken {
         this.timeout = timeout;
         this._gennonce = gennonce;
         this._auth = key && secret ? new _Authenticator(key, secret, genotp) : null;
+        if (pubMethods)
+            this._legacy.pubMethods = pubMethods;
+        if (privMethods)
+            this._legacy.privMethods = privMethods;
+        if (parse)
+            this._legacy.parse = parse;
+        if (dataFormatter)
+            this._legacy.dataFormatter = dataFormatter;
         _hidePrivates(this);
     }
     request(endpoint, options = null, type = "public", encoding = "utf8") {
         return _request(endpoint, options, type, encoding, this.timeout, this._gennonce, this._auth);
+    }
+    call(method, options, cb) {
+        let type;
+        if (this._legacy.pubMethods.includes(method)) {
+            type = "public";
+        }
+        else if (this._legacy.privMethods.includes(method)) {
+            type = "private";
+        }
+        else {
+            throw Error(`Bad method: ${method}. See documentation and check settings.`);
+        }
+        const onceresponse = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = _Legacy.parseNested(yield this.request(method, options || null, type, "utf8"), this._legacy.parse);
+                if (this._legacy.dataFormatter) {
+                    resolve(this._legacy.dataFormatter(method, options, res));
+                }
+                else {
+                    resolve(res);
+                }
+            }
+            catch (e) {
+                reject(e);
+            }
+        }));
+        if (cb) {
+            onceresponse.then((data) => cb(null, data)).catch((err) => cb(err, null));
+        }
+        else {
+            return onceresponse;
+        }
     }
     time() {
         return this.request("Time");
@@ -1094,6 +1135,132 @@ function _request(endpoint, options, type, encoding, timeout, gennonce, auth) {
     });
 }
 exports._request = _request;
+var _Legacy;
+(function (_Legacy) {
+    let Settings;
+    (function (Settings) {
+        function defaults() {
+            return {
+                pubMethods: [
+                    "Time",
+                    "SystemStatus",
+                    "Assets",
+                    "AssetPairs",
+                    "Ticker",
+                    "OHLC",
+                    "Depth",
+                    "Trades",
+                    "Spread",
+                ],
+                privMethods: [
+                    "GetWebSocketsToken",
+                    "Balance",
+                    "TradeBalance",
+                    "OpenOrders",
+                    "ClosedOrders",
+                    "QueryOrders",
+                    "TradesHistory",
+                    "QueryTrades",
+                    "OpenPositions",
+                    "Ledgers",
+                    "QueryLedgers",
+                    "TradeVolume",
+                    "AddExport",
+                    "ExportStatus",
+                    "RetrieveExport",
+                    "RemoveExport",
+                    "AddOrder",
+                    "CancelOrder",
+                    "CancelAll",
+                    "CancelAllOrdersAfter",
+                    "DepositMethods",
+                    "DepositAddresses",
+                    "DepositStatus",
+                    "WithdrawInfo",
+                    "Withdraw",
+                    "WithdrawStatus",
+                    "WithdrawCancel",
+                    "WalletTransfer",
+                    "Stake",
+                    "Unstake",
+                    "Staking/Assets",
+                    "Staking/Pending",
+                    "Staking/Transactions",
+                ],
+                parse: {
+                    numbers: true,
+                    dates: true,
+                },
+                dataFormatter: null,
+            };
+        }
+        Settings.defaults = defaults;
+    })(Settings = _Legacy.Settings || (_Legacy.Settings = {}));
+    function parseNested(o, parse) {
+        function rangedDate(data, back = 0.5, fwd = 0.5, exclude = {}) {
+            const inRange = (t, l, u) => t > l && t < u;
+            const yrDist = (target) => (target - Date.now()) / +"31536e6";
+            const bound = (target, back, fwd) => inRange(yrDist(target), -back, fwd) && target;
+            const check = (target, back, fwd, exclude) => isFinite(target) &&
+                ((!(exclude.ms === true) && bound(target, back, fwd)) ||
+                    (!(exclude.s === true) && bound(target * 1000, back, fwd)) ||
+                    (!(exclude.us === true) && bound(target / 1000, back, fwd)));
+            if (data instanceof Date)
+                return data.valueOf();
+            if (typeof data === "number")
+                return check(data, back, fwd, exclude);
+            return check(Date.parse(data), back, fwd, exclude) || check(+data, back, fwd, exclude);
+        }
+        const parseValue = (() => {
+            if (parse.numbers && parse.dates) {
+                return function parseValue(parent, key) {
+                    const testNum = +parent[key];
+                    if (!isNaN(testNum)) {
+                        parent[key] = testNum;
+                    }
+                    const testDate = rangedDate(parent[key]);
+                    if (testDate !== false) {
+                        parent[key] = testDate;
+                    }
+                };
+            }
+            else if (parse.numbers && !parse.dates) {
+                return function parseValue(parent, key) {
+                    const testNum = +parent[key];
+                    if (!isNaN(testNum)) {
+                        parent[key] = testNum;
+                    }
+                };
+            }
+            else if (!parse.numbers && parse.dates) {
+                return function parseValue(parent, key) {
+                    const testDate = rangedDate(parent[key]);
+                    if (testDate !== false) {
+                        parent[key] = testDate;
+                    }
+                };
+            }
+            else {
+                return function parse(_, __) { };
+            }
+        })();
+        function recurse(parent, key) {
+            if (parent[key] instanceof Object) {
+                for (const k of Object.keys(parent[key]))
+                    recurse(parent[key], k);
+            }
+            else {
+                parseValue(parent, key);
+            }
+        }
+        if (o instanceof Object) {
+            for (const k of Object.keys(o))
+                recurse(o, k);
+        }
+        return o;
+    }
+    _Legacy.parseNested = parseNested;
+})(_Legacy = exports._Legacy || (exports._Legacy = {}));
 class _CountTrigger {
     constructor(count, action) {
         if (count <= 0)

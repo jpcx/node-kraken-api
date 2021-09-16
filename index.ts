@@ -41,7 +41,7 @@ import WebSocket from "ws";
 /*                                                                 constants {*/
 
 /** Our user agent for REST request. */
-export const _USER_AGENT = "node-kraken-api/2.0.0";
+export const _USER_AGENT = "node-kraken-api/2.1.0";
 /** REST server hostname. */
 export const _REST_HOSTNAME = "api.kraken.com";
 /** WS public server hostname. */
@@ -122,6 +122,8 @@ export const _GENNONCE = (() => {
 export class Kraken {
   private _gennonce: () => number;
   private _auth: _Authenticator | null;
+  /** @deprecated */
+  private _legacy = _Legacy.Settings.defaults();
 
   public timeout: number;
 
@@ -131,18 +133,28 @@ export class Kraken {
     genotp,
     gennonce = _GENNONCE,
     timeout = 1000,
-  }: Readonly<{
-    /** REST API key. */
-    key?: string;
-    /** REST API secret. */
-    secret?: string;
-    /** REST API OTP generator. */
-    genotp?: () => string;
-    /** Nonce generator (the default is ms time with an incrementation guarantee). */
-    gennonce?: () => number;
-    /** Connection timeout. */
-    timeout?: number;
-  }> = {}) {
+    /** @deprecated */
+    pubMethods,
+    /** @deprecated */
+    privMethods,
+    /** @deprecated */
+    parse,
+    /** @deprecated */
+    dataFormatter,
+  }: Readonly<
+    {
+      /** REST API key. */
+      key?: string;
+      /** REST API secret. */
+      secret?: string;
+      /** REST API OTP generator. */
+      genotp?: () => string;
+      /** Nonce generator (the default is ms time with an incrementation guarantee). */
+      gennonce?: () => number;
+      /** Connection timeout. */
+      timeout?: number;
+    } & _Legacy.Settings
+  > = {}) {
     /*· {*/
 
     // verify settings
@@ -164,6 +176,11 @@ export class Kraken {
     this._gennonce = gennonce;
     this._auth = key && secret ? new _Authenticator(key, secret, genotp) : null;
 
+    if (pubMethods) this._legacy.pubMethods = pubMethods;
+    if (privMethods) this._legacy.privMethods = privMethods;
+    if (parse) this._legacy.parse = parse;
+    if (dataFormatter) this._legacy.dataFormatter = dataFormatter;
+
     _hidePrivates(this);
 
     /*· }*/
@@ -182,6 +199,44 @@ export class Kraken {
     encoding: "utf8" | "binary" = "utf8"
   ): Promise<any> {
     return _request(endpoint, options, type, encoding, this.timeout, this._gennonce, this._auth);
+  }
+
+  /** @deprecated legacy request function */
+  public call(method: any, options?: any, cb?: (err: any, data: any) => any): any {
+    /*· {*/
+
+    let type: "public" | "private";
+    if (this._legacy.pubMethods.includes(method)) {
+      type = "public";
+    } else if (this._legacy.privMethods.includes(method)) {
+      type = "private";
+    } else {
+      throw Error(`Bad method: ${method}. See documentation and check settings.`);
+    }
+
+    const onceresponse = new Promise(async (resolve, reject) => {
+      try {
+        const res = _Legacy.parseNested(
+          await this.request(method, options || null, type, "utf8"),
+          this._legacy.parse
+        );
+        if (this._legacy.dataFormatter) {
+          resolve(this._legacy.dataFormatter(method, options, res));
+        } else {
+          resolve(res);
+        }
+      } catch (e) {
+        reject(e);
+      }
+    });
+
+    if (cb) {
+      onceresponse.then((data) => cb(null, data)).catch((err) => cb(err, null));
+    } else {
+      return onceresponse;
+    }
+
+    /*· }*/
   }
 
   /*                                                    Manual REST Requests }*/
@@ -5241,9 +5296,155 @@ export async function _request(
   }
 }
 
-/*                                                              REST Detail }*/
+/*                                                               REST Detail }*/
 
-//                                                          General Detail {*/
+//                                                            General Detail {*/
+
+/*                                                                    Legacy {*/
+
+/** @deprecated */
+export module _Legacy {
+  /** @deprecated */
+  export interface Settings {
+    /** @deprecated */
+    pubMethods?: any;
+    /** @deprecated */
+    privMethods?: any;
+    /** @deprecated */
+    parse?: any;
+    /** @deprecated */
+    dataFormatter?: any;
+  }
+  /** @deprecated */
+  export module Settings {
+    /** @deprecated */
+    export function defaults(): Required<Settings> {
+      return {
+        /** @deprecated */
+        pubMethods: [
+          "Time",
+          "SystemStatus",
+          "Assets",
+          "AssetPairs",
+          "Ticker",
+          "OHLC",
+          "Depth",
+          "Trades",
+          "Spread",
+        ],
+        /** @deprecated */
+        privMethods: [
+          "GetWebSocketsToken",
+          "Balance",
+          "TradeBalance",
+          "OpenOrders",
+          "ClosedOrders",
+          "QueryOrders",
+          "TradesHistory",
+          "QueryTrades",
+          "OpenPositions",
+          "Ledgers",
+          "QueryLedgers",
+          "TradeVolume",
+          "AddExport",
+          "ExportStatus",
+          "RetrieveExport",
+          "RemoveExport",
+          "AddOrder",
+          "CancelOrder",
+          "CancelAll",
+          "CancelAllOrdersAfter",
+          "DepositMethods",
+          "DepositAddresses",
+          "DepositStatus",
+          "WithdrawInfo",
+          "Withdraw",
+          "WithdrawStatus",
+          "WithdrawCancel",
+          "WalletTransfer",
+          "Stake",
+          "Unstake",
+          "Staking/Assets",
+          "Staking/Pending",
+          "Staking/Transactions",
+        ],
+        /** @deprecated */
+        parse: {
+          /** @deprecated */
+          numbers: true,
+          /** @deprecated */
+          dates: true,
+        },
+        /** @deprecated */
+        dataFormatter: null,
+      };
+    }
+  }
+  /** @deprecated */
+  export function parseNested(o: any, parse: any) {
+    function rangedDate(data: any, back: any = 0.5, fwd: any = 0.5, exclude: any = {}) {
+      const inRange = (t: any, l: any, u: any) => t > l && t < u;
+      const yrDist = (target: any) => (target - Date.now()) / +"31536e6";
+      const bound = (target: any, back: any, fwd: any) =>
+        inRange(yrDist(target), -back, fwd) && target;
+      const check = (target: any, back: any, fwd: any, exclude: any) =>
+        isFinite(target) &&
+        ((!(exclude.ms === true) && bound(target, back, fwd)) ||
+          (!(exclude.s === true) && bound(target * 1000, back, fwd)) ||
+          (!(exclude.us === true) && bound(target / 1000, back, fwd)));
+      if (data instanceof Date) return data.valueOf();
+      if (typeof data === "number") return check(data, back, fwd, exclude);
+      return check(Date.parse(data), back, fwd, exclude) || check(+data, back, fwd, exclude);
+    }
+
+    const parseValue = (() => {
+      if (parse.numbers && parse.dates) {
+        return function parseValue(parent: any, key: any) {
+          const testNum = +parent[key];
+          if (!isNaN(testNum)) {
+            parent[key] = testNum;
+          }
+          const testDate = rangedDate(parent[key]);
+          if (testDate !== false) {
+            parent[key] = testDate;
+          }
+        };
+      } else if (parse.numbers && !parse.dates) {
+        return function parseValue(parent: any, key: any) {
+          const testNum = +parent[key];
+          if (!isNaN(testNum)) {
+            parent[key] = testNum;
+          }
+        };
+      } else if (!parse.numbers && parse.dates) {
+        return function parseValue(parent: any, key: any) {
+          const testDate = rangedDate(parent[key]);
+          if (testDate !== false) {
+            parent[key] = testDate;
+          }
+        };
+      } else {
+        return function parse(_: any, __: any) {};
+      }
+    })();
+
+    function recurse(parent: any, key: any) {
+      if (parent[key] instanceof Object) {
+        for (const k of Object.keys(parent[key])) recurse(parent[key], k);
+      } else {
+        parseValue(parent, key);
+      }
+    }
+
+    if (o instanceof Object) {
+      for (const k of Object.keys(o)) recurse(o, k);
+    }
+
+    return o;
+  }
+}
+
+/*                                                                    Legacy }*/
 
 /** Performs an action after `count` calls of this.fireWhenReady() */
 export class _CountTrigger {
@@ -5271,7 +5472,7 @@ export function _hidePrivates(o: object): void {
   }
 }
 
-/*                                                          General Detail }*/
+/*                                                            General Detail }*/
 
 // vim: fdm=marker:fmr=\ {*/,\ }*/
 
