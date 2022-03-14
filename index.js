@@ -42,7 +42,7 @@ const ts_ev_1 = require("ts-ev");
 const crc_1 = require("crc");
 const crypto_1 = __importDefault(require("crypto"));
 const ws_1 = __importDefault(require("ws"));
-exports._USER_AGENT = "node-kraken-api/2.2.0";
+exports._USER_AGENT = "node-kraken-api/2.2.1";
 exports._REST_HOSTNAME = "api.kraken.com";
 exports._WS_PUB_HOSTNAME = "ws.kraken.com";
 exports._WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -1032,6 +1032,7 @@ function _prepareRequest(endpoint, options, type, gennonce, auth) {
         const path = `/${exports._REST_VERSION}/public/${endpoint}`;
         const headers = {
             "User-Agent": exports._USER_AGENT,
+            "Content-Type": "application/x-www-form-urlencoded",
         };
         if (options) {
             const method = "POST";

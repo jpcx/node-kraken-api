@@ -41,7 +41,7 @@ import WebSocket from "ws";
 /*                                                                 constants {*/
 
 /** Our user agent for REST request. */
-export const _USER_AGENT = "node-kraken-api/2.2.0";
+export const _USER_AGENT = "node-kraken-api/2.2.1";
 /** REST server hostname. */
 export const _REST_HOSTNAME = "api.kraken.com";
 /** WS public server hostname. */
@@ -5178,6 +5178,7 @@ export function _prepareRequest(
     const path = `/${_REST_VERSION}/public/${endpoint}`;
     const headers = {
       "User-Agent": _USER_AGENT,
+      "Content-Type": "application/x-www-form-urlencoded",
     };
     if (options) {
       const method = "POST";
