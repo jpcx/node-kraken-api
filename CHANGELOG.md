@@ -1,5 +1,24 @@
 # Changelog
 
+<a name="2.2.0"></a>
+
+## [2.2.0](https://github.com/jpcx/node-kraken-api/tree/2.2.0) (2022-03-13)
+
+| __[Changes since 2.1.0](https://github.com/jpcx/node-kraken-api/compare/2.1.0...2.2.0)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/2.2.0) | [README](https://github.com/jpcx/node-kraken-api/tree/2.2.0/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/2.2.0.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/2.2.0.tar.gz) |
+| --- | --- |
+
+__Changed__
+
+- Updated all dependencies to latest versions.
+
+__Fixed__
+
+- `RetrieveExport` endpoint removed from legacy `.call()` (does not support binary responses).
+- Fixed `ExportStatus` bug by including `Content-Type` header for all REST requests.
+
 <a name="2.1.0"></a>
 
 ## [2.1.0](https://github.com/jpcx/node-kraken-api/tree/2.1.0) (2021-09-16)

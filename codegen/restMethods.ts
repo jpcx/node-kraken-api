@@ -9,7 +9,7 @@
  *                @link http://github.com/jpcx/node-kraken-api                *
  *                                                                            *
  * @license MIT                                                               *
- * @copyright 2018-2021 @author Justin Collier <m@jpcx.dev>                   *
+ * @copyright 2018-2022 @author Justin Collier <m@jpcx.dev>                   *
  *                                                                            *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
  * copy of this software and associated documentation files (the "Software"), *
@@ -48,7 +48,7 @@ import * as path from "path";
 
 const specsPath = path.join(__dirname, "../swagger.json");
 const apiPath = path.join(__dirname, "../../index.ts");
-const backupPath = path.join(__dirname, "../~index.ts.restMethods.bak");
+const backupPath = path.join(__dirname, "../.build/~index.ts.restMethods.bak");
 
 const ANSI_GRAY_FG = "\x1b[90m";
 const ANSI_GREEN_FG = "\x1b[32m";

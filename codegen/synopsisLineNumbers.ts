@@ -9,7 +9,7 @@
  *                @link http://github.com/jpcx/node-kraken-api                *
  *                                                                            *
  * @license MIT                                                               *
- * @copyright 2018-2021 @author Justin Collier <m@jpcx.dev>                   *
+ * @copyright 2018-2022 @author Justin Collier <m@jpcx.dev>                   *
  *                                                                            *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
  * copy of this software and associated documentation files (the "Software"), *
@@ -42,7 +42,7 @@ import * as path from "path";
 
 const readmePath = path.join(__dirname, "../../README.md");
 const apiPath = path.join(__dirname, "../../index.ts");
-const backupPath = path.join(__dirname, "../~README.md.synposisLineNumbers.bak");
+const backupPath = path.join(__dirname, "../.build/~README.md.synposisLineNumbers.bak");
 const packageJSONPath = path.join(__dirname, "../../package.json")
 
 const METHODS_REGEX = /^### Methods\n\n([\s\S]*?)\n\n/m;
