@@ -9,7 +9,7 @@
  *                @link http://github.com/jpcx/node-kraken-api                *
  *                                                                            *
  * @license MIT                                                               *
- * @copyright 2018-2021 @author Justin Collier <m@jpcx.dev>                   *
+ * @copyright 2018-2022 @author Justin Collier <m@jpcx.dev>                   *
  *                                                                            *
  * Permission is hereby granted, free of charge, to any person obtaining a    *
  * copy of this software and associated documentation files (the "Software"), *
@@ -41,7 +41,7 @@ import WebSocket from "ws";
 /*                                                                 constants {*/
 
 /** Our user agent for REST request. */
-export const _USER_AGENT = "node-kraken-api/2.1.0";
+export const _USER_AGENT = "node-kraken-api/2.2.0";
 /** REST server hostname. */
 export const _REST_HOSTNAME = "api.kraken.com";
 /** WS public server hostname. */
@@ -4956,6 +4956,7 @@ export class _Authenticator {
     "User-Agent": typeof _USER_AGENT;
     "API-Key": string;
     "API-Sign": string;
+    "Content-Type": "application/x-www-form-urlencoded";
   };
 
   public signedQuery: (input: Readonly<NodeJS.Dict<any>>) => NodeJS.Dict<any> & { otp?: string };
@@ -4975,6 +4976,7 @@ export class _Authenticator {
               .digest()
           )
           .digest("base64"),
+        "Content-Type": "application/x-www-form-urlencoded",
       };
     };
     if (genotp) {
@@ -5348,7 +5350,6 @@ export module _Legacy {
           "TradeVolume",
           "AddExport",
           "ExportStatus",
-          "RetrieveExport",
           "RemoveExport",
           "AddOrder",
           "CancelOrder",
