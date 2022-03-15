@@ -228,7 +228,7 @@ new Kraken({
    *       default generation logic.
    */
   gennonce?: () => number;
-  /** Connection timeout. */
+  /** Connection timeout (default 1000). */
   timeout?: number;
 });
 ```

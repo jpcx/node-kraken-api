@@ -149,9 +149,15 @@ export class Kraken {
       secret?: string;
       /** REST API OTP generator. */
       genotp?: () => string;
-      /** Nonce generator (the default is ms time with an incrementation guarantee). */
+      /**
+       * Nonce generator (the default is ms time with an incrementation guarantee).
+       * Note: Some other APIs use a spoofed microsecond time. If you are using an
+       *       API key used by one of those APIs then you will need to use a custom
+       *       nonce generator (e.g. () => Date.now() * 1000). See _GENNONCE for the
+       *       default generation logic.
+       */
       gennonce?: () => number;
-      /** Connection timeout. */
+      /** Connection timeout (default 1000). */
       timeout?: number;
     } & _Legacy.Settings
   > = {}) {
