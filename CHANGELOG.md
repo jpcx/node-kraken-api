@@ -1,8 +1,30 @@
 # Changelog
 
+<a name="2.2.2"></a>
+
+## [2.2.2](https://github.com/jpcx/node-kraken-api/tree/2.2.2) (2022-06-10)
+
+| __[Changes since 2.2.1](https://github.com/jpcx/node-kraken-api/compare/2.2.1...2.2.2)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/2.2.2) | [README](https://github.com/jpcx/node-kraken-api/tree/2.2.2/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/2.2.2.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/2.2.2.tar.gz) |
+| --- | --- |
+
+__Fixed__
+
+- Added error listener to WS dict reads.
+- Added explicit errors to WS open/close rejections.
+- Fixed double socket open due to immediate rapid WS requests.
+- Updated last changelog 2.2.1 publish date.
+
+__Changed__
+
+- Modified WS subscribe/unsubscribe signatures to simplify pair array passing.
+- Added explicit internal errors to unexpected rejections.
+
 <a name="2.2.1"></a>
 
-## [2.2.1](https://github.com/jpcx/node-kraken-api/tree/2.2.1) (2022-03-14)
+## [2.2.1](https://github.com/jpcx/node-kraken-api/tree/2.2.1) (2022-06-09)
 
 | __[Changes since 2.2.0](https://github.com/jpcx/node-kraken-api/compare/2.2.0...2.2.1)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/2.2.1) | [README](https://github.com/jpcx/node-kraken-api/tree/2.2.1/README.md) |
 | --- | --- | --- |

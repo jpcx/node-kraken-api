@@ -1,8 +1,10 @@
 /// <reference types="node" />
+/// <reference types="node" />
+/// <reference types="node" />
 import * as http from "http";
 import { Emitter } from "ts-ev";
 import WebSocket from "ws";
-export declare const _USER_AGENT = "node-kraken-api/2.2.1";
+export declare const _USER_AGENT = "node-kraken-api/2.2.2";
 export declare const _REST_HOSTNAME = "api.kraken.com";
 export declare const _WS_PUB_HOSTNAME = "ws.kraken.com";
 export declare const _WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -204,8 +206,8 @@ export declare class Kraken {
             update: (ticker: Kraken.WS.Ticker, pair: string) => any;
         }, {}>;
         ohlc(options?: {
-            interval?: number | undefined;
-        } | undefined): Kraken.WS.Subscriber<{
+            interval?: number;
+        }): Kraken.WS.Subscriber<{
             update: (ohlc: Kraken.WS.OHLC, pair: string) => any;
         }, {
             interval?: number | undefined;
@@ -217,8 +219,8 @@ export declare class Kraken {
             update: (spread: Kraken.WS.Spread, pair: string) => any;
         }, {}>;
         book(options?: {
-            depth?: number | undefined;
-        } | undefined): Kraken.WS.Subscriber<{
+            depth?: number;
+        }): Kraken.WS.Subscriber<{
             snapshot: (snapshot: Kraken.WS.Book.Snapshot, pair: string) => any;
             ask: (ask: Kraken.WS.Book.Ask, pair: string) => any;
             bid: (bid: Kraken.WS.Book.Bid, pair: string) => any;
@@ -230,7 +232,7 @@ export declare class Kraken {
             token: string;
             snapshot?: boolean;
         }): Kraken.WS.Subscriber<{
-            update: (ownTrades: Kraken.WS.OwnTrades, sequence?: number | undefined) => any;
+            update: (ownTrades: Kraken.WS.OwnTrades, sequence?: number) => any;
         }, {
             token: string;
             snapshot?: boolean | undefined;
@@ -239,7 +241,7 @@ export declare class Kraken {
             token: string;
             ratecounter?: boolean;
         }): Kraken.WS.Subscriber<{
-            update: (openOrders: Kraken.WS.OpenOrders, sequence?: number | undefined) => any;
+            update: (openOrders: Kraken.WS.OpenOrders, sequence?: number) => any;
         }, {
             token: string;
             ratecounter?: boolean | undefined;
@@ -283,13 +285,17 @@ export declare class Kraken {
 }
 export declare module Kraken {
     class InternalError extends Error {
-        constructor(message: string);
+        info?: unknown;
+        constructor(message: string, info?: unknown);
     }
     class UnknownError extends Error {
         info?: unknown;
         constructor(message: string, info?: unknown);
     }
     class ArgumentError extends Error {
+        constructor(message: string);
+    }
+    class UsageError extends Error {
         constructor(message: string);
     }
     class SettingsError extends ArgumentError {
@@ -1250,14 +1256,10 @@ export declare module Kraken {
             readonly options: Options;
             readonly subscriptions: Set<Subscription>;
             constructor(con: Connection, name: string, payloadDistributor: (self: Subscriber<PayloadEvents, Options>, payload: any[], status: SubscriptionStatus) => void, options: Options);
-            subscribe(pair: Options extends {
-                token: string;
-            } ? void : string, ...pairs: Options extends {
+            subscribe(...pairs: Options extends {
                 token: string;
             } ? void[] : string[]): Promise<this>;
-            unsubscribe(pair: Options extends {
-                token: string;
-            } ? void : string, ...pairs: Options extends {
+            unsubscribe(...pairs: Options extends {
                 token: string;
             } ? void[] : string[]): Promise<this>;
             private _mksub;
