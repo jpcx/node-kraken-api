@@ -13,6 +13,7 @@
 __Changed__
 
 - Added content type header to public REST requests.
+- Added unexpected rejection handlers to WebSocket methods.
 
 <a name="2.2.0"></a>
 
