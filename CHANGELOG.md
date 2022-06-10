@@ -1,5 +1,20 @@
 # Changelog
 
+<a name="2.2.1"></a>
+
+## [2.2.1](https://github.com/jpcx/node-kraken-api/tree/2.2.1) (2022-03-14)
+
+| __[Changes since 2.2.0](https://github.com/jpcx/node-kraken-api/compare/2.2.0...2.2.1)__ | [Release Notes](https://github.com/jpcx/node-kraken-api/releases/tag/2.2.1) | [README](https://github.com/jpcx/node-kraken-api/tree/2.2.1/README.md) |
+| --- | --- | --- |
+
+| [Source Code (zip)](https://github.com/jpcx/node-kraken-api/archive/2.2.1.zip) | [Source Code (tar.gz)](https://github.com/jpcx/node-kraken-api/archive/2.2.1.tar.gz) |
+| --- | --- |
+
+__Changed__
+
+- Added content type header to public REST requests.
+- Added unexpected rejection handlers to WebSocket methods.
+
 <a name="2.2.0"></a>
 
 ## [2.2.0](https://github.com/jpcx/node-kraken-api/tree/2.2.0) (2022-03-13)

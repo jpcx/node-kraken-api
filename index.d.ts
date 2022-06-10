@@ -2,7 +2,7 @@
 import * as http from "http";
 import { Emitter } from "ts-ev";
 import WebSocket from "ws";
-export declare const _USER_AGENT = "node-kraken-api/2.2.0";
+export declare const _USER_AGENT = "node-kraken-api/2.2.1";
 export declare const _REST_HOSTNAME = "api.kraken.com";
 export declare const _WS_PUB_HOSTNAME = "ws.kraken.com";
 export declare const _WS_PRIV_HOSTNAME = "ws-auth.kraken.com";

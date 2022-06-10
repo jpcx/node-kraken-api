@@ -42,7 +42,7 @@ const ts_ev_1 = require("ts-ev");
 const crc_1 = require("crc");
 const crypto_1 = __importDefault(require("crypto"));
 const ws_1 = __importDefault(require("ws"));
-exports._USER_AGENT = "node-kraken-api/2.2.0";
+exports._USER_AGENT = "node-kraken-api/2.2.1";
 exports._REST_HOSTNAME = "api.kraken.com";
 exports._WS_PUB_HOSTNAME = "ws.kraken.com";
 exports._WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -552,25 +552,30 @@ exports.Kraken = Kraken;
             }
             requestMulti(request, nResponses) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    return new Promise((resolve) => {
-                        const reqid = (0, exports._GENNONCE)();
-                        let prevreqid = request.reqid;
-                        const responses = [];
-                        const resolver = new _CountTrigger(nResponses, () => {
-                            this.off("dict", l);
-                            resolve(responses);
-                        });
-                        const l = (o) => {
-                            if (prevreqid)
-                                o.reqid = prevreqid;
-                            responses.push(o);
-                            resolver.fireWhenReady();
-                        };
-                        this.on("dict", l, {
-                            protect: true,
-                            filter: (args) => args[0].reqid === reqid,
-                        });
-                        this.write(JSON.stringify(Object.assign(Object.assign({}, request), { reqid })));
+                    return new Promise((resolve, reject) => {
+                        try {
+                            const reqid = (0, exports._GENNONCE)();
+                            let prevreqid = request.reqid;
+                            const responses = [];
+                            const resolver = new _CountTrigger(nResponses, () => {
+                                this.off("dict", l);
+                                resolve(responses);
+                            });
+                            const l = (o) => {
+                                if (prevreqid)
+                                    o.reqid = prevreqid;
+                                responses.push(o);
+                                resolver.fireWhenReady();
+                            };
+                            this.on("dict", l, {
+                                protect: true,
+                                filter: (args) => args[0].reqid === reqid,
+                            });
+                            this.write(JSON.stringify(Object.assign(Object.assign({}, request), { reqid })));
+                        }
+                        catch (e) {
+                            reject(e);
+                        }
                     });
                 });
             }
@@ -719,70 +724,98 @@ exports.Kraken = Kraken;
             }
             subscribe(pair, ...pairs) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    return new Promise((resolve) => {
-                        const request = {
-                            event: "subscribe",
-                            reqid: this._reqid,
-                            subscription: Object.assign(Object.assign({}, this.options), { name: this.name }),
-                        };
-                        if (pair) {
-                            request.pair = [pair, ...pairs];
-                            const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
-                            request.pair.forEach((p) => this._mksub(p).then(() => resolver.fireWhenReady()));
+                    return new Promise((resolve, reject) => {
+                        try {
+                            const request = {
+                                event: "subscribe",
+                                reqid: this._reqid,
+                                subscription: Object.assign(Object.assign({}, this.options), { name: this.name }),
+                            };
+                            if (pair) {
+                                request.pair = [pair, ...pairs];
+                                const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
+                                request.pair.forEach((p) => this._mksub(p)
+                                    .then(() => resolver.fireWhenReady())
+                                    .catch(reject));
+                            }
+                            else {
+                                this._mksub()
+                                    .then(() => resolve(this))
+                                    .catch(reject);
+                            }
+                            this._con.write(JSON.stringify(request));
                         }
-                        else {
-                            this._mksub().then(() => resolve(this));
+                        catch (e) {
+                            reject(e);
                         }
-                        this._con.write(JSON.stringify(request));
                     });
                 });
             }
             unsubscribe(pair, ...pairs) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    return new Promise((resolve) => {
-                        const request = {
-                            event: "unsubscribe",
-                            reqid: this._reqid,
-                            subscription: Object.assign(Object.assign({}, this.options), { name: this.name }),
-                        };
-                        if (pair) {
-                            request.pair = [pair, ...pairs];
-                            const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
-                            request.pair.forEach((p) => this._rmsub(p).then(() => resolver.fireWhenReady()));
+                    return new Promise((resolve, reject) => {
+                        try {
+                            const request = {
+                                event: "unsubscribe",
+                                reqid: this._reqid,
+                                subscription: Object.assign(Object.assign({}, this.options), { name: this.name }),
+                            };
+                            if (pair) {
+                                request.pair = [pair, ...pairs];
+                                const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
+                                request.pair.forEach((p) => this._rmsub(p)
+                                    .then(() => resolver.fireWhenReady())
+                                    .catch(reject));
+                            }
+                            else {
+                                this._rmsub()
+                                    .then(() => resolve(this))
+                                    .catch(reject);
+                            }
+                            this._con.write(JSON.stringify(request));
                         }
-                        else {
-                            this._rmsub().then(() => resolve(this));
+                        catch (e) {
+                            reject(e);
                         }
-                        this._con.write(JSON.stringify(request));
                     });
                 });
             }
             _mksub(pair) {
-                return new Promise((resolve) => {
-                    const protect = { protect: true };
-                    const sub = new Subscription(this._con, this._reqid, pair);
-                    const onstatus = (status) => this.emit("status", status);
-                    const onerror = (error) => this.emit("error", error, sub.status);
-                    const onpayload = (payload) => this.emit("payload", payload, sub.status);
-                    sub
-                        .once("created", () => {
-                        this.subscriptions.add(sub);
-                        resolve();
-                    }, protect)
-                        .once("destroyed", () => {
-                        this.subscriptions.delete(sub);
-                        sub.off("status", onstatus).off("error", onerror).off("payload", onpayload);
-                    }, protect)
-                        .on("status", onstatus, protect)
-                        .on("error", onerror, protect)
-                        .on("payload", onpayload, protect);
+                return new Promise((resolve, reject) => {
+                    try {
+                        const protect = { protect: true };
+                        const sub = new Subscription(this._con, this._reqid, pair);
+                        const onstatus = (status) => this.emit("status", status);
+                        const onerror = (error) => this.emit("error", error, sub.status);
+                        const onpayload = (payload) => this.emit("payload", payload, sub.status);
+                        sub
+                            .once("created", () => {
+                            this.subscriptions.add(sub);
+                            resolve();
+                        }, protect)
+                            .once("destroyed", () => {
+                            this.subscriptions.delete(sub);
+                            sub.off("status", onstatus).off("error", onerror).off("payload", onpayload);
+                        }, protect)
+                            .on("status", onstatus, protect)
+                            .on("error", onerror, protect)
+                            .on("payload", onpayload, protect);
+                    }
+                    catch (e) {
+                        reject(e);
+                    }
                 });
             }
             _rmsub(pair) {
-                return new Promise((resolve) => {
-                    for (const sub of this.subscriptions)
-                        if (sub.status.pair === pair)
-                            sub.once("destroyed", () => resolve(), { protect: true });
+                return new Promise((resolve, reject) => {
+                    try {
+                        for (const sub of this.subscriptions)
+                            if (sub.status.pair === pair)
+                                sub.once("destroyed", () => resolve(), { protect: true });
+                    }
+                    catch (e) {
+                        reject(e);
+                    }
                 });
             }
         }
@@ -1032,6 +1065,7 @@ function _prepareRequest(endpoint, options, type, gennonce, auth) {
         const path = `/${exports._REST_VERSION}/public/${endpoint}`;
         const headers = {
             "User-Agent": exports._USER_AGENT,
+            "Content-Type": "application/x-www-form-urlencoded",
         };
         if (options) {
             const method = "POST";

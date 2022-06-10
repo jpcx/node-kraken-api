@@ -1,4 +1,4 @@
-[![](https://github.com/jpcx/node-kraken-api/blob/2.2.0/logo.png)](#)
+[![](https://github.com/jpcx/node-kraken-api/blob/2.2.1/logo.png)](#)
 
 [![](https://img.shields.io/github/issues/jpcx/node-kraken-api)](#)
 [![](https://img.shields.io/github/forks/jpcx/node-kraken-api)](#)
@@ -27,7 +27,7 @@ WebSocket API Docs: [docs.kraken.com/websockets](https://docs.kraken.com/websock
 - `RetrieveExport` (binary endpoint); see the [example](#RetrieveExport).
 - Full WS orderbook mirroring and checksum validation.
 
-[CHANGELOG](https://github.com/jpcx/node-kraken-api/blob/2.2.0/CHANGELOG.md) | [Synopsis](#synopsis) | [Usage](#usage) | [Code](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts) |
+[CHANGELOG](https://github.com/jpcx/node-kraken-api/blob/2.2.1/CHANGELOG.md) | [Synopsis](#synopsis) | [Usage](#usage) | [Code](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts) |
 | --- | --- | --- | --- |
 
 ### MIGRATION FROM 0.4.1:
@@ -75,7 +75,7 @@ If you're upgrading, please review the changes and upgrade guide below.
 
 #### Changed
 
-- Errors have changed to named classes. Please review [the synopsis](https://github.com/jpcx/node-kraken-api/blob/2.2.0/README.md#synopsis).
+- Errors have changed to named classes. Please review [the synopsis](https://github.com/jpcx/node-kraken-api/blob/2.2.1/README.md#synopsis).
 
 #### Upgrade Guide
 
@@ -119,82 +119,82 @@ Minor changes to the Emitter class.
 
 ### Methods
 
-- [`.request()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L195)
-- [`.time()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L249)
-- [`.systemStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L256)
-- [`.assets()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L263)
-- [`.assetPairs()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L285)
-- [`.ticker()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L311)
-- [`.ohlc()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L328)
-- [`.depth()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L356)
-- [`.trades()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L379)
-- [`.spread()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L401)
-- [`.getWebSocketsToken()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L424)
-- [`.balance()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L431)
-- [`.tradeBalance()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L438)
-- [`.openOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L455)
-- [`.closedOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L476)
-- [`.queryOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L513)
-- [`.tradesHistory()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L538)
-- [`.queryTrades()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L571)
-- [`.openPositions()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L591)
-- [`.ledgers()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L615)
-- [`.queryLedgers()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L654)
-- [`.tradeVolume()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L674)
-- [`.addExport()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L694)
-- [`.exportStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L734)
-- [`.retrieveExport()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L750)
-- [`.removeExport()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L766)
-- [`.addOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L787)
-- [`.cancelOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L881)
-- [`.cancelAll()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L897)
-- [`.cancelAllOrdersAfter()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L905)
-- [`.depositMethods()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L921)
-- [`.depositAddresses()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L937)
-- [`.depositStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L961)
-- [`.withdrawInfo()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L981)
-- [`.withdrawStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1029)
-- [`.withdrawCancel()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1049)
-- [`.walletTransfer()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1069)
-- [`.stake()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1098)
-- [`.unstake()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1123)
-- [`.stakingAssets()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1145)
-- [`.stakingPending()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1154)
-- [`.stakingTransactions()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1163)
-- [`.ws.ticker()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1188)
-- [`.ws.ohlc()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1211)
-- [`.ws.trade()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1234)
-- [`.ws.spread()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1253)
-- [`.ws.book()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1272)
-- [`.ws.ownTrades()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1347)
-- [`.ws.openOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1372)
-- [`.ws.addOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1397)
-- [`.ws.cancelOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1451)
-- [`.ws.cancelAll()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1467)
-- [`.ws.cancelAllOrdersAfter()`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1487)
+- [`.request()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L195)
+- [`.time()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L249)
+- [`.systemStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L256)
+- [`.assets()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L263)
+- [`.assetPairs()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L285)
+- [`.ticker()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L311)
+- [`.ohlc()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L328)
+- [`.depth()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L356)
+- [`.trades()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L379)
+- [`.spread()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L401)
+- [`.getWebSocketsToken()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L424)
+- [`.balance()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L431)
+- [`.tradeBalance()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L438)
+- [`.openOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L455)
+- [`.closedOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L476)
+- [`.queryOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L513)
+- [`.tradesHistory()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L538)
+- [`.queryTrades()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L571)
+- [`.openPositions()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L591)
+- [`.ledgers()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L615)
+- [`.queryLedgers()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L654)
+- [`.tradeVolume()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L674)
+- [`.addExport()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L694)
+- [`.exportStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L734)
+- [`.retrieveExport()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L750)
+- [`.removeExport()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L766)
+- [`.addOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L787)
+- [`.cancelOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L881)
+- [`.cancelAll()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L897)
+- [`.cancelAllOrdersAfter()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L905)
+- [`.depositMethods()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L921)
+- [`.depositAddresses()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L937)
+- [`.depositStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L961)
+- [`.withdrawInfo()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L981)
+- [`.withdrawStatus()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1029)
+- [`.withdrawCancel()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1049)
+- [`.walletTransfer()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1069)
+- [`.stake()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1098)
+- [`.unstake()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1123)
+- [`.stakingAssets()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1145)
+- [`.stakingPending()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1154)
+- [`.stakingTransactions()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1163)
+- [`.ws.ticker()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1188)
+- [`.ws.ohlc()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1211)
+- [`.ws.trade()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1234)
+- [`.ws.spread()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1253)
+- [`.ws.book()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1272)
+- [`.ws.ownTrades()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1347)
+- [`.ws.openOrders()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1372)
+- [`.ws.addOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1397)
+- [`.ws.cancelOrder()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1451)
+- [`.ws.cancelAll()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1467)
+- [`.ws.cancelAllOrdersAfter()`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1487)
 
 ### Properties
 
-- [`.ws`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1170)
-- [`.ws.pub`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1174)
-- [`.ws.priv`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1176)
+- [`.ws`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1170)
+- [`.ws.pub`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1174)
+- [`.ws.priv`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1176)
 
 ### Classes
 
-- [`Kraken`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L122)
-- [`Kraken.InternalError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1510)
-- [`Kraken.UnknownError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1517)
-- [`Kraken.ArgumentError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1527)
-- [`Kraken.SettingsError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1534)
-- [`Kraken.JSONParseError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1541)
-- [`Kraken.BufferParseError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1551)
-- [`Kraken.HTTPRequestError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1561)
-- [`Kraken.RESTAPIError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1577)
-- [`Kraken.TimeoutError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1587)
-- [`Kraken.WSAPIError`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L1594)
-- [`Kraken.WS.Connection`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L4390)
-- [`Kraken.WS.Subscriber`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L4691)
-- [`Kraken.WS.Subscription`](https://github.com/jpcx/node-kraken-api/blob/2.2.0/index.ts#L4853)
+- [`Kraken`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L122)
+- [`Kraken.InternalError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1510)
+- [`Kraken.UnknownError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1517)
+- [`Kraken.ArgumentError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1527)
+- [`Kraken.SettingsError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1534)
+- [`Kraken.JSONParseError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1541)
+- [`Kraken.BufferParseError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1551)
+- [`Kraken.HTTPRequestError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1561)
+- [`Kraken.RESTAPIError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1577)
+- [`Kraken.TimeoutError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1587)
+- [`Kraken.WSAPIError`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L1594)
+- [`Kraken.WS.Connection`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L4390)
+- [`Kraken.WS.Subscriber`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L4691)
+- [`Kraken.WS.Subscription`](https://github.com/jpcx/node-kraken-api/blob/2.2.1/index.ts#L4853)
 
 </details>
 
@@ -228,7 +228,7 @@ new Kraken({
    *       default generation logic.
    */
   gennonce?: () => number;
-  /** Connection timeout. */
+  /** Connection timeout (default 1000). */
   timeout?: number;
 });
 ```
@@ -356,4 +356,4 @@ Inspired by [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/2.2.0/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/jpcx/node-kraken-api/blob/2.2.1/LICENSE) file for details

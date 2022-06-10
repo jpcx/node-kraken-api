@@ -41,7 +41,7 @@ import WebSocket from "ws";
 /*                                                                 constants {*/
 
 /** Our user agent for REST request. */
-export const _USER_AGENT = "node-kraken-api/2.2.0";
+export const _USER_AGENT = "node-kraken-api/2.2.1";
 /** REST server hostname. */
 export const _REST_HOSTNAME = "api.kraken.com";
 /** WS public server hostname. */
@@ -149,9 +149,15 @@ export class Kraken {
       secret?: string;
       /** REST API OTP generator. */
       genotp?: () => string;
-      /** Nonce generator (the default is ms time with an incrementation guarantee). */
+      /**
+       * Nonce generator (the default is ms time with an incrementation guarantee).
+       * Note: Some other APIs use a spoofed microsecond time. If you are using an
+       *       API key used by one of those APIs then you will need to use a custom
+       *       nonce generator (e.g. () => Date.now() * 1000). See _GENNONCE for the
+       *       default generation logic.
+       */
       gennonce?: () => number;
-      /** Connection timeout. */
+      /** Connection timeout (default 1000). */
       timeout?: number;
     } & _Legacy.Settings
   > = {}) {
@@ -4496,33 +4502,37 @@ export module Kraken {
       ): Promise<any[]> {
         /*· {*/
 
-        return new Promise((resolve) => {
-          const reqid = _GENNONCE();
-          let prevreqid = request.reqid;
+        return new Promise((resolve, reject) => {
+          try {
+            const reqid = _GENNONCE();
+            let prevreqid = request.reqid;
 
-          const responses: any[] = [];
+            const responses: any[] = [];
 
-          const resolver = new _CountTrigger(nResponses, () => {
-            this.off("dict", l);
-            resolve(responses);
-          });
+            const resolver = new _CountTrigger(nResponses, () => {
+              this.off("dict", l);
+              resolve(responses);
+            });
 
-          const l = (o: { reqid: number }) => {
-            if (prevreqid) o.reqid = prevreqid;
-            responses.push(o);
-            resolver.fireWhenReady();
-          };
-          this.on("dict", l, {
-            protect: true,
-            filter: (args: [NodeJS.Dict<any>]): args is [{ reqid: number }] =>
-              args[0].reqid === reqid,
-          });
-          this.write(
-            JSON.stringify({
-              ...request,
-              reqid,
-            })
-          );
+            const l = (o: { reqid: number }) => {
+              if (prevreqid) o.reqid = prevreqid;
+              responses.push(o);
+              resolver.fireWhenReady();
+            };
+            this.on("dict", l, {
+              protect: true,
+              filter: (args: [NodeJS.Dict<any>]): args is [{ reqid: number }] =>
+                args[0].reqid === reqid,
+            });
+            this.write(
+              JSON.stringify({
+                ...request,
+                reqid,
+              })
+            );
+          } catch (e: any) {
+            reject(e);
+          }
         });
 
         /*· }*/
@@ -4743,7 +4753,7 @@ export module Kraken {
        * Subscribe to some pairs (if applicable).
        * Requires at least one pair if public (i.e. token not in options).
        *
-       * DOES NOT REJECT.
+       * Rejects only on argument and internal errors.
        * If there is an issue with the subscription an error event will be emitted.
        */
       public async subscribe(
@@ -4752,22 +4762,32 @@ export module Kraken {
       ): Promise<this> {
         /*· {*/
 
-        return new Promise((resolve) => {
-          const request: SubscriptionRequest = {
-            event: "subscribe",
-            reqid: this._reqid,
-            subscription: { ...this.options, name: this.name },
-          };
+        return new Promise((resolve, reject) => {
+          try {
+            const request: SubscriptionRequest = {
+              event: "subscribe",
+              reqid: this._reqid,
+              subscription: { ...this.options, name: this.name },
+            };
 
-          if (pair) {
-            request.pair = [pair, ...pairs];
-            const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
-            request.pair.forEach((p) => this._mksub(p).then(() => resolver.fireWhenReady()));
-          } else {
-            this._mksub().then(() => resolve(this));
+            if (pair) {
+              request.pair = [pair, ...pairs];
+              const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
+              request.pair.forEach((p) =>
+                this._mksub(p)
+                  .then(() => resolver.fireWhenReady())
+                  .catch(reject)
+              );
+            } else {
+              this._mksub()
+                .then(() => resolve(this))
+                .catch(reject);
+            }
+
+            this._con.write(JSON.stringify(request));
+          } catch (e: any) {
+            reject(e);
           }
-
-          this._con.write(JSON.stringify(request));
         });
 
         /*· }*/
@@ -4777,7 +4797,7 @@ export module Kraken {
        * Unsubscribe from some pairs (if applicable).
        * Requires at least one pair if public (i.e. token not in options).
        *
-       * DOES NOT REJECT.
+       * Rejects only on argument and internal errors.
        * If there is an issue with the subscription an error event will be emitted.
        */
       public async unsubscribe(
@@ -4786,22 +4806,32 @@ export module Kraken {
       ): Promise<this> {
         /*· {*/
 
-        return new Promise((resolve) => {
-          const request: SubscriptionRequest = {
-            event: "unsubscribe",
-            reqid: this._reqid,
-            subscription: { ...this.options, name: this.name },
-          };
+        return new Promise((resolve, reject) => {
+          try {
+            const request: SubscriptionRequest = {
+              event: "unsubscribe",
+              reqid: this._reqid,
+              subscription: { ...this.options, name: this.name },
+            };
 
-          if (pair) {
-            request.pair = [pair, ...pairs];
-            const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
-            request.pair.forEach((p) => this._rmsub(p).then(() => resolver.fireWhenReady()));
-          } else {
-            this._rmsub().then(() => resolve(this));
+            if (pair) {
+              request.pair = [pair, ...pairs];
+              const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
+              request.pair.forEach((p) =>
+                this._rmsub(p)
+                  .then(() => resolver.fireWhenReady())
+                  .catch(reject)
+              );
+            } else {
+              this._rmsub()
+                .then(() => resolve(this))
+                .catch(reject);
+            }
+
+            this._con.write(JSON.stringify(request));
+          } catch (e: any) {
+            reject(e);
           }
-
-          this._con.write(JSON.stringify(request));
         });
 
         /*· }*/
@@ -4810,39 +4840,48 @@ export module Kraken {
       /* Private Methods {*/
 
       private _mksub(pair?: string): Promise<void> {
-        return new Promise((resolve) => {
-          const protect = { protect: true };
-          const sub = new Subscription(this._con, this._reqid, pair);
-          const onstatus = (status: SubscriptionStatus) => this.emit("status", status);
-          const onerror = (error: Error) => this.emit("error", error, sub.status);
-          const onpayload = (payload: any[]) => this.emit("payload", payload, sub.status);
-          sub
-            .once(
-              "created",
-              () => {
-                this.subscriptions.add(sub);
-                resolve();
-              },
-              protect
-            )
-            .once(
-              "destroyed",
-              () => {
-                this.subscriptions.delete(sub);
-                sub.off("status", onstatus).off("error", onerror).off("payload", onpayload);
-              },
-              protect
-            )
-            .on("status", onstatus, protect)
-            .on("error", onerror, protect)
-            .on("payload", onpayload, protect);
+        return new Promise((resolve, reject) => {
+          try {
+            const protect = { protect: true };
+            const sub = new Subscription(this._con, this._reqid, pair);
+            const onstatus = (status: SubscriptionStatus) => this.emit("status", status);
+            const onerror = (error: Error) => this.emit("error", error, sub.status);
+            const onpayload = (payload: any[]) => this.emit("payload", payload, sub.status);
+            sub
+              .once(
+                "created",
+                () => {
+                  this.subscriptions.add(sub);
+                  resolve();
+                },
+                protect
+              )
+              .once(
+                "destroyed",
+                () => {
+                  this.subscriptions.delete(sub);
+                  sub.off("status", onstatus).off("error", onerror).off("payload", onpayload);
+                },
+                protect
+              )
+              .on("status", onstatus, protect)
+              .on("error", onerror, protect)
+              .on("payload", onpayload, protect);
+          } catch (e: any) {
+            reject(e);
+          }
         });
       }
 
       private _rmsub(pair?: string): Promise<void> {
-        return new Promise((resolve) => {
-          for (const sub of this.subscriptions)
-            if (sub.status.pair === pair) sub.once("destroyed", () => resolve(), { protect: true });
+        return new Promise((resolve, reject) => {
+          try {
+            for (const sub of this.subscriptions)
+              if (sub.status.pair === pair)
+                sub.once("destroyed", () => resolve(), { protect: true });
+          } catch (e: any) {
+            reject(e);
+          }
         });
       }
 
@@ -5178,6 +5217,7 @@ export function _prepareRequest(
     const path = `/${_REST_VERSION}/public/${endpoint}`;
     const headers = {
       "User-Agent": _USER_AGENT,
+      "Content-Type": "application/x-www-form-urlencoded",
     };
     if (options) {
       const method = "POST";
