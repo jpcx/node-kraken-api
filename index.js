@@ -42,7 +42,7 @@ const ts_ev_1 = require("ts-ev");
 const crc_1 = require("crc");
 const crypto_1 = __importDefault(require("crypto"));
 const ws_1 = __importDefault(require("ws"));
-exports._USER_AGENT = "node-kraken-api/2.2.1";
+exports._USER_AGENT = "node-kraken-api/2.2.2";
 exports._REST_HOSTNAME = "api.kraken.com";
 exports._WS_PUB_HOSTNAME = "ws.kraken.com";
 exports._WS_PRIV_HOSTNAME = "ws-auth.kraken.com";
@@ -359,8 +359,9 @@ class Kraken {
 exports.Kraken = Kraken;
 (function (Kraken) {
     class InternalError extends Error {
-        constructor(message) {
+        constructor(message, info) {
             super(message);
+            this.info = info;
         }
     }
     Kraken.InternalError = InternalError;
@@ -377,6 +378,12 @@ exports.Kraken = Kraken;
         }
     }
     Kraken.ArgumentError = ArgumentError;
+    class UsageError extends Error {
+        constructor(message) {
+            super(message);
+        }
+    }
+    Kraken.UsageError = UsageError;
     class SettingsError extends ArgumentError {
         constructor(description) {
             super(description);
@@ -531,22 +538,27 @@ exports.Kraken = Kraken;
             request(request) {
                 return __awaiter(this, void 0, void 0, function* () {
                     return new Promise((resolve, reject) => {
-                        const reqid = (0, exports._GENNONCE)();
-                        let prevreqid = request.reqid;
-                        this.once("dict", (o) => {
-                            if (!o.errorMessage) {
-                                if (prevreqid)
-                                    o.reqid = prevreqid;
-                                resolve(o);
-                            }
-                            else {
-                                reject(new WSAPIError(o));
-                            }
-                        }, {
-                            protect: true,
-                            filter: (args) => args[0].reqid === reqid,
-                        });
-                        this.write(JSON.stringify(Object.assign(Object.assign({}, request), { reqid })));
+                        try {
+                            const reqid = (0, exports._GENNONCE)();
+                            let prevreqid = request.reqid;
+                            this.once("dict", (o) => {
+                                if (!o.errorMessage) {
+                                    if (prevreqid)
+                                        o.reqid = prevreqid;
+                                    resolve(o);
+                                }
+                                else {
+                                    reject(new WSAPIError(o));
+                                }
+                            }, {
+                                protect: true,
+                                filter: (args) => args[0].reqid === reqid,
+                            });
+                            this.write(JSON.stringify(Object.assign(Object.assign({}, request), { reqid })));
+                        }
+                        catch (e) {
+                            reject(new InternalError("an unexpected error occurred", e));
+                        }
                     });
                 });
             }
@@ -574,58 +586,68 @@ exports.Kraken = Kraken;
                             this.write(JSON.stringify(Object.assign(Object.assign({}, request), { reqid })));
                         }
                         catch (e) {
-                            reject(e);
+                            reject(new InternalError("an unexpected error occurred", e));
                         }
                     });
                 });
             }
             open() {
                 return new Promise((resolve, reject) => {
-                    if (this._state === "open" || this._state === "opening") {
-                        reject();
+                    try {
+                        if (this._state === "open" || this._state === "opening") {
+                            reject(new UsageError("cannot open the connection twice"));
+                        }
+                        else {
+                            this._setState("opening");
+                            this._socket = new ws_1.default("wss://" + this.hostname + ":443", {
+                                timeout: this._gettimeout(),
+                            });
+                            this._socket.addListener("message", this._onread.bind(this));
+                            this._socket.addListener("error", this._onerror.bind(this));
+                            this._socket.addListener("close", this._onclose.bind(this));
+                            this._socket.addListener("open", this._onopen.bind(this));
+                            const onceOpen = () => {
+                                if (!this._socket)
+                                    reject(new InternalError("Socket should have been available"));
+                                else {
+                                    this._socket.removeListener("open", onceOpen);
+                                    resolve();
+                                }
+                            };
+                            this._socket.addListener("open", onceOpen);
+                        }
                     }
-                    else {
-                        this._setState("opening");
-                        this._socket = new ws_1.default("wss://" + this.hostname + ":443", {
-                            timeout: this._gettimeout(),
-                        });
-                        this._socket.addListener("message", this._onread.bind(this));
-                        this._socket.addListener("error", this._onerror.bind(this));
-                        this._socket.addListener("close", this._onclose.bind(this));
-                        this._socket.addListener("open", this._onopen.bind(this));
-                        const onceOpen = () => {
-                            if (!this._socket)
-                                reject(new InternalError("Socket should have been available"));
-                            else {
-                                this._socket.removeListener("open", onceOpen);
-                                resolve();
-                            }
-                        };
-                        this._socket.addListener("open", onceOpen);
+                    catch (e) {
+                        reject(new InternalError("an unexpected error occurred", e));
                     }
                 });
             }
             close(code, reason) {
                 return new Promise((resolve, reject) => {
-                    if (this._state === "closed" || this._state === "closing")
-                        reject();
-                    else {
-                        this._setState("closing");
-                        if (this._socket) {
-                            const onceClosed = () => {
-                                if (!this._socket) {
-                                    resolve();
-                                }
-                                else {
-                                    reject(new InternalError("Socket should not have been available"));
-                                }
-                            };
-                            this._socket.addListener("close", onceClosed);
-                            this._socket.close(code, reason);
-                        }
+                    try {
+                        if (this._state === "closed" || this._state === "closing")
+                            reject(new UsageError("cannot close the connection twice"));
                         else {
-                            reject(new InternalError("Socket should have been available"));
+                            this._setState("closing");
+                            if (this._socket) {
+                                const onceClosed = () => {
+                                    if (!this._socket) {
+                                        resolve();
+                                    }
+                                    else {
+                                        reject(new InternalError("Socket should not have been available"));
+                                    }
+                                };
+                                this._socket.addListener("close", onceClosed);
+                                this._socket.close(code, reason);
+                            }
+                            else {
+                                reject(new InternalError("Socket should have been available"));
+                            }
                         }
+                    }
+                    catch (e) {
+                        reject(new InternalError("an unexpected error occurred", e));
                     }
                 });
             }
@@ -643,7 +665,8 @@ exports.Kraken = Kraken;
                     this.emit("write", data);
                 }
                 else {
-                    this.open();
+                    if (this._state !== "opening")
+                        this.open();
                     this._sendQueue.push(data);
                 }
                 return this;
@@ -669,6 +692,8 @@ exports.Kraken = Kraken;
                         else if (parsed.event === "systemStatus") {
                             this.emit("systemStatus", parsed);
                         }
+                        if (parsed.status === "error")
+                            this.emit("error", new WSAPIError(parsed));
                     }
                 }
                 catch (_) { }
@@ -722,7 +747,7 @@ exports.Kraken = Kraken;
                 });
                 _hidePrivates(this);
             }
-            subscribe(pair, ...pairs) {
+            subscribe(...pairs) {
                 return __awaiter(this, void 0, void 0, function* () {
                     return new Promise((resolve, reject) => {
                         try {
@@ -731,8 +756,8 @@ exports.Kraken = Kraken;
                                 reqid: this._reqid,
                                 subscription: Object.assign(Object.assign({}, this.options), { name: this.name }),
                             };
-                            if (pair) {
-                                request.pair = [pair, ...pairs];
+                            if (pairs.length) {
+                                request.pair = pairs;
                                 const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
                                 request.pair.forEach((p) => this._mksub(p)
                                     .then(() => resolver.fireWhenReady())
@@ -746,12 +771,12 @@ exports.Kraken = Kraken;
                             this._con.write(JSON.stringify(request));
                         }
                         catch (e) {
-                            reject(e);
+                            reject(new InternalError("an unexpected error occurred", e));
                         }
                     });
                 });
             }
-            unsubscribe(pair, ...pairs) {
+            unsubscribe(...pairs) {
                 return __awaiter(this, void 0, void 0, function* () {
                     return new Promise((resolve, reject) => {
                         try {
@@ -760,8 +785,8 @@ exports.Kraken = Kraken;
                                 reqid: this._reqid,
                                 subscription: Object.assign(Object.assign({}, this.options), { name: this.name }),
                             };
-                            if (pair) {
-                                request.pair = [pair, ...pairs];
+                            if (pairs.length) {
+                                request.pair = pairs;
                                 const resolver = new _CountTrigger(request.pair.length, () => resolve(this));
                                 request.pair.forEach((p) => this._rmsub(p)
                                     .then(() => resolver.fireWhenReady())
@@ -775,7 +800,7 @@ exports.Kraken = Kraken;
                             this._con.write(JSON.stringify(request));
                         }
                         catch (e) {
-                            reject(e);
+                            reject(new InternalError("an unexpected error occurred", e));
                         }
                     });
                 });
@@ -802,7 +827,7 @@ exports.Kraken = Kraken;
                             .on("payload", onpayload, protect);
                     }
                     catch (e) {
-                        reject(e);
+                        reject(new InternalError("an unexpected error occurred", e));
                     }
                 });
             }
@@ -814,7 +839,7 @@ exports.Kraken = Kraken;
                                 sub.once("destroyed", () => resolve(), { protect: true });
                     }
                     catch (e) {
-                        reject(e);
+                        reject(new InternalError("an unexpected error occurred", e));
                     }
                 });
             }
@@ -1098,46 +1123,51 @@ function _prepareRequest(endpoint, options, type, gennonce, auth) {
 exports._prepareRequest = _prepareRequest;
 function _sendRequest(requestOptions, postdata, encoding, timeout) {
     return new Promise((resolve, reject) => {
-        let didRespond = false;
-        const r = https
-            .request(requestOptions, (res) => {
-            didRespond = true;
-            try {
-                const handler = (() => {
-                    if (encoding === "utf8") {
-                        return new _UTF8Receiver(resolve, reject);
-                    }
-                    else if (encoding === "binary") {
-                        return new _BinaryReceiver(resolve, reject);
-                    }
-                    else {
-                        throw new Kraken.ArgumentError("Invalid Encoding: " + encoding);
-                    }
-                })();
-                res.setEncoding(encoding);
-                res.on("data", (chunk) => handler.nextChunk(chunk, res.statusCode, res.statusMessage));
-                res.on("end", () => {
-                    handler.finalize(res.statusCode, res.statusMessage);
-                    res.removeAllListeners();
-                });
-            }
-            catch (e) {
-                reject(e);
-            }
-        })
-            .on("error", (e) => {
-            r.destroy();
-            reject(e);
-        })
-            .setTimeout(timeout, () => {
-            if (!didRespond) {
+        try {
+            let didRespond = false;
+            const r = https
+                .request(requestOptions, (res) => {
+                didRespond = true;
+                try {
+                    const handler = (() => {
+                        if (encoding === "utf8") {
+                            return new _UTF8Receiver(resolve, reject);
+                        }
+                        else if (encoding === "binary") {
+                            return new _BinaryReceiver(resolve, reject);
+                        }
+                        else {
+                            throw new Kraken.ArgumentError("Invalid Encoding: " + encoding);
+                        }
+                    })();
+                    res.setEncoding(encoding);
+                    res.on("data", (chunk) => handler.nextChunk(chunk, res.statusCode, res.statusMessage));
+                    res.on("end", () => {
+                        handler.finalize(res.statusCode, res.statusMessage);
+                        res.removeAllListeners();
+                    });
+                }
+                catch (e) {
+                    reject(e);
+                }
+            })
+                .on("error", (e) => {
                 r.destroy();
-                reject(new Kraken.TimeoutError("REST request timed out."));
-            }
-        });
-        if (postdata)
-            r.write(postdata);
-        r.end();
+                reject(e);
+            })
+                .setTimeout(timeout, () => {
+                if (!didRespond) {
+                    r.destroy();
+                    reject(new Kraken.TimeoutError("REST request timed out."));
+                }
+            });
+            if (postdata)
+                r.write(postdata);
+            r.end();
+        }
+        catch (e) {
+            reject(new Kraken.InternalError("an unexpected error occurred", e));
+        }
     });
 }
 exports._sendRequest = _sendRequest;
