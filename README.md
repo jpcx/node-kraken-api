@@ -1,3 +1,9 @@
+## Notice
+
+Sorry, this project has been archived
+
+---
+
 [![](https://github.com/jpcx/node-kraken-api/blob/2.2.2/logo.png)](#)
 
 [![](https://img.shields.io/github/issues/jpcx/node-kraken-api)](#)
@@ -345,12 +351,6 @@ Also, I am US-based and can't access the futures API; if you have access and wan
 ## Author
 
 **Justin Collier** - [jpcx](https://github.com/jpcx)
-
-```
-msg: node-kraken-api
-btc: bc1q3asl6wjnmarx4r9qcc04gkcld9q2qaqk42dvh6
-sig: J4p7GsyX/2wQLk32Zfi/AmubUzGM66I6ah+mEn8Vpqf4EpfPuWYGaLcu2J8tdcsRGMAsmavbz/SJnw7yr3c0Duw=
-```
 
 Inspired by [npm-kraken-api](https://github.com/nothingisdead/npm-kraken-api) ([_nothingisdead_](https://github.com/nothingisdead)).
 
